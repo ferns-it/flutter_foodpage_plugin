@@ -1,5 +1,4 @@
-
-import 'package:flutter_foodpage_plugin/order_online/model/order/online_order_data.dart';
+import 'package:flutter_foodpage_plugin/order_online/models/order/online_order_data.dart';
 import 'package:get/get.dart';
 
 class OrderController extends GetxController {
@@ -9,5 +8,4 @@ class OrderController extends GetxController {
   bool get loading => _loading.value;
 
   void onChangeLoading(bool status) => _loading(status);
-  
 }

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import '../../constants/api_endpoints.dart';
-import '../../model/order/dinein_order_data.dart';
-import '../../model/order/online_order_data.dart';
-import '../../model/order/view_order_data.dart';
+import '../../models/order/dinein_order_data.dart';
+import '../../models/order/online_order_data.dart';
+import '../../models/order/view_order_data.dart';
 import '../base_client.dart';
 
 class OrderService {

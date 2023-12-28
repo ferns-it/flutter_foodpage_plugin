@@ -1,6 +1,6 @@
 library flutter_foodpage_plugin;
 
-import 'package:flutter_foodpage_plugin/order_online/model/order/online_order_data.dart';
+import 'package:flutter_foodpage_plugin/order_online/models/order/online_order_data.dart';
 
 import 'order_online/constants/app_export.dart';
 

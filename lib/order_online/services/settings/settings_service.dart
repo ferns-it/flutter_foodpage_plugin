@@ -1,5 +1,5 @@
 import '../../constants/api_endpoints.dart';
-import '../../model/settings/save_shop_settings.dart';
+import '../../models/settings/save_shop_settings.dart';
 import '../base_client.dart';
 
 class SettingsService {

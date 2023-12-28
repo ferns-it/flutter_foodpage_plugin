@@ -1,5 +1,5 @@
 import '../../constants/api_endpoints.dart';
-import '../../model/profile/shop_profile_data.dart';
+import '../../models/profile/shop_profile_data.dart';
 import '../base_client.dart';
 
 class ShopProfileService {
