@@ -49,12 +49,12 @@ class NewRequestsCollection {
         statusMessage: map['statusMessage'] as String,
         haveAdvance: map['haveAdvance'] as String,
         enquiries: List<Enquirie>.from(
-          (map['enquiries'] as List<int>).map<Enquirie>(
+          (map['enquiries'] ?? []).map<Enquirie>(
             (x) => Enquirie.fromMap(x as Map<String, dynamic>),
           ),
         ),
         modifiedEnquiries: List<Enquirie>.from(
-          (map['modified_enquiries'] as List<int>).map<Enquirie>(
+          (map['modified_enquiries'] ?? []).map<Enquirie>(
             (x) => Enquirie.fromMap(x as Map<String, dynamic>),
           ),
         ),

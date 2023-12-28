@@ -3,11 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-
 import 'package:flutter_foodpage_plugin/table_reservation/constants/api_endpoints.dart';
 
 import '../table_reservation/exceptions/app_exceptions.dart';
-import 'services/shared_preference/user_preference.dart';
 
 class BaseClient {
   static const _connectionTimeOut = Duration(milliseconds: 30000);
@@ -25,31 +23,10 @@ class BaseClient {
   static Dio get dio => Dio(_baseOptions)
     ..interceptors.add(
       InterceptorsWrapper(
-        onRequest: requestInterceptorHandler,
         onResponse: responseInterceptorHandler,
-        onError: errorResponseHandler,
+        // onError: errorResponseHandler,
       ),
     );
-
-  static void requestInterceptorHandler(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
-    final needAuth = (options.headers["needToken"] as bool);
-    if (!needAuth) return handler.next(options);
-    final user = await UserPreference.readUserData();
-    if (user == null || user.token == null) {
-      return handler.reject(
-        DioException(requestOptions: options, error: "User not authenticated"),
-      );
-    }
-
-    options.headers.remove("needToken");
-    // options.headers.addAll({"x-user": user.token});
-    options.headers.addAll({"Authorization": 'Bearer ${user.token}'});
-
-    handler.next(options);
-  }
 
   static void responseInterceptorHandler(
     Response<dynamic> response,
@@ -57,17 +34,7 @@ class BaseClient {
   ) {
     final data = response.data;
     final res = jsonDecode(data);
-    final error = res is List && res.isNotEmpty ? false : res['error'];
-
-    if (error == true || error is int) {
-      final errMsg = res['error'];
-
-      return handler.reject(DioException(
-        requestOptions: response.requestOptions,
-        error: InvalidRequest(message: errMsg),
-        type: DioExceptionType.badResponse,
-      ));
-    }
+    response.data = jsonEncode(res['data']);
     return handler.next(response);
   }
 

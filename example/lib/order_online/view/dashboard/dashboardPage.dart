@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/services/table_reservation_service.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
@@ -18,42 +21,53 @@ class DashboardPage extends GetView<DashboardController> {
       "online orders",
       "shop status",
     ];
-    final labelItems = [
-      "post",
-      "get",
-      "put"
-    ];
+    final labelItems = ["post", "get", "put"];
 
     return Scaffold(
       appBar: buildAppbar(title: "Dashboard", widget: const SizedBox.shrink()),
-      body: ListView.builder(
-        itemCount: dashboardItems.length,
-        itemBuilder: (context, index) {
-          return _DashboardCard(
-            itemName: dashboardItems[index],
-            itemIndex: index,
-            label: labelItems[index],
-
-          );
-        },
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              final requests = await TableReservationService.getNewRequests();
+              inspect(requests);
+            },
+            child: const Text("Get New Requests"),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: dashboardItems.length,
+              itemBuilder: (context, index) {
+                return _DashboardCard(
+                  itemName: dashboardItems[index],
+                  itemIndex: index,
+                  label: labelItems[index],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class _DashboardCard extends GetView<DashboardController> {
-  const _DashboardCard(
-     {
-    super.key,
+  const _DashboardCard({
+    Key? key,
     required this.itemName,
     required this.itemIndex,
     required this.label,
-  });
+  }) : super(key: key);
   final String itemName, label;
   final int itemIndex;
   @override
   Widget build(BuildContext context) {
-    final navigationList = [const LoginPage(), const OnlineOrderPage(), const ShopStatusPage()];
+    final navigationList = [
+      const LoginPage(),
+      const OnlineOrderPage(),
+      const ShopStatusPage(),
+    ];
 
     return SizedBox(
       height: 100.0,
@@ -106,6 +120,5 @@ class _DashboardCard extends GetView<DashboardController> {
         ),
       ),
     );
-  
   }
 }

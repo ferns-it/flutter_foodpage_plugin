@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:example/order_online/constants/app_colors.dart';
 import 'package:example/order_online/controller/shop/shop_controller.dart';
 import 'package:example/order_online/utils/build_appbar.dart';
@@ -12,7 +10,6 @@ class ShopStatusPage extends GetView<ShopController> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: buildAppbar(
         title: "Shop Status",
@@ -57,8 +54,7 @@ class ShopStatusPage extends GetView<ShopController> {
                                   margin: const EdgeInsets.symmetric(
                                       horizontal: 15.0, vertical: 25.0),
                                   colorText: AppColors.primaryColor);
-                                  controller.onChangeSelectedIndex(-1);
-
+                              controller.onChangeSelectedIndex(-1);
                             } finally {
                               controller.onChangeLoading(false);
                             }
