@@ -1,4 +1,4 @@
-enum ResponseType {
+enum ResponseResult {
   success,
   failure;
 }
@@ -15,3 +15,5 @@ enum ReservationStatus {
 
   final String label;
 }
+
+enum APIResponseStatus { initial, loading, completed, error }

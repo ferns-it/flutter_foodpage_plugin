@@ -8,18 +8,7 @@ import '../models/new_request/new_request_collection_model.dart';
 import '../models/reservation/reservation_details_model.dart';
 import '../models/reservation/update_reservation_request_model.dart';
 import '../models/upcoming_request/upcoming_request_collection_model.dart';
-
-abstract class ReservationService {
-  Future<NewRequestCollectionModel?> getNewRequests();
-
-  Future<UpcomingRequestCollection?> getUpcomingList();
-
-  Future<ReservationDetailsModel?> getReservationDetails(String reservationID);
-
-  Future<ResponseType?> updateReservationDetails(
-    UpdateReservationRequestModel payload,
-  );
-}
+import 'reservation_service_abstract.dart';
 
 class TableReservationService implements ReservationService {
   @override
@@ -48,14 +37,15 @@ class TableReservationService implements ReservationService {
   }
 
   @override
-  Future<ResponseType?> updateReservationDetails(
-      UpdateReservationRequestModel payload) async {
+  Future<ResponseResult?> updateReservationDetails(
+    UpdateReservationRequestModel payload,
+  ) async {
     final details = await BaseClient.put(
       api: ApiEndpoints.getdata,
       data: payload.toJson(),
       additionalHeaders: {"reservationId": payload.reservationId},
     );
-    if (details == null) return ResponseType.failure;
-    return ResponseType.success;
+    if (details == null) return ResponseResult.failure;
+    return ResponseResult.success;
   }
 }

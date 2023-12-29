@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foodpage_plugin/table_reservation/services/table_reservation_service.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/foodpage_table_reservation_plugin.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
@@ -11,8 +9,27 @@ import '../../controller/dashboard/dashboard_controller.dart';
 import '../../utils/build_appbar.dart';
 import '../login/login_page.dart';
 
-class DashboardPage extends GetView<DashboardController> {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  final controller = Get.find<DashboardController>();
+  late FoodpageTableReservation reservation;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> createInstance() async {
+    reservation = await FoodpageTableReservation.create(
+      authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae",
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +46,7 @@ class DashboardPage extends GetView<DashboardController> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              final requests = await TableReservationService.getNewRequests();
-              inspect(requests);
+              reservation.getNewRequests();
             },
             child: const Text("Get New Requests"),
           ),
