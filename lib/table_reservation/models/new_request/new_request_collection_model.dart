@@ -52,17 +52,17 @@ class NewRequestCollectionModel {
       statusMessage: map['statusMessage'] as String,
       haveAdvance: map['haveAdvance'] as String,
       enquiries: List<EnquirieModel>.from(
-        (map['enquiries'] as List<int>).map<EnquirieModel>(
+        (map['enquiries'] ?? []).map<EnquirieModel>(
           (x) => EnquirieModel.fromMap(x as Map<String, dynamic>),
         ),
       ),
       modifiedEnquiries: List<EnquirieModel>.from(
-        (map['modified_enquiries'] as List<int>).map<EnquirieModel>(
+        (map['modified_enquiries'] ?? []).map<EnquirieModel>(
           (x) => EnquirieModel.fromMap(x as Map<String, dynamic>),
         ),
       ),
       todayCancelledEnquiries: List<EnquirieModel>.from(
-        (map['today_cancelled_enquiries'] as List<int>).map<EnquirieModel>(
+        (map['today_cancelled_enquiries'] ?? []).map<EnquirieModel>(
           (x) => EnquirieModel.fromMap(x as Map<String, dynamic>),
         ),
       ),

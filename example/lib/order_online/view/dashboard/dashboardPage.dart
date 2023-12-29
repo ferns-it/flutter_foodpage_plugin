@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   void initState() {
+    createInstance();
     super.initState();
   }
 
@@ -46,7 +49,8 @@ class _DashboardPageState extends State<DashboardPage> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              reservation.getNewRequests();
+              final response = await reservation.getUpcomingRequests();
+              inspect(response);
             },
             child: const Text("Get New Requests"),
           ),

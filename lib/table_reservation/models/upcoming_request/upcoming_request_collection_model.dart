@@ -35,7 +35,7 @@ class UpcomingRequestCollection {
       statusMessage:
           map['statusMessage'] != null ? map['statusMessage'] as String : null,
       upcomingEnquiries: List<EnquirieModel>.from(
-        (map['upcomingEnquiries'] as List<int>).map<EnquirieModel>(
+        (map['upcomingEnquiries'] ?? []).map<EnquirieModel>(
           (x) => EnquirieModel.fromMap(x as Map<String, dynamic>),
         ),
       ),

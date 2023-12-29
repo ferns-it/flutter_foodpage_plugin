@@ -41,8 +41,6 @@ class BaseClient {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final needAuth = (options.headers["needToken"] as bool);
-    if (!needAuth) return handler.next(options);
     final authenticationKey = await AuthPreference().readAuthKeyData();
     if (authenticationKey == null) {
       final error = UnauthorizedAccessException();
@@ -55,7 +53,7 @@ class BaseClient {
         ),
       );
     }
-    options.headers.remove("needToken");
+
     options.headers.addAll({"x-shopToken": authenticationKey});
     handler.next(options);
   }
@@ -88,6 +86,7 @@ class BaseClient {
             type: DioExceptionType.badResponse,
           ));
         }
+
         response.data = jsonEncode(responseData);
 
         return handler.next(response);
