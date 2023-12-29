@@ -49,7 +49,7 @@ class _DashboardPageState extends State<DashboardPage> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              final response = await reservation.getUpcomingRequests();
+              final response = await reservation.getReservationDetails("70");
               inspect(response);
             },
             child: const Text("Get New Requests"),

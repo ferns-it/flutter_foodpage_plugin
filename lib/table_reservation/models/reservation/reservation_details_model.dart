@@ -44,7 +44,7 @@ class ReservationDetailsModel {
       reservationProfile: ReservationProfile.fromMap(
           map['reservationProfile'] as Map<String, dynamic>),
       chatMessages: List<ChatMessage>.from(
-        (map['chatMessages'] as List<int>).map<ChatMessage>(
+        (map['chatMessages'] ?? []).map<ChatMessage>(
           (x) => ChatMessage.fromMap(x as Map<String, dynamic>),
         ),
       ),
