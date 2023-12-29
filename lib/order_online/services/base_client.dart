@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import '../constants/api_endpoints.dart';
-import '../exceptions/app_exceptions.dart';
+import 'exceptions/app_exceptions.dart';
 import 'sharedpreference/user_preference.dart';
 
 
