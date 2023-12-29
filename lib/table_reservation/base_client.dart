@@ -114,10 +114,14 @@ class BaseClient {
     required Object data,
     Map<String, dynamic>? queryParameters,
   }) async {
-    final response = await dio.post<String>(api,
-        data: data,
-        queryParameters: queryParameters,
-        options: Options(headers: {"needToken": needAuth}));
+    const authKey = '5521bacd985f98bbcb30c9e0f1a242ae';
+
+    final response = await dio.post<String>(
+      api,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(headers: {"x-shopToken": authKey}),
+    );
     return response.data;
   }
 
@@ -129,11 +133,23 @@ class BaseClient {
     String params = '',
     Object? data,
     Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? additionalHeaders,
   }) async {
-    final response = await dio.put<String>(api + params,
-        data: data,
-        queryParameters: queryParameters,
-        options: Options(headers: {'needToken': needAuthentication}));
+    const authKey = '5521bacd985f98bbcb30c9e0f1a242ae';
+
+    // Prepare headers with the additional headers if not null
+    Map<String, dynamic> headers = {"x-shopToken": authKey};
+    if (additionalHeaders != null) {
+      headers.addAll(additionalHeaders);
+    }
+
+    final response = await dio.put<String>(
+      api + params,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(headers: headers), // Use the prepared headers
+    );
+
     return response.data;
   }
 
