@@ -1,5 +1,4 @@
-import 'package:flutter_foodpage_plugin/table_reservation/constants/enums.dart';
-
+import '../../constants/enums.dart';
 import '../../services/app_exception/app_exception.dart';
 
 class APIResponse<T> {

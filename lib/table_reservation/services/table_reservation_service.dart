@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter_foodpage_plugin/table_reservation/services/base_client.dart';
-import 'package:flutter_foodpage_plugin/table_reservation/constants/api_endpoints.dart';
+import 'base_client.dart';
+import '../constants/api_endpoints.dart';
 
 import '../constants/enums.dart';
 import '../models/new_request/new_request_collection_model.dart';

@@ -1,6 +1,7 @@
 
-import 'package:flutter_foodpage_plugin/order_online/models/auth/login_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../models/auth/login_response.dart';
 
 class UserPreference {
   static String get storageKey => 'user';

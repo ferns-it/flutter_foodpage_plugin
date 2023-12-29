@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foodpage_plugin/table_reservation/constants/api_endpoints.dart';
-import 'package:flutter_foodpage_plugin/table_reservation/services/shared_preference/auth_preference.dart';
 
+import '../constants/api_endpoints.dart';
 import 'app_exception/app_exception.dart';
+import 'shared_preference/auth_preference.dart';
 
 class BaseClient {
   static const int _timeLimit = 120;
