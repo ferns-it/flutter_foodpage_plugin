@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:example/order_online/constants/app_colors.dart';
 import 'package:example/order_online/controller/order/order_controller.dart';
 import 'package:example/order_online/utils/build_appbar.dart';
@@ -60,7 +58,7 @@ class OnlineOrderPage extends GetView<OrderController> {
             ),
           ),
         ),
-        Expanded(child: const _OnlineOrderDetailsWidget())
+        const Expanded(child: _OnlineOrderDetailsWidget())
       ]),
     );
   }

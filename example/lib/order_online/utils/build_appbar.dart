@@ -1,4 +1,3 @@
-import 'package:example/order_online/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 PreferredSizeWidget buildAppbar(
