@@ -3,7 +3,7 @@
 import 'package:example/order_online/controller/auth/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
-import 'package:flutter_foodpage_plugin/order_online/constants/app_export.dart';
+
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
@@ -64,8 +64,8 @@ class LoginPage extends GetView<AuthController> {
                   } else {
                     try {
                       controller.onChangeLoading(true);
-                      final user =
-                          await FlutterFoodpagePlugin.userLogin(data: data);
+                      final user = await FlutterFoodpageOrderOnline.userLogin(
+                          data: data);
                       if (user != null) {
                         controller.onChangeUser(user);
                       }
@@ -84,10 +84,9 @@ class LoginPage extends GetView<AuthController> {
                 child: const Text("LOGIN"),
               ),
               const SizedBox(height: 50.0),
-
-              Obx(() => Visibility(visible: controller.user != null,child: const _ShopDetailsCard()))
-
-              
+              Obx(() => Visibility(
+                  visible: controller.user != null,
+                  child: const _ShopDetailsCard()))
             ],
           ),
         ),
@@ -135,8 +134,8 @@ class _ShopDetailsCard extends GetView<AuthController> {
                 child: Text(
                   controller.user?.shopName?.toUpperCase() ?? "N/A",
                   style: const TextStyle(
-                      color: AppColors.primaryColor,
-                      ),
+                    color: AppColors.primaryColor,
+                  ),
                 ),
               ),
             ),

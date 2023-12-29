@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/constants/api_endpoints.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/shared_preference/auth_preference.dart';
 
-import 'services/app_exception/app_exception.dart';
+import 'app_exception/app_exception.dart';
 
 class BaseClient {
   static const int _timeLimit = 120;

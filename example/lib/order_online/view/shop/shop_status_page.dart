@@ -42,9 +42,8 @@ class ShopStatusPage extends GetView<ShopController> {
                             try {
                               controller.onChangeLoading(true);
                               controller.onChangeSelectedIndex(0);
-                              final status =
-                                  await FlutterFoodpagePlugin.changeShopStatus(
-                                      status: "open");
+                              final status = await FlutterFoodpageOrderOnline
+                                  .changeShopStatus(status: "open");
                               if (status != null) {
                                 controller.onChangeShopStatus(status);
                               }
@@ -86,9 +85,8 @@ class ShopStatusPage extends GetView<ShopController> {
                             try {
                               controller.onChangeLoading(true);
                               controller.onChangeSelectedIndex(1);
-                              final status =
-                                  await FlutterFoodpagePlugin.changeShopStatus(
-                                      status: "close");
+                              final status = await FlutterFoodpageOrderOnline
+                                  .changeShopStatus(status: "close");
                               if (status != null) {
                                 controller.onChangeShopStatus(status);
                               }

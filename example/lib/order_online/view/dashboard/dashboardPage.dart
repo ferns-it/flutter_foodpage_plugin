@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foodpage_plugin/table_reservation/foodpage_table_reservation_plugin.dart';
+import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
