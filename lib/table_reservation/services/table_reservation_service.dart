@@ -43,7 +43,7 @@ class TableReservationService implements ReservationService {
     final details = await BaseClient.put(
       api: ApiEndpoints.getdata,
       data: payload.toJson(),
-      additionalHeaders: {"reservationId": payload.reservationId},
+      params: payload.reservationId,
     );
     if (details == null) return ResponseResult.failure;
     return ResponseResult.success;
