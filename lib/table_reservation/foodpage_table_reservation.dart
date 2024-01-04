@@ -6,6 +6,7 @@ import 'package:flutter_foodpage_plugin/table_reservation/models/upcoming_reques
 import 'package:flutter_foodpage_plugin/table_reservation/services/app_exception/app_exception.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/shared_preference/auth_preference.dart';
 
+import 'models/history/history_request_collection_model.dart';
 import 'models/new_request/new_request_collection_model.dart';
 import 'models/reservation/reservation_details_model.dart';
 import 'models/reservation/update_reservation_request_model.dart';
@@ -68,6 +69,23 @@ class FoodpageTableReservation {
       return APIResponse.error(error.message, exception: error);
     } catch (e) {
       return _throwUnknownErrorException<UpcomingRequestCollection>();
+    }
+  }
+
+  Future<APIResponse<ReservationHistoryRequestCollectionModel>>
+      getReservationHistory() async {
+    try {
+      final response = await _reservationService.getReservationHistory();
+      if (response == null) {
+        return _throwNotFoundException<
+            ReservationHistoryRequestCollectionModel>();
+      }
+      return APIResponse.completed(response);
+    } on AppExceptions catch (error) {
+      return APIResponse.error(error.message, exception: error);
+    } catch (e) {
+      return _throwUnknownErrorException<
+          ReservationHistoryRequestCollectionModel>();
     }
   }
 
