@@ -1,14 +1,12 @@
-import 'dart:developer';
-
 import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/common/api_response.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
 import '../../controller/dashboard/dashboard_controller.dart';
-import '../../utils/build_appbar.dart';
 import '../login/login_page.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -19,8 +17,10 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final controller = Get.find<DashboardController>();
-  late FoodpageTableReservation reservation;
+  late FoodpageTableReservation foodpageTableReservation;
+
+  APIResponse<NewRequestCollectionModel> newRequestCollection =
+      APIResponse<NewRequestCollectionModel>.initial();
 
   @override
   void initState() {
@@ -29,44 +29,51 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> createInstance() async {
-    reservation = await FoodpageTableReservation.create(
-      authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae",
-    );
+    foodpageTableReservation = await FoodpageTableReservation.create(
+        authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae");
+    getNewRequests();
+  }
+
+  Future<void> getNewRequests() async {
+    setState(() {
+      newRequestCollection = APIResponse.loading();
+    });
+    final response = await foodpageTableReservation.getNewRequests();
+    setState(() {
+      newRequestCollection = response;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final dashboardItems = [
-      "login",
-      "online orders",
-      "shop status",
-    ];
-    final labelItems = ["post", "get", "put"];
-
     return Scaffold(
-      appBar: buildAppbar(title: "Dashboard", widget: const SizedBox.shrink()),
-      body: Column(
-        children: [
-          ElevatedButton(
-            onPressed: () async {
-              final response = await reservation.getReservationDetails("70");
-              inspect(response);
-            },
-            child: const Text("Get New Requests"),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: dashboardItems.length,
+      appBar: AppBar(
+        title: const Text("Table Reservation"),
+      ),
+      body: newRequestCollection.when(
+        initial: () {
+          return const SizedBox();
+        },
+        loading: () {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        completed: (data) {
+          return ListView.builder(
+              itemCount: data.enquiries.length,
               itemBuilder: (context, index) {
-                return _DashboardCard(
-                  itemName: dashboardItems[index],
-                  itemIndex: index,
-                  label: labelItems[index],
+                final enquiry = data.enquiries[index];
+                return ListTile(
+                  title: Text(enquiry.name.toString()),
+                  subtitle: Text(enquiry.id.toString()),
+                  leading: const Icon(Icons.table_restaurant),
                 );
-              },
-            ),
-          ),
-        ],
+              });
+        },
+        error: (message, exceptions) {
+          return Text(message ?? "Something went wrong");
+        },
       ),
     );
   }
