@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'base_client.dart';
 import '../constants/api_endpoints.dart';
-
 import '../constants/enums.dart';
+import '../models/history/history_request_collection_model.dart';
 import '../models/new_request/new_request_collection_model.dart';
 import '../models/reservation/reservation_details_model.dart';
 import '../models/reservation/update_reservation_request_model.dart';
 import '../models/upcoming_request/upcoming_request_collection_model.dart';
+import 'base_client.dart';
 import 'reservation_service_abstract.dart';
 
 class TableReservationService implements ReservationService {
@@ -47,5 +47,13 @@ class TableReservationService implements ReservationService {
     );
     if (details == null) return ResponseResult.failure;
     return ResponseResult.success;
+  }
+
+  @override
+  Future<ReservationHistoryRequestCollectionModel?>
+      getReservationHistory() async {
+    final data = await BaseClient.get(api: ApiEndpoints.gethistory);
+    if (data == null) return null;
+    return ReservationHistoryRequestCollectionModel.fromJson(data);
   }
 }
