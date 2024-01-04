@@ -1,5 +1,5 @@
 import '../../constants/api_endpoints.dart';
-import '../../model/status/shop_status_data.dart';
+import '../../models/status/shop_status_data.dart';
 import '../base_client.dart';
 
 class ShopStatusService {

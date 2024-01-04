@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import '../../constants/api_endpoints.dart';
-import '../../model/dishes/dishes_data.dart';
+import '../../models/dishes/dishes_data.dart';
 import '../base_client.dart';
 
 class DishesService {

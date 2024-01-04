@@ -1,40 +1,78 @@
 import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/common/api_response.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
 import '../../controller/dashboard/dashboard_controller.dart';
-import '../../utils/build_appbar.dart';
 import '../login/login_page.dart';
 
-class DashboardPage extends GetView<DashboardController> {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  late FoodpageTableReservation foodpageTableReservation;
+
+  APIResponse<NewRequestCollectionModel> newRequestCollection =
+      APIResponse<NewRequestCollectionModel>.initial();
+
+  @override
+  void initState() {
+    createInstance();
+    super.initState();
+  }
+
+  Future<void> createInstance() async {
+    foodpageTableReservation = await FoodpageTableReservation.create(
+        authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae");
+    getNewRequests();
+  }
+
+  Future<void> getNewRequests() async {
+    setState(() {
+      newRequestCollection = APIResponse.loading();
+    });
+    final response = await foodpageTableReservation.getNewRequests();
+    setState(() {
+      newRequestCollection = response;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final dashboardItems = [
-      "login",
-      "online orders",
-      "shop status",
-    ];
-    final labelItems = [
-      "post",
-      "get",
-      "put"
-    ];
-
     return Scaffold(
-      appBar: buildAppbar(title: "Dashboard", widget: const SizedBox.shrink()),
-      body: ListView.builder(
-        itemCount: dashboardItems.length,
-        itemBuilder: (context, index) {
-          return _DashboardCard(
-            itemName: dashboardItems[index],
-            itemIndex: index,
-            label: labelItems[index],
-
+      appBar: AppBar(
+        title: const Text("Table Reservation"),
+      ),
+      body: newRequestCollection.when(
+        initial: () {
+          return const SizedBox();
+        },
+        loading: () {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
+        },
+        completed: (data) {
+          return ListView.builder(
+              itemCount: data.enquiries.length,
+              itemBuilder: (context, index) {
+                final enquiry = data.enquiries[index];
+                return ListTile(
+                  title: Text(enquiry.name.toString()),
+                  subtitle: Text(enquiry.id.toString()),
+                  leading: const Icon(Icons.table_restaurant),
+                );
+              });
+        },
+        error: (message, exceptions) {
+          return Text(message ?? "Something went wrong");
         },
       ),
     );
@@ -42,18 +80,21 @@ class DashboardPage extends GetView<DashboardController> {
 }
 
 class _DashboardCard extends GetView<DashboardController> {
-  const _DashboardCard(
-     {
-    super.key,
+  const _DashboardCard({
+    Key? key,
     required this.itemName,
     required this.itemIndex,
     required this.label,
-  });
+  }) : super(key: key);
   final String itemName, label;
   final int itemIndex;
   @override
   Widget build(BuildContext context) {
-    final navigationList = [const LoginPage(), const OnlineOrderPage(), const ShopStatusPage()];
+    final navigationList = [
+      const LoginPage(),
+      const OnlineOrderPage(),
+      const ShopStatusPage(),
+    ];
 
     return SizedBox(
       height: 100.0,
@@ -106,6 +147,5 @@ class _DashboardCard extends GetView<DashboardController> {
         ),
       ),
     );
-  
   }
 }

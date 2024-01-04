@@ -1,5 +1,5 @@
 import '../../constants/api_endpoints.dart';
-import '../../model/time/time_data.dart';
+import '../../models/time/time_data.dart';
 import '../base_client.dart';
 
 class TimeService {

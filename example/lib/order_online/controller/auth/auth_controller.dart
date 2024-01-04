@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_foodpage_plugin/order_online/constants/app_export.dart';
+import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
+
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {

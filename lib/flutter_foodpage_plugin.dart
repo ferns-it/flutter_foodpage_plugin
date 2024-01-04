@@ -1,69 +1,29 @@
-library flutter_foodpage_plugin;
-
-import 'package:flutter_foodpage_plugin/order_online/model/order/online_order_data.dart';
-
-import 'order_online/constants/app_export.dart';
-
-class FlutterFoodpagePlugin {
-  static Future<LoginResponse?> userLogin({required LoginRequest data}) async {
-    return await AuthService.loginUser(data: data);
-  }
-
-  static Future<List<OnlineOrderData>> getOnlineOrder(
-      {required String filter}) async {
-    return await OrderService.fetchOnlineOrders(filter: filter);
-  }
-
-  static Future<List<DineinOrderData>> getDineinOrder(
-      {required String filter}) async {
-    return await OrderService.fetchDineinOrders(filter: filter);
-  }
-
-  static Future<ViewOrderData?> getOrderDetails(
-      {required String orderID}) async {
-    return await OrderService.fetchOrderDetails(orderID: orderID);
-  }
-
-  static Future<OrderStatusUpdateData?> acceptOrder(
-      {required OrderStatusAcceptRequest acceptMessage,
-      required String orderID}) async {
-    return await OrderStatusService.sendAcceptOrderStatus(
-        orderID: orderID, data: acceptMessage);
-  }
-
-  static Future<OrderStatusUpdateData?> dispatchOrder(
-      {required OrderStatusDispatchRequest dispatchMessage,
-      required String orderID}) async {
-    return await OrderStatusService.sendDispatchOrderStatus(
-        orderID: orderID, data: dispatchMessage);
-  }
-
-  static Future<OrderStatusUpdateData?> rejectOrder(
-      {required OrderStatusRejectRequest rejectMessage,
-      required String orderID}) async {
-    return await OrderStatusService.sendRejectOrderStatus(
-        orderID: orderID, data: rejectMessage);
-  }
-
-  static Future<List<DishData>> fetchAllDishes() async {
-    return await DishesService.fetchAllDishes();
-  }
-
-  static Future<SettingsData?> fetchShopSettings() async {
-    return await SettingsService.fetchShopSettings();
-  }
-
-  static Future<ShopProfileData?> fetchShopProfileDetails() async {
-    return await ShopProfileService.fetchShopProfileData();
-  }
-
-  static Future<TimeData?> fetchTimeDetails() async {
-    return await TimeService.fetchTimeData();
-  }
-
-  static Future<ShopStatusData?> changeShopStatus(
-      {required String status}) async {
-    return await ShopStatusService.fetchShopOpenStatus(argument: status);
-  }
-}
-
+//ORDER ONLINE
+export 'package:flutter_foodpage_plugin/order_online/flutter_foodpage_order_online.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/auth/login_request.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/auth/login_response.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/dishes/dishes_data.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/order/dinein_order_data.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/order/order_status/request/order_status_Accept_request.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/order/order_status/request/order_status_dispatch_request.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/order/order_status/request/order_status_reject_request.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/order/order_status/response/order_status_update_data.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/order/view_order_data.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/profile/shop_profile_data.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/settings/save_shop_settings.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/status/shop_status_data.dart';
+export 'package:flutter_foodpage_plugin/order_online/models/time/time_data.dart';
+export 'package:flutter_foodpage_plugin/order_online/services/auth/auth_service.dart';
+export 'package:flutter_foodpage_plugin/order_online/services/dishes/dishes_service.dart';
+export 'package:flutter_foodpage_plugin/order_online/services/order/order_service.dart';
+export 'package:flutter_foodpage_plugin/order_online/services/order/order_status_service.dart';
+export 'package:flutter_foodpage_plugin/order_online/services/profile/shop_profile_service.dart';
+export 'package:flutter_foodpage_plugin/order_online/services/settings/settings_service.dart';
+export 'package:flutter_foodpage_plugin/order_online/services/status/shop_status_service.dart';
+export 'package:flutter_foodpage_plugin/order_online/services/time/time-service.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/foodpage_table_reservation.dart';
+//TABLE RESERVATION
+export 'package:flutter_foodpage_plugin/table_reservation/models/enquire/enquire_model.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/models/new_request/new_request_collection_model.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/reservation_details_model.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/update_reservation_request_model.dart';

@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_foodpage_plugin/order_online/services/sharedpreference/user_preference.dart';
 
 import '../constants/api_endpoints.dart';
-import '../exceptions/app_exceptions.dart';
+import 'exceptions/app_exceptions.dart';
+import 'sharedpreference/user_preference.dart';
 
 
 class BaseClient {

@@ -1,9 +1,8 @@
-import 'package:flutter_foodpage_plugin/order_online/model/order/order_status/request/order_status_dispatch_request.dart';
-import 'package:flutter_foodpage_plugin/order_online/model/order/order_status/request/order_status_reject_request.dart';
-
 import '../../constants/api_endpoints.dart';
-import '../../model/order/order_status/request/order_status_Accept_request.dart';
-import '../../model/order/order_status/response/order_status_update_data.dart';
+import '../../models/order/order_status/request/order_status_Accept_request.dart';
+import '../../models/order/order_status/request/order_status_dispatch_request.dart';
+import '../../models/order/order_status/request/order_status_reject_request.dart';
+import '../../models/order/order_status/response/order_status_update_data.dart';
 import '../base_client.dart';
 
 class OrderStatusService {

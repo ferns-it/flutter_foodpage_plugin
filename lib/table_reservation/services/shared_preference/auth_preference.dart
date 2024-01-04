@@ -1,29 +1,25 @@
-
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/auth/login_response.dart';
-
-class UserPreference {
-  static String get storageKey => 'user';
-
-  static Future<bool> checkUserIsExist() async {
+class AuthPreference {
+  String get storageKey => 'auth_key';
+  Future<bool> checkAuthKeyIsExist() async {
     final instance = await SharedPreferences.getInstance();
     return instance.containsKey(storageKey);
   }
 
-  static Future<bool> saveUserData({required LoginResponse data}) async {
+  Future<bool> saveAuthKeyData(String authKey) async {
     final instance = await SharedPreferences.getInstance();
-    return await instance.setString(storageKey, data.toJson());
+    return await instance.setString(storageKey, authKey);
   }
 
-  static Future<LoginResponse?> readUserData() async {
+  Future<String?> readAuthKeyData() async {
     final instance = await SharedPreferences.getInstance();
     final data = instance.getString(storageKey);
     if (data == null) return null;
-    return LoginResponse.fromJson(data);
+    return data;
   }
 
-  static Future<bool> clearUserData() async {
+  Future<bool> clearAuthKeyData() async {
     final instance = await SharedPreferences.getInstance();
     return instance.clear();
   }
