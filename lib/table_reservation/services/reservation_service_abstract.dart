@@ -5,6 +5,7 @@ import '../models/history/history_request_collection_model.dart';
 import '../models/new_request/new_request_collection_model.dart';
 import '../models/reservation/reservation_details_model.dart';
 import '../models/reservation/update_reservation_request_model.dart';
+import '../models/send_message/send_message_model.dart';
 import '../models/upcoming_request/upcoming_request_collection_model.dart';
 
 abstract class ReservationService {
@@ -19,7 +20,9 @@ abstract class ReservationService {
 
   Future<ReservationHistoryRequestCollectionModel?> getReservationHistory();
 
-  Future<ResponseResult?> updateReservationDetails(
+  Future<ResponseResult> updateReservationDetails(
     UpdateReservationRequestModel payload,
   );
+
+  Future<ResponseResult> sendMessageToCustomer(SendMessageModel message);
 }

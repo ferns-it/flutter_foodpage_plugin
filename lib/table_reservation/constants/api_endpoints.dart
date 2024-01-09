@@ -4,5 +4,6 @@ class ApiEndpoints {
   static const getNewRequests = '/getnewrequests';
   static const getUpcomingRequests = '/getupcominglist';
   static const getdata = '/getdata';
+  static const sendCustomerMessage = '/sendcustomermessage';
   static const gethistory = '/gethistory';
 }
