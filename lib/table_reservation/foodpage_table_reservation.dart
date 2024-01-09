@@ -36,6 +36,13 @@ class FoodpageTableReservation {
     );
   }
 
+  APIResponse<T> _throwInvalidResponseFromServer<T>() {
+    return APIResponse.error(
+      "Invalid response from the server.",
+      exception: InternalServerErrorException(),
+    );
+  }
+
   APIResponse<T> _throwUnknownErrorException<T>() {
     final error = UnknwonErrorException();
     return APIResponse.error(
@@ -122,7 +129,7 @@ class FoodpageTableReservation {
     final response = await ReservationService.instance.sendMessageToCustomer(
       message,
     );
-    if (response == null) _throwNotFoundException<ChatMessage>();
+    if (response == null) _throwInvalidResponseFromServer<ChatMessage>();
     return APIResponse.completed(response);
   }
 }
