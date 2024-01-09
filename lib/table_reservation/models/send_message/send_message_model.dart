@@ -3,11 +3,10 @@ import 'dart:convert';
 class SendMessageModel {
   final int reservationId;
   final String message;
-  final String source;
+  final String source = 'Flutter';
   SendMessageModel({
     required this.reservationId,
     required this.message,
-    required this.source,
   });
 
   SendMessageModel copyWith({
@@ -18,7 +17,6 @@ class SendMessageModel {
     return SendMessageModel(
       reservationId: reservationId ?? this.reservationId,
       message: message ?? this.message,
-      source: source ?? this.source,
     );
   }
 
@@ -34,7 +32,6 @@ class SendMessageModel {
     return SendMessageModel(
       reservationId: map['reservationId'].toInt() as int,
       message: map['message'] as String,
-      source: map['source'] as String,
     );
   }
 
