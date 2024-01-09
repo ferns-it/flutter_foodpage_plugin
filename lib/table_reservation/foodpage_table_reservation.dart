@@ -117,10 +117,12 @@ class FoodpageTableReservation {
     }
   }
 
-  Future<ChatMessage?> sendMessageToCustomer(SendMessageModel message) async {
+  Future<APIResponse<ChatMessage>?> sendMessageToCustomer(
+      SendMessageModel message) async {
     final response = await ReservationService.instance.sendMessageToCustomer(
       message,
     );
-    return response;
+    if (response == null) _throwNotFoundException<ChatMessage>();
+    return APIResponse.completed(response);
   }
 }
