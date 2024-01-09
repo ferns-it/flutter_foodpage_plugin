@@ -43,7 +43,7 @@ class TableReservationService implements ReservationService {
     UpdateReservationRequestModel payload,
   ) async {
     final details = await BaseClient.put(
-      api: ApiEndpoints.getdata,
+      api: ApiEndpoints.updateRequest,
       data: payload.toJson(),
       params: payload.reservationId,
     );
