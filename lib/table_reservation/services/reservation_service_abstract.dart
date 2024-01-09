@@ -24,5 +24,5 @@ abstract class ReservationService {
     UpdateReservationRequestModel payload,
   );
 
-  Future<ResponseResult> sendMessageToCustomer(SendMessageModel message);
+  Future<ChatMessage?> sendMessageToCustomer(SendMessageModel message);
 }

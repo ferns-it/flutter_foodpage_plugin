@@ -117,14 +117,10 @@ class FoodpageTableReservation {
     }
   }
 
-  Future<ResponseResult> sendMessageToCustomer(SendMessageModel message) async {
-    try {
-      final response = await ReservationService.instance.sendMessageToCustomer(
-        message,
-      );
-      return response;
-    } catch (e) {
-      return ResponseResult.failure;
-    }
+  Future<ChatMessage?> sendMessageToCustomer(SendMessageModel message) async {
+    final response = await ReservationService.instance.sendMessageToCustomer(
+      message,
+    );
+    return response;
   }
 }

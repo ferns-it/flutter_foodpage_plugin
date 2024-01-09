@@ -60,12 +60,14 @@ class TableReservationService implements ReservationService {
   }
 
   @override
-  Future<ResponseResult> sendMessageToCustomer(SendMessageModel message) async {
+  Future<ChatMessage?> sendMessageToCustomer(SendMessageModel message) async {
     final response = await BaseClient.post(
       api: ApiEndpoints.sendCustomerMessage,
       data: message.toJson(),
     );
-    if (response == null) return ResponseResult.failure;
-    return ResponseResult.success;
+    if (response == null) return null;
+    final decodedJson = json.decode(response);
+    final messageData = decodedJson['messageData'];
+    return ChatMessage.fromMap(messageData);
   }
 }
