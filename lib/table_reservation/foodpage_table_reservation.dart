@@ -124,7 +124,7 @@ class FoodpageTableReservation {
     }
   }
 
-  Future<APIResponse<ChatMessage>?> sendMessageToCustomer(
+  Future<APIResponse<ChatMessage>> sendMessageToCustomer(
       SendMessageModel message) async {
     final response = await ReservationService.instance.sendMessageToCustomer(
       message,
