@@ -2,6 +2,7 @@
 
 import 'package:flutter_foodpage_plugin/table_reservation/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/common/api_response.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/upcoming_request/upcoming_request_collection_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/app_exception/app_exception.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/reservation_service_abstract.dart';
@@ -13,7 +14,6 @@ import 'models/reservation/reservation_details_model.dart';
 import 'models/reservation/update_reservation_request_model.dart';
 
 class FoodpageTableReservation {
- 
   static final _preference = AuthPreference();
 
   FoodpageTableReservation._internal();
@@ -75,7 +75,8 @@ class FoodpageTableReservation {
   Future<APIResponse<ReservationHistoryRequestCollectionModel>>
       getReservationHistory() async {
     try {
-      final response = await ReservationService.instance.getReservationHistory();
+      final response =
+          await ReservationService.instance.getReservationHistory();
       if (response == null) {
         return _throwNotFoundException<
             ReservationHistoryRequestCollectionModel>();
@@ -108,11 +109,20 @@ class FoodpageTableReservation {
     UpdateReservationRequestModel payload,
   ) async {
     try {
-      final response = await ReservationService.instance.updateReservationDetails(
-        payload,
+      final response =
+          await ReservationService.instance.updateReservationDetails(payload);
+      return response;
+    } catch (e) {
+      return ResponseResult.failure;
+    }
+  }
+
+  Future<ResponseResult> sendMessageToCustomer(SendMessageModel message) async {
+    try {
+      final response = await ReservationService.instance.sendMessageToCustomer(
+        message,
       );
-      if (response == null) ResponseResult.failure;
-      return ResponseResult.success;
+      return response;
     } catch (e) {
       return ResponseResult.failure;
     }

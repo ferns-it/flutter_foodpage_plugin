@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
+
 import '../constants/api_endpoints.dart';
 import '../constants/enums.dart';
 import '../models/history/history_request_collection_model.dart';
@@ -37,7 +39,7 @@ class TableReservationService implements ReservationService {
   }
 
   @override
-  Future<ResponseResult?> updateReservationDetails(
+  Future<ResponseResult> updateReservationDetails(
     UpdateReservationRequestModel payload,
   ) async {
     final details = await BaseClient.put(
@@ -55,5 +57,15 @@ class TableReservationService implements ReservationService {
     final data = await BaseClient.get(api: ApiEndpoints.gethistory);
     if (data == null) return null;
     return ReservationHistoryRequestCollectionModel.fromJson(data);
+  }
+
+  @override
+  Future<ResponseResult> sendMessageToCustomer(SendMessageModel message) async {
+    final response = await BaseClient.post(
+      api: ApiEndpoints.sendCustomerMessage,
+      data: message.toJson(),
+    );
+    if (response == null) return ResponseResult.failure;
+    return ResponseResult.success;
   }
 }
