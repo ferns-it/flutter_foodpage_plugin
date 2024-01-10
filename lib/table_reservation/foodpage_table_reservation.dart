@@ -52,17 +52,17 @@ class FoodpageTableReservation {
   }
 
   Future<APIResponse<NewRequestCollectionModel>> getNewRequests() async {
-    try {
-      final response = await ReservationService.instance.getNewRequests();
-      if (response == null) {
-        return _throwNotFoundException<NewRequestCollectionModel>();
-      }
-      return APIResponse.completed(response);
-    } on AppExceptions catch (error) {
-      return APIResponse.error(error.message, exception: error);
-    } catch (e) {
-      return _throwUnknownErrorException<NewRequestCollectionModel>();
+    // try {
+    final response = await ReservationService.instance.getNewRequests();
+    if (response == null) {
+      return _throwNotFoundException<NewRequestCollectionModel>();
     }
+    return APIResponse.completed(response);
+    // } on AppExceptions catch (error) {
+    //   return APIResponse.error(error.message, exception: error);
+    // } catch (e) {
+    //   return _throwUnknownErrorException<NewRequestCollectionModel>();
+    // }
   }
 
   Future<APIResponse<UpcomingRequestCollection>> getUpcomingRequests() async {

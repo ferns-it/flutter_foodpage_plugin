@@ -105,7 +105,7 @@ class EnquirieModel {
       message: map['message'] != null ? map['message'] as String : null,
       status: map['status'] != null
           ? ReservationStatus.fromLabel(map['status'])
-          : null,
+          : ReservationStatus.initial,
       shopMessage:
           map['shopMessage'] != null ? map['shopMessage'] as String : null,
       bookingTime:

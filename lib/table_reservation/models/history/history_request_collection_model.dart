@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 
 class ReservationHistoryRequestCollectionModel {
