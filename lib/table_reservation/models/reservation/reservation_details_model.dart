@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import '../../constants/enums.dart';
+
 class ReservationDetailsModel {
   final String bookingOver;
   final ReservationProfile reservationProfile;
@@ -92,7 +94,7 @@ class ReservationProfile {
   final String? email;
   final String? chairs;
   final String? message;
-  final String? status;
+  final ReservationStatus? status;
   final String? shopMessage;
   final String? bookingTime;
   final String? addedTime;
@@ -135,7 +137,7 @@ class ReservationProfile {
     String? email,
     String? chairs,
     String? message,
-    String? status,
+    ReservationStatus? status,
     String? shopMessage,
     String? bookingTime,
     String? addedTime,
@@ -180,7 +182,7 @@ class ReservationProfile {
       'email': email,
       'chairs': chairs,
       'message': message,
-      'status': status,
+      'status': status?.label,
       'shopMessage': shopMessage,
       'bookingTime': bookingTime,
       'addedTime': addedTime,
@@ -205,7 +207,9 @@ class ReservationProfile {
       email: map['email'] != null ? map['email'] as String : null,
       chairs: map['chairs'] != null ? map['chairs'] as String : null,
       message: map['message'] != null ? map['message'] as String : null,
-      status: map['status'] != null ? map['status'] as String : null,
+      status: map['status'] != null
+          ? ReservationStatus.fromLabel(map['status'])
+          : null,
       shopMessage:
           map['shopMessage'] != null ? map['shopMessage'] as String : null,
       bookingTime:
@@ -223,7 +227,7 @@ class ReservationProfile {
       transactionID:
           map['transactionID'] != null ? map['transactionID'] as String : null,
       messagingOtp:
-          map['messaging_otp'] != null ? map['messaging_otp'] as String : null,
+          map['messagingOtp'] != null ? map['messagingOtp'] as String : null,
     );
   }
 

@@ -21,8 +21,7 @@ abstract class ReservationService {
   Future<ReservationHistoryRequestCollectionModel?> getReservationHistory();
 
   Future<ResponseResult> updateReservationDetails(
-    UpdateReservationRequestModel payload,
-  );
+      UpdateReservationRequestModel payload);
 
   Future<ChatMessage?> sendMessageToCustomer(SendMessageModel message);
 }

@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import '../../constants/enums.dart';
+
 class EnquirieModel {
   final String? id;
   final String? formattedID;
@@ -9,7 +11,7 @@ class EnquirieModel {
   final String? email;
   final String? chairs;
   final String? message;
-  final String? status;
+  final ReservationStatus? status;
   final String? shopMessage;
   final String? bookingTime;
   final String? addedTime;
@@ -43,7 +45,7 @@ class EnquirieModel {
     String? email,
     String? chairs,
     String? message,
-    String? status,
+    ReservationStatus? status,
     String? shopMessage,
     String? bookingTime,
     String? addedTime,
@@ -80,7 +82,7 @@ class EnquirieModel {
       'email': email,
       'chairs': chairs,
       'message': message,
-      'status': status,
+      'status': status?.name,
       'shopMessage': shopMessage,
       'bookingTime': bookingTime,
       'addedTime': addedTime,
@@ -94,20 +96,30 @@ class EnquirieModel {
   factory EnquirieModel.fromMap(Map<String, dynamic> map) {
     return EnquirieModel(
       id: map['id'] != null ? map['id'] as String : null,
-      formattedID: map['formattedID'] != null ? map['formattedID'] as String : null,
+      formattedID:
+          map['formattedID'] != null ? map['formattedID'] as String : null,
       name: map['name'] != null ? map['name'] as String : null,
       phone: map['phone'] != null ? map['phone'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
       chairs: map['chairs'] != null ? map['chairs'] as String : null,
       message: map['message'] != null ? map['message'] as String : null,
-      status: map['status'] != null ? map['status'] as String : null,
-      shopMessage: map['shopMessage'] != null ? map['shopMessage'] as String : null,
-      bookingTime: map['bookingTime'] != null ? map['bookingTime'] as String : null,
+      status: map['status'] != null
+          ? ReservationStatus.fromLabel(map['status'])
+          : null,
+      shopMessage:
+          map['shopMessage'] != null ? map['shopMessage'] as String : null,
+      bookingTime:
+          map['bookingTime'] != null ? map['bookingTime'] as String : null,
       addedTime: map['addedTime'] != null ? map['addedTime'] as String : null,
-      advancePayment: map['advancePayment'] != null ? map['advancePayment'] as String : null,
-      advanceAmount: map['advanceAmount'] != null ? map['advanceAmount'] as String : null,
-      amountStatus: map['amountStatus'] != null ? map['amountStatus'] as String : null,
-      paymentMethod: map['paymentMethod'] != null ? map['paymentMethod'] as String : null,
+      advancePayment: map['advancePayment'] != null
+          ? map['advancePayment'] as String
+          : null,
+      advanceAmount:
+          map['advanceAmount'] != null ? map['advanceAmount'] as String : null,
+      amountStatus:
+          map['amountStatus'] != null ? map['amountStatus'] as String : null,
+      paymentMethod:
+          map['paymentMethod'] != null ? map['paymentMethod'] as String : null,
     );
   }
 
