@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 enum ResponseResult {
   success,
@@ -16,8 +16,6 @@ enum ReservationStatus {
 
   static ReservationStatus fromLabel(String label) {
     if (label.isEmpty) return ReservationStatus.initial;
-
-    log(label);
 
     return ReservationStatus.values.firstWhere((e) => e.label == label);
   }
