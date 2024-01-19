@@ -35,6 +35,7 @@ enum ReservationStatus {
 
 enum AmountStatus {
   initial(label: "Initial"),
+  ready(label: "Ready"),
   received(label: "Received"),
   refunded(label: "Refund");
   const AmountStatus({required this.label});
