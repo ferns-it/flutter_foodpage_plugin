@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_foodpage_plugin/table_reservation/models/enquire/enquire_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
 
 import '../constants/api_endpoints.dart';
@@ -69,5 +70,38 @@ class TableReservationService implements ReservationService {
     final decodedJson = json.decode(response);
     final messageData = decodedJson['messageData'];
     return ChatMessage.fromMap(messageData);
+  }
+
+  @override
+  Future<EnquirieModel?> collectAdvancePayment(String reservationId) async {
+    final response = await BaseClient.post(
+      api: ApiEndpoints.captureamount,
+      params: reservationId,
+    );
+    if (response == null) return null;
+    final enquiryData = jsonDecode(response)['enquiryData'];
+    return EnquirieModel.fromMap(enquiryData);
+  }
+
+  @override
+  Future<EnquirieModel?> refundAdvancePayment(String reservationId) async {
+    final response = await BaseClient.post(
+      api: ApiEndpoints.refundAmount,
+      params: reservationId,
+    );
+    if (response == null) return null;
+    final enquiryData = jsonDecode(response)['enquiryData'];
+    return EnquirieModel.fromMap(enquiryData);
+  }
+
+  @override
+  Future<EnquirieModel?> revokeAdvancePayment(String reservationId) async {
+    final response = await BaseClient.post(
+      api: ApiEndpoints.cancelcapturedamount,
+      params: reservationId,
+    );
+    if (response == null) return null;
+    final enquiryData = jsonDecode(response)['enquiryData'];
+    return EnquirieModel.fromMap(enquiryData);
   }
 }

@@ -7,4 +7,7 @@ class ApiEndpoints {
   static const updateRequest = '/enruiryupdate/';
   static const sendCustomerMessage = '/sendcustomermessage';
   static const gethistory = '/gethistory';
+  static const captureamount = '/captureamount/';
+  static const cancelcapturedamount = '/cancelcapturedamount/';
+  static const refundAmount = '/refundamount/';
 }

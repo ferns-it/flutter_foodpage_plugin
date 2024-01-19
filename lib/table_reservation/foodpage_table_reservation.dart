@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/common/api_response.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
@@ -117,7 +118,9 @@ class FoodpageTableReservation {
   ) async {
     try {
       final response =
-          await ReservationService.instance.updateReservationDetails(payload);
+          await ReservationService.instance.updateReservationDetails(
+        payload,
+      );
       return response;
     } catch (e) {
       return ResponseResult.failure;
@@ -131,5 +134,52 @@ class FoodpageTableReservation {
     );
     if (response == null) _throwInvalidResponseFromServer<ChatMessage>();
     return APIResponse.completed(response);
+  }
+
+  Future<APIResponse<EnquirieModel>> collectAdvance(
+    String reservationID,
+  ) async {
+    try {
+      final response = await ReservationService.instance
+          .collectAdvancePayment(reservationID);
+      if (response == null) _throwInvalidResponseFromServer<EnquirieModel>();
+      return APIResponse.completed(response);
+    } on AppExceptions catch (error) {
+      return APIResponse.error(error.message, exception: error);
+    } catch (e) {
+      return _throwUnknownErrorException<EnquirieModel>();
+    }
+  }
+
+  Future<APIResponse<EnquirieModel>> revokeAdvance(
+    String reservationID,
+  ) async {
+    try {
+      final response = await ReservationService.instance.revokeAdvancePayment(
+        reservationID,
+      );
+      if (response == null) _throwInvalidResponseFromServer<EnquirieModel>();
+      return APIResponse.completed(response);
+    } on AppExceptions catch (error) {
+      return APIResponse.error(error.message, exception: error);
+    } catch (e) {
+      return _throwUnknownErrorException<EnquirieModel>();
+    }
+  }
+
+  Future<APIResponse<EnquirieModel>> refundAdvancePayment(
+    String reservationID,
+  ) async {
+    try {
+      final response = await ReservationService.instance.refundAdvancePayment(
+        reservationID,
+      );
+      if (response == null) _throwInvalidResponseFromServer<EnquirieModel>();
+      return APIResponse.completed(response);
+    } on AppExceptions catch (error) {
+      return APIResponse.error(error.message, exception: error);
+    } catch (e) {
+      return _throwUnknownErrorException<EnquirieModel>();
+    }
   }
 }

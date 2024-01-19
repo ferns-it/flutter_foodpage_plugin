@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/common/api_response.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/upcoming_request/upcoming_request_collection_model.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
@@ -19,8 +22,8 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   late FoodpageTableReservation foodpageTableReservation;
 
-  APIResponse<NewRequestCollectionModel> newRequestCollection =
-      APIResponse<NewRequestCollectionModel>.initial();
+  APIResponse<UpcomingRequestCollection> newRequestCollection =
+      APIResponse<UpcomingRequestCollection>.initial();
 
   @override
   void initState() {
@@ -38,12 +41,11 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() {
       newRequestCollection = APIResponse.loading();
     });
-    final response = await foodpageTableReservation.getNewRequests();
+    final response = await foodpageTableReservation.getUpcomingRequests();
     setState(() {
       newRequestCollection = response;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +64,21 @@ class _DashboardPageState extends State<DashboardPage> {
         },
         completed: (data) {
           return ListView.builder(
-              itemCount: data.enquiries.length,
-              itemBuilder: (context, index) {
-                final enquiry = data.enquiries[index];
-                return ListTile(
-                  title: Text(enquiry.name.toString()),
-                  subtitle: Text(enquiry.id.toString()),
-                  leading: const Icon(Icons.table_restaurant),
-                );
-              });
+            itemCount: data.upcomingEnquiries.length,
+            itemBuilder: (context, index) {
+              final enquiry = data.upcomingEnquiries[index];
+              return ListTile(
+                title: Text("${enquiry.name} (${enquiry.id})"),
+                subtitle: Text(enquiry.amountStatus.toString()),
+                leading: const Icon(Icons.table_restaurant),
+                onTap: () async {
+                  final response = await foodpageTableReservation
+                      .revokeAdvance(enquiry.id ?? "");
+                  inspect(response);
+                },
+              );
+            },
+          );
         },
         error: (message, exceptions) {
           return Text(message ?? "Something went wrong");
