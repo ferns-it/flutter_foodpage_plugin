@@ -8,7 +8,7 @@ import '../constants/enums.dart';
 import '../models/history/history_request_collection_model.dart';
 import '../models/new_request/new_request_collection_model.dart';
 import '../models/reservation/reservation_details_model.dart';
-import '../models/reservation/update_reservation_request_model.dart';
+import '../models/reservation/approve_or_cancel_request_model.dart';
 import '../models/upcoming_request/upcoming_request_collection_model.dart';
 import 'base_client.dart';
 import 'reservation_service_abstract.dart';
@@ -40,8 +40,8 @@ class TableReservationService implements ReservationService {
   }
 
   @override
-  Future<ResponseResult> updateReservationDetails(
-    UpdateReservationRequestModel payload,
+  Future<ResponseResult> approveOrCancelReservation(
+    ApproveOrCancelRequestModel payload,
   ) async {
     final details = await BaseClient.put(
       api: ApiEndpoints.updateRequest,

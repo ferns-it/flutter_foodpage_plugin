@@ -3,13 +3,13 @@ import 'dart:convert';
 
 import '../../constants/enums.dart';
 
-class UpdateReservationRequestModel {
+class ApproveOrCancelRequestModel {
   final String reservationId;
-  final ReservationStatus status;
+  final ReservationStatusUpdate status;
   final String bookingDate;
   final String bookingTime;
   final String shopMessage;
-  UpdateReservationRequestModel({
+  ApproveOrCancelRequestModel({
     required this.reservationId,
     required this.status,
     required this.bookingDate,
@@ -17,14 +17,14 @@ class UpdateReservationRequestModel {
     required this.shopMessage,
   });
 
-  UpdateReservationRequestModel copyWith({
+  ApproveOrCancelRequestModel copyWith({
     String? reservationId,
-    ReservationStatus? status,
+    ReservationStatusUpdate? status,
     String? bookingDate,
     String? bookingTime,
     String? shopMessage,
   }) {
-    return UpdateReservationRequestModel(
+    return ApproveOrCancelRequestModel(
       reservationId: reservationId ?? this.reservationId,
       status: status ?? this.status,
       bookingDate: bookingDate ?? this.bookingDate,
@@ -43,10 +43,10 @@ class UpdateReservationRequestModel {
     };
   }
 
-  factory UpdateReservationRequestModel.fromMap(Map<String, dynamic> map) {
-    return UpdateReservationRequestModel(
+  factory ApproveOrCancelRequestModel.fromMap(Map<String, dynamic> map) {
+    return ApproveOrCancelRequestModel(
       reservationId: map['reservationId'] as String,
-      status: ReservationStatus.fromLabel(map['status']),
+      status: ReservationStatusUpdate.fromLabel(map['status']),
       bookingDate: map['bookingDate'] as String,
       bookingTime: map['bookingTime'] as String,
       shopMessage: map['shopMessage'] as String,
@@ -55,8 +55,8 @@ class UpdateReservationRequestModel {
 
   String toJson() => json.encode(toMap());
 
-  factory UpdateReservationRequestModel.fromJson(String source) =>
-      UpdateReservationRequestModel.fromMap(
+  factory ApproveOrCancelRequestModel.fromJson(String source) =>
+      ApproveOrCancelRequestModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
 
   @override
@@ -65,7 +65,7 @@ class UpdateReservationRequestModel {
   }
 
   @override
-  bool operator ==(covariant UpdateReservationRequestModel other) {
+  bool operator ==(covariant ApproveOrCancelRequestModel other) {
     if (identical(this, other)) return true;
 
     return other.reservationId == reservationId &&

@@ -1,8 +1,18 @@
-
-
 enum ResponseResult {
   success,
   failure;
+}
+
+enum ReservationStatusUpdate {
+  cancelled(label: "Cancelled"),
+  approved(label: "Approved");
+
+  const ReservationStatusUpdate({required this.label});
+  static ReservationStatusUpdate fromLabel(String label) {
+    return ReservationStatusUpdate.values.firstWhere((e) => e.label == label);
+  }
+
+  final String label;
 }
 
 enum ReservationStatus {

@@ -12,7 +12,7 @@ import 'package:flutter_foodpage_plugin/table_reservation/services/shared_prefer
 import 'models/history/history_request_collection_model.dart';
 import 'models/new_request/new_request_collection_model.dart';
 import 'models/reservation/reservation_details_model.dart';
-import 'models/reservation/update_reservation_request_model.dart';
+import 'models/reservation/approve_or_cancel_request_model.dart';
 
 class FoodpageTableReservation {
   static final _preference = AuthPreference();
@@ -113,12 +113,12 @@ class FoodpageTableReservation {
     }
   }
 
-  Future<ResponseResult> updateReservationDetails(
-    UpdateReservationRequestModel payload,
+  Future<ResponseResult> approveOrCancelReservation(
+    ApproveOrCancelRequestModel payload,
   ) async {
     try {
       final response =
-          await ReservationService.instance.updateReservationDetails(
+          await ReservationService.instance.approveOrCancelReservation(
         payload,
       );
       return response;
