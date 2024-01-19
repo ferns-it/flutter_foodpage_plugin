@@ -33,4 +33,16 @@ enum ReservationStatus {
   final String label;
 }
 
+enum AmountStatus {
+  initial(label: "Initial"),
+  received(label: "Received"),
+  refunded(label: "Refund");
+  const AmountStatus({required this.label});
+  static AmountStatus fromLabel(String label) {
+    if (label.isEmpty) return AmountStatus.initial;
+    return AmountStatus.values.firstWhere((e) => e.label == label);
+  }
+  final String label;
+}
+
 enum APIResponseStatus { initial, loading, completed, error }

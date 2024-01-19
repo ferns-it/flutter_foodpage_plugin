@@ -17,7 +17,8 @@ abstract class ReservationService {
   Future<ReservationDetailsModel?> getReservationDetails(String reservationID);
   Future<ReservationHistoryRequestCollectionModel?> getReservationHistory();
   Future<ResponseResult> approveOrCancelReservation(
-      ApproveOrCancelRequestModel payload);
+    ApproveOrCancelRequestModel payload,
+  );
   Future<ChatMessage?> sendMessageToCustomer(SendMessageModel message);
   Future<EnquirieModel?> collectAdvancePayment(String reservationId);
   Future<EnquirieModel?> revokeAdvancePayment(String reservationId);

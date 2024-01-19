@@ -17,7 +17,7 @@ class EnquirieModel {
   final String? addedTime;
   final String? advancePayment;
   final String? advanceAmount;
-  final String? amountStatus;
+  final AmountStatus? amountStatus;
   final String? paymentMethod;
   EnquirieModel({
     required this.id,
@@ -51,7 +51,7 @@ class EnquirieModel {
     String? addedTime,
     String? advancePayment,
     String? advanceAmount,
-    String? amountStatus,
+    AmountStatus? amountStatus,
     String? paymentMethod,
   }) {
     return EnquirieModel(
@@ -116,8 +116,9 @@ class EnquirieModel {
           : null,
       advanceAmount:
           map['advanceAmount'] != null ? map['advanceAmount'] as String : null,
-      amountStatus:
-          map['amountStatus'] != null ? map['amountStatus'] as String : null,
+      amountStatus: map['amountStatus'] != null
+          ? AmountStatus.fromLabel(map['amountStatus'])
+          : AmountStatus.initial,
       paymentMethod:
           map['paymentMethod'] != null ? map['paymentMethod'] as String : null,
     );
