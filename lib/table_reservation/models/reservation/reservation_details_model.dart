@@ -100,7 +100,7 @@ class ReservationProfile {
   final String? addedTime;
   final String? advancePayment;
   final String? advanceAmount;
-  final String? amountStatus;
+  final AmountStatus? amountStatus;
   final String? paymentMethod;
   final String? transactionID;
   final String? messagingOtp;
@@ -143,7 +143,7 @@ class ReservationProfile {
     String? addedTime,
     String? advancePayment,
     String? advanceAmount,
-    String? amountStatus,
+    AmountStatus? amountStatus,
     String? paymentMethod,
     String? transactionID,
     String? messagingOtp,
@@ -220,8 +220,9 @@ class ReservationProfile {
           : null,
       advanceAmount:
           map['advanceAmount'] != null ? map['advanceAmount'] as String : null,
-      amountStatus:
-          map['amountStatus'] != null ? map['amountStatus'] as String : null,
+      amountStatus: map['amountStatus'] != null
+          ? AmountStatus.fromLabel(map['amountStatus'])
+          : AmountStatus.initial,
       paymentMethod:
           map['paymentMethod'] != null ? map['paymentMethod'] as String : null,
       transactionID:
