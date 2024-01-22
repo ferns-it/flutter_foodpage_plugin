@@ -49,6 +49,7 @@ enum AmountStatus {
 }
 
 enum AmountStatusRequest {
+  
   ready(label: "Ready"),
   received(label: "Received");
 

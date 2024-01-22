@@ -9,14 +9,14 @@ class NewReservationModel {
   final String phone;
   final String email;
   final String chairs;
-  final String message;
-  final String shopmessage;
+  final String? message;
+  final String? shopmessage;
   final String bookingTime;
   final ConditionValues advancePayment;
   final String advanceAmount;
-  final AmountStatusRequest amountStatus;
+  final AmountStatusRequest? amountStatus;
   final PaymentMethod paymentMethod;
-  final String transactionID;
+  final String? transactionID;
   final String source;
   NewReservationModel({
     required this.userID,
@@ -81,8 +81,8 @@ class NewReservationModel {
       'bookingTime': bookingTime,
       'advancePayment': advancePayment.label,
       'advanceAmount': advanceAmount,
-      'amountStatus': amountStatus.label,
-      'paymentMethod': paymentMethod.label,
+      'amountStatus': amountStatus?.name,
+      'paymentMethod': paymentMethod.name,
       'transactionID': transactionID,
       'source': source,
     };
@@ -95,20 +95,18 @@ class NewReservationModel {
       phone: map['phone'] as String,
       email: map['email'] as String,
       chairs: map['chairs'] as String,
-      message: map['message'] as String,
-      shopmessage: map['shopmessage'] as String,
+      message: map['message'] != null ? map['message'] as String : null,
+      shopmessage:
+          map['shopmessage'] != null ? map['shopmessage'] as String : null,
       bookingTime: map['bookingTime'] as String,
-      advancePayment: ConditionValues.fromLabel(
-        map['advancePayment'] as String,
-      ),
+      advancePayment: ConditionValues.fromLabel(map['advancePayment']),
       advanceAmount: map['advanceAmount'] as String,
-      amountStatus: AmountStatusRequest.fromLabel(
-        map['amountStatus'] as String,
-      ),
-      paymentMethod: PaymentMethod.fromLabel(
-        map['paymentMethod'] as String,
-      ),
-      transactionID: map['transactionID'] as String,
+      amountStatus: map['amountStatus'] != null
+          ? AmountStatusRequest.fromLabel(map['amountStatus'])
+          : null,
+      paymentMethod: PaymentMethod.fromLabel(map['paymentMethod']),
+      transactionID:
+          map['transactionID'] != null ? map['transactionID'] as String : null,
       source: map['source'] as String,
     );
   }
