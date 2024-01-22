@@ -38,12 +38,53 @@ enum AmountStatus {
   ready(label: "Ready"),
   received(label: "Received"),
   refunded(label: "Refund");
+
   const AmountStatus({required this.label});
   static AmountStatus fromLabel(String label) {
     if (label.isEmpty) return AmountStatus.initial;
     return AmountStatus.values.firstWhere((e) => e.label == label);
   }
+
+  final String label;
+}
+
+enum AmountStatusRequest {
+  ready(label: "Ready"),
+  received(label: "Received");
+
+  const AmountStatusRequest({required this.label});
+  static AmountStatusRequest fromLabel(String label) {
+    return AmountStatusRequest.values.firstWhere((e) => e.label == label);
+  }
+
   final String label;
 }
 
 enum APIResponseStatus { initial, loading, completed, error }
+
+enum PaymentMethod {
+  stripe(label: "STRIPE"),
+  card(label: "CASH"),
+  cash(label: "CARD");
+
+  const PaymentMethod({required this.label});
+
+  static PaymentMethod fromLabel(String label) {
+    return PaymentMethod.values.firstWhere((e) => e.label == label);
+  }
+
+  final String label;
+}
+
+enum ConditionValues {
+  yes(label: "Yes"),
+  no(label: "NO");
+
+  const ConditionValues({required this.label});
+
+  static ConditionValues fromLabel(String label) {
+    return ConditionValues.values.firstWhere((e) => e.label == label);
+  }
+
+  final String label;
+}

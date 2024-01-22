@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_foodpage_plugin/table_reservation/models/enquire/enquire_model.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/reservation/new_reservation_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
 
 import '../constants/api_endpoints.dart';
@@ -102,6 +103,17 @@ class TableReservationService implements ReservationService {
     );
     if (response == null) return null;
     final enquiryData = jsonDecode(response)['enquiryData'];
+    return EnquirieModel.fromMap(enquiryData);
+  }
+
+  @override
+  Future<EnquirieModel?> newReservation(NewReservationModel reservation) async {
+    final response = await BaseClient.post(
+      api: ApiEndpoints.newReservation,
+      data: reservation.toJson(),
+    );
+    if (response == null) return null;
+    final enquiryData = jsonDecode(response)['reservationData'];
     return EnquirieModel.fromMap(enquiryData);
   }
 }

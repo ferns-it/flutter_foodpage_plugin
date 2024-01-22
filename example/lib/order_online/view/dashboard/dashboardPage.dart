@@ -5,6 +5,7 @@ import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/common/api_response.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/reservation/new_reservation_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/upcoming_request/upcoming_request_collection_model.dart';
 import 'package:get/get.dart';
 
@@ -47,42 +48,78 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
+  Future<void> newReservation() async {
+    final payload = {
+      "userID": 0,
+      "name": "Sankar",
+      "phone": "9895198951",
+      "email": "test@test.com",
+      "chairs": "2",
+      "message": "message",
+      "shopmessage": "message from shop - optional",
+      "bookingTime": "2024-02-20 10:10:10",
+      "advancePayment": "NO",
+      "advanceAmount": "0",
+      "amountStatus": "Ready",
+      "paymentMethod": "STRIPE",
+      "transactionID": "123",
+      "source": "Flutter"
+    };
+    final reservation = NewReservationModel.fromMap(payload);
+
+    final response = await foodpageTableReservation.newReservation(reservation);
+
+    inspect(response);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Table Reservation"),
       ),
-      body: newRequestCollection.when(
-        initial: () {
-          return const SizedBox();
-        },
-        loading: () {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-        completed: (data) {
-          return ListView.builder(
-            itemCount: data.upcomingEnquiries.length,
-            itemBuilder: (context, index) {
-              final enquiry = data.upcomingEnquiries[index];
-              return ListTile(
-                title: Text("${enquiry.name} (${enquiry.id})"),
-                subtitle: Text(enquiry.amountStatus.toString()),
-                leading: const Icon(Icons.table_restaurant),
-                onTap: () async {
-                  final response = await foodpageTableReservation
-                      .revokeAdvance(enquiry.id ?? "");
-                  inspect(response);
-                },
-              );
-            },
-          );
-        },
-        error: (message, exceptions) {
-          return Text(message ?? "Something went wrong");
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: newRequestCollection.when(
+              initial: () {
+                return const SizedBox();
+              },
+              loading: () {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+              completed: (data) {
+                return ListView.builder(
+                  itemCount: data.upcomingEnquiries.length,
+                  itemBuilder: (context, index) {
+                    final enquiry = data.upcomingEnquiries[index];
+                    return ListTile(
+                      title: Text("${enquiry.name} (${enquiry.id})"),
+                      subtitle: Text(enquiry.amountStatus.toString()),
+                      leading: const Icon(Icons.table_restaurant),
+                      onTap: () async {
+                        final response = await foodpageTableReservation
+                            .revokeAdvance(enquiry.id ?? "");
+                        inspect(response);
+                      },
+                    );
+                  },
+                );
+              },
+              error: (message, exceptions) {
+                return Text(message ?? "Something went wrong");
+              },
+            ),
+          ),
+          const SizedBox(height: 100),
+          ElevatedButton(
+              onPressed: () {
+                newReservation();
+              },
+              child: const Text("New Booking"))
+        ],
       ),
     );
   }

@@ -10,9 +10,7 @@ import 'package:flutter_foodpage_plugin/table_reservation/services/reservation_s
 import 'package:flutter_foodpage_plugin/table_reservation/services/shared_preference/auth_preference.dart';
 
 import 'models/history/history_request_collection_model.dart';
-import 'models/new_request/new_request_collection_model.dart';
-import 'models/reservation/reservation_details_model.dart';
-import 'models/reservation/approve_or_cancel_request_model.dart';
+import 'models/reservation/new_reservation_model.dart';
 
 class FoodpageTableReservation {
   static final _preference = AuthPreference();
@@ -174,6 +172,22 @@ class FoodpageTableReservation {
       final response = await ReservationService.instance.refundAdvancePayment(
         reservationID,
       );
+      if (response == null) _throwInvalidResponseFromServer<EnquirieModel>();
+      return APIResponse.completed(response);
+    } on AppExceptions catch (error) {
+      return APIResponse.error(error.message, exception: error);
+    } catch (e) {
+      return _throwUnknownErrorException<EnquirieModel>();
+    }
+  }
+
+  Future<APIResponse<EnquirieModel>> newReservation(
+      NewReservationModel reservation) async {
+    try {
+      final response = await ReservationService.instance.newReservation(
+        reservation,
+      );
+
       if (response == null) _throwInvalidResponseFromServer<EnquirieModel>();
       return APIResponse.completed(response);
     } on AppExceptions catch (error) {
