@@ -27,3 +27,7 @@ export 'package:flutter_foodpage_plugin/table_reservation/models/enquire/enquire
 export 'package:flutter_foodpage_plugin/table_reservation/models/new_request/new_request_collection_model.dart';
 export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/reservation_details_model.dart';
 export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/approve_or_cancel_request_model.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/models/common/api_response.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/new_reservation_model.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/models/upcoming_request/upcoming_request_collection_model.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/constants/enums.dart';
