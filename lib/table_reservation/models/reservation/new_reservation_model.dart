@@ -15,7 +15,7 @@ class NewReservationModel {
   final ConditionValues advancePayment;
   final String advanceAmount;
   final AmountStatusRequest? amountStatus;
-  final PaymentMethod paymentMethod;
+  final PaymentMethod? paymentMethod;
   final String? transactionID;
   final String source;
   NewReservationModel({
@@ -81,8 +81,8 @@ class NewReservationModel {
       'bookingTime': bookingTime,
       'advancePayment': advancePayment.label,
       'advanceAmount': advanceAmount,
-      'amountStatus': amountStatus?.name,
-      'paymentMethod': paymentMethod.name,
+      'amountStatus': amountStatus?.label,
+      'paymentMethod': paymentMethod?.label,
       'transactionID': transactionID,
       'source': source,
     };
@@ -99,12 +99,15 @@ class NewReservationModel {
       shopmessage:
           map['shopmessage'] != null ? map['shopmessage'] as String : null,
       bookingTime: map['bookingTime'] as String,
-      advancePayment: ConditionValues.fromLabel(map['advancePayment']),
+      advancePayment:
+          ConditionValues.fromLabel(map['advancePayment'] as String),
       advanceAmount: map['advanceAmount'] as String,
       amountStatus: map['amountStatus'] != null
-          ? AmountStatusRequest.fromLabel(map['amountStatus'])
+          ? AmountStatusRequest.fromLabel(map['amountStatus'] as String)
           : null,
-      paymentMethod: PaymentMethod.fromLabel(map['paymentMethod']),
+      paymentMethod: map['paymentMethod'] != null
+          ? PaymentMethod.fromLabel(map['paymentMethod'] as String)
+          : null,
       transactionID:
           map['transactionID'] != null ? map['transactionID'] as String : null,
       source: map['source'] as String,
