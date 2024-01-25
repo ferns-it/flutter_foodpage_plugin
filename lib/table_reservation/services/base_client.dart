@@ -28,14 +28,14 @@ class BaseClient {
         onResponse: responseInterceptorHandler,
         onError: errorResponseHandler,
       ),
-    );
-  // ..interceptors.add(LogInterceptor(
-  //   error: true,
-  //   request: true,
-  //   requestHeader: true,
-  //   requestBody: true,
-  //   responseBody: true,
-  // ));
+    )
+    ..interceptors.add(LogInterceptor(
+      error: true,
+      request: true,
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+    ));
 
   static void requestInterceptorHandler(
     RequestOptions options,
@@ -126,7 +126,7 @@ class BaseClient {
         final jsonData = json.decode(data) as Map<String, dynamic>?;
         message =
             jsonData?['error']?['message'] ?? jsonData?['data']?['message'];
-      } catch (_) {
+      } catch (e) {
         debugPrint('Not JSON Decodable: $data');
       }
     }
