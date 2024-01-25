@@ -16,15 +16,23 @@ import 'reservation_service_abstract.dart';
 
 class TableReservationService implements ReservationService {
   @override
-  Future<NewRequestCollectionModel?> getNewRequests() async {
-    final result = await BaseClient.get(api: ApiEndpoints.getNewRequests);
+  Future<NewRequestCollectionModel?> getNewRequests(
+      {String? searchQuery}) async {
+    final result = await BaseClient.get(
+      api: ApiEndpoints.getNewRequests,
+      params: searchQuery != null ? '/$searchQuery' : '',
+    );
     if (result == null) return null;
     return NewRequestCollectionModel.fromJson(result);
   }
 
   @override
-  Future<UpcomingRequestCollection?> getUpcomingList() async {
-    final result = await BaseClient.get(api: ApiEndpoints.getUpcomingRequests);
+  Future<UpcomingRequestCollection?> getUpcomingList(
+      {String? searchQuery}) async {
+    final result = await BaseClient.get(
+      api: ApiEndpoints.getUpcomingRequests,
+      params: searchQuery != null ? '/$searchQuery' : '',
+    );
     if (result == null) return null;
     return UpcomingRequestCollection.fromJson(result);
   }
@@ -54,9 +62,12 @@ class TableReservationService implements ReservationService {
   }
 
   @override
-  Future<ReservationHistoryRequestCollectionModel?>
-      getReservationHistory() async {
-    final data = await BaseClient.get(api: ApiEndpoints.gethistory);
+  Future<ReservationHistoryRequestCollectionModel?> getReservationHistory(
+      {String? searchQuery}) async {
+    final data = await BaseClient.get(
+      api: ApiEndpoints.gethistory,
+      params: searchQuery != null ? '/$searchQuery' : '',
+    );
     if (data == null) return null;
     return ReservationHistoryRequestCollectionModel.fromJson(data);
   }
