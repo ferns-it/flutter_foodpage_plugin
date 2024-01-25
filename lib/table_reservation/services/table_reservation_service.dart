@@ -20,7 +20,8 @@ class TableReservationService implements ReservationService {
       {String? searchQuery}) async {
     final result = await BaseClient.get(
       api: ApiEndpoints.getNewRequests,
-      params: searchQuery != null ? '/$searchQuery' : '',
+      params:
+          searchQuery != null && searchQuery.isNotEmpty ? '/$searchQuery' : '',
     );
     if (result == null) return null;
     return NewRequestCollectionModel.fromJson(result);
@@ -31,7 +32,8 @@ class TableReservationService implements ReservationService {
       {String? searchQuery}) async {
     final result = await BaseClient.get(
       api: ApiEndpoints.getUpcomingRequests,
-      params: searchQuery != null ? '/$searchQuery' : '',
+      params:
+          searchQuery != null && searchQuery.isNotEmpty ? '/$searchQuery' : '',
     );
     if (result == null) return null;
     return UpcomingRequestCollection.fromJson(result);
@@ -66,7 +68,8 @@ class TableReservationService implements ReservationService {
       {String? searchQuery}) async {
     final data = await BaseClient.get(
       api: ApiEndpoints.gethistory,
-      params: searchQuery != null ? '/$searchQuery' : '',
+      params:
+          searchQuery != null && searchQuery.isNotEmpty ? '/$searchQuery' : '',
     );
     if (data == null) return null;
     return ReservationHistoryRequestCollectionModel.fromJson(data);

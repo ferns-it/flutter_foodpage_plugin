@@ -118,9 +118,7 @@ class BaseClient {
     final type = dioError.type;
     final res = dioError.response;
     final data = res?.data;
-
     String? message;
-
     if (data is String) {
       try {
         final jsonData = json.decode(data) as Map<String, dynamic>?;
