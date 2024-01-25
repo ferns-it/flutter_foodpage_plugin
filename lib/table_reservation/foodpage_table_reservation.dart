@@ -1,16 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
-import 'package:flutter_foodpage_plugin/table_reservation/constants/enums.dart';
-import 'package:flutter_foodpage_plugin/table_reservation/models/common/api_response.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
-import 'package:flutter_foodpage_plugin/table_reservation/models/upcoming_request/upcoming_request_collection_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/app_exception/app_exception.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/reservation_service_abstract.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/shared_preference/auth_preference.dart';
 
 import 'models/history/history_request_collection_model.dart';
-import 'models/reservation/new_reservation_model.dart';
 
 class FoodpageTableReservation {
   static final _preference = AuthPreference();
@@ -50,9 +46,11 @@ class FoodpageTableReservation {
     );
   }
 
-  Future<APIResponse<NewRequestCollectionModel>> getNewRequests() async {
+  Future<APIResponse<NewRequestCollectionModel>> getNewRequests(
+      {String? searchQuery}) async {
     // try {
-    final response = await ReservationService.instance.getNewRequests();
+    final response = await ReservationService.instance
+        .getNewRequests(searchQuery: searchQuery);
     if (response == null) {
       return _throwNotFoundException<NewRequestCollectionModel>();
     }
@@ -64,9 +62,11 @@ class FoodpageTableReservation {
     // }
   }
 
-  Future<APIResponse<UpcomingRequestCollection>> getUpcomingRequests() async {
+  Future<APIResponse<UpcomingRequestCollection>> getUpcomingRequests(
+      {String? searchQuery}) async {
     try {
-      final response = await ReservationService.instance.getUpcomingList();
+      final response = await ReservationService.instance
+          .getUpcomingList(searchQuery: searchQuery);
       if (response == null) {
         return _throwNotFoundException<UpcomingRequestCollection>();
       }
@@ -79,10 +79,11 @@ class FoodpageTableReservation {
   }
 
   Future<APIResponse<ReservationHistoryRequestCollectionModel>>
-      getReservationHistory() async {
+      getReservationHistory({String? searchQuery}) async {
     try {
-      final response =
-          await ReservationService.instance.getReservationHistory();
+      final response = await ReservationService.instance.getReservationHistory(
+        searchQuery: searchQuery,
+      );
       if (response == null) {
         return _throwNotFoundException<
             ReservationHistoryRequestCollectionModel>();
