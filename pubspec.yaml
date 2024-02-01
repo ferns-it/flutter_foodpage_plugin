@@ -13,6 +13,9 @@ dependencies:
   
   #network
   dio: ^5.1.1
+  socket_io_client: ^2.0.3+1
+
+  
   #storage
   shared_preferences: ^2.1.0
 

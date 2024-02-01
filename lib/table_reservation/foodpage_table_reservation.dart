@@ -1,27 +1,65 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'dart:developer';
+
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
+import 'package:flutter_foodpage_plugin/order_online/constants/api_endpoints.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/app_exception/app_exception.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/reservation_service_abstract.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/shared_preference/auth_preference.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/services/socket/socket_service.dart';
 
 import 'models/history/history_request_collection_model.dart';
 
 class FoodpageTableReservation {
   static final _preference = AuthPreference();
+  static late SocketService _socketService;
 
   FoodpageTableReservation._internal();
 
   static Future<FoodpageTableReservation> create({
     required String authenticationKey,
+    required String shopId,
   }) async {
     // Call the private constructor
     final instance = FoodpageTableReservation._internal();
     // Do initialization that requires async
     await _preference.saveAuthKeyData(authenticationKey);
+
+    _socketService = SocketService(ApiEndpoints.socketBaseUrl);
+    _joinSocketRoom(shopId);
+    _listenToSocketEvents();
+
     // Return the fully initialized object
     return instance;
+  }
+
+  static void _joinSocketRoom(String shopId) async {
+    _socketService.emit(event: 'join-merchant-room', data: shopId);
+  }
+
+  static void _listenToSocketEvents() {
+    _socketService.on(
+        event: "joinedInRoom",
+        onEvent: (room) {
+          log("Successfully connected to room $room");
+        });
+    _socketService.on(
+        event: "new_reservation",
+        onEvent: (payload) {
+          log(payload.toString());
+        });
+    _socketService.on(
+        event: "message_from_shop",
+        onEvent: (payload) {
+          log(payload.toString());
+        });
+    _socketService.on(
+        event: "message_from_customer",
+        onEvent: (payload) {
+          log(payload.toString());
+        });
   }
 
   APIResponse<T> _throwNotFoundException<T>() {
