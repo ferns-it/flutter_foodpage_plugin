@@ -1,7 +1,5 @@
 // ignore_for_file: library_prefixes
 
-import 'dart:developer';
-
 import 'package:flutter/widgets.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -9,7 +7,12 @@ class SocketService {
   IO.Socket? socket;
   bool connected = false;
 
-  SocketService(String url, {VoidCallback? onSocketConnected}) {
+  SocketService(
+    String url, {
+    VoidCallback? onSocketConnected,
+    VoidCallback? onSocketDisconnected,
+    void Function(dynamic error)? onSocketError,
+  }) {
     // Initialize your socket with the provided URL
     socket = IO.io(
       url,
@@ -22,20 +25,23 @@ class SocketService {
     connect();
     onConnect(onConnect: (_) {
       connected = true;
-      log("<< --- SOCKET CONNECTED --- >>");
       if (onSocketConnected != null) {
         onSocketConnected();
       }
     });
     onDisconnected(onDisconnect: (_) {
       connected = false;
-      log("<< --- SOCKET DISCONNECTED --- >>");
+      if (onSocketDisconnected != null) {
+        onSocketDisconnected();
+      }
       // ToastPlugin.showToast("Socket disonnected!", 1);
     });
     onConnectError(
       onError: (error) {
         connected = false;
-        log("<< --- SOCKET FAILED TO CONNECT --- >> $error");
+        if (onSocketError != null) {
+          onSocketError(error);
+        }
       },
     );
   }

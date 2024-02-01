@@ -292,6 +292,7 @@ class ReservationProfile {
 }
 
 class ChatMessage {
+  final String? reservationId;
   final String? id;
   final String? shopID;
   final String? userID;
@@ -302,20 +303,24 @@ class ChatMessage {
   final String? message;
   final String? auther;
   final String? addedTime;
+  final bool socketMessage;
   ChatMessage({
+    this.reservationId,
     required this.id,
-    required this.shopID,
-    required this.userID,
-    required this.relationID,
-    required this.source,
-    required this.userEmail,
-    required this.userPhone,
-    required this.message,
-    required this.auther,
-    required this.addedTime,
+    this.shopID,
+    this.userID,
+    this.relationID,
+    this.source,
+    this.userEmail,
+    this.userPhone,
+    this.message,
+    this.auther,
+    this.addedTime,
+    this.socketMessage = false,
   });
 
   ChatMessage copyWith({
+    String? reservationId,
     String? id,
     String? shopID,
     String? userID,
@@ -326,8 +331,10 @@ class ChatMessage {
     String? message,
     String? auther,
     String? addedTime,
+    bool? socketMessage,
   }) {
     return ChatMessage(
+      reservationId: reservationId ?? this.reservationId,
       id: id ?? this.id,
       shopID: shopID ?? this.shopID,
       userID: userID ?? this.userID,
@@ -338,11 +345,13 @@ class ChatMessage {
       message: message ?? this.message,
       auther: auther ?? this.auther,
       addedTime: addedTime ?? this.addedTime,
+      socketMessage: socketMessage ?? this.socketMessage,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'reservationId': reservationId,
       'id': id,
       'shopID': shopID,
       'userID': userID,
@@ -353,11 +362,14 @@ class ChatMessage {
       'message': message,
       'auther': auther,
       'addedTime': addedTime,
+      'socketMessage': socketMessage,
     };
   }
 
   factory ChatMessage.fromMap(Map<String, dynamic> map) {
     return ChatMessage(
+      reservationId:
+          map['reservationId'] != null ? map['reservationId'] as String : null,
       id: map['id'] != null ? map['id'] as String : null,
       shopID: map['shopID'] != null ? map['shopID'] as String : null,
       userID: map['userID'] != null ? map['userID'] as String : null,
@@ -369,6 +381,7 @@ class ChatMessage {
       message: map['message'] != null ? map['message'] as String : null,
       auther: map['auther'] != null ? map['auther'] as String : null,
       addedTime: map['addedTime'] != null ? map['addedTime'] as String : null,
+      socketMessage: map['socketMessage'] ?? false,
     );
   }
 
@@ -379,14 +392,15 @@ class ChatMessage {
 
   @override
   String toString() {
-    return 'ChatMessage(id: $id, shopID: $shopID, userID: $userID, relationID: $relationID, source: $source, userEmail: $userEmail, userPhone: $userPhone, message: $message, auther: $auther, addedTime: $addedTime)';
+    return 'ChatMessage(reservationId: $reservationId, id: $id, shopID: $shopID, userID: $userID, relationID: $relationID, source: $source, userEmail: $userEmail, userPhone: $userPhone, message: $message, auther: $auther, addedTime: $addedTime, socketMessage: $socketMessage)';
   }
 
   @override
   bool operator ==(covariant ChatMessage other) {
     if (identical(this, other)) return true;
 
-    return other.id == id &&
+    return other.reservationId == reservationId &&
+        other.id == id &&
         other.shopID == shopID &&
         other.userID == userID &&
         other.relationID == relationID &&
@@ -395,12 +409,14 @@ class ChatMessage {
         other.userPhone == userPhone &&
         other.message == message &&
         other.auther == auther &&
-        other.addedTime == addedTime;
+        other.addedTime == addedTime &&
+        other.socketMessage == socketMessage;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^
+    return reservationId.hashCode ^
+        id.hashCode ^
         shopID.hashCode ^
         userID.hashCode ^
         relationID.hashCode ^
@@ -409,6 +425,7 @@ class ChatMessage {
         userPhone.hashCode ^
         message.hashCode ^
         auther.hashCode ^
-        addedTime.hashCode;
+        addedTime.hashCode ^
+        socketMessage.hashCode;
   }
 }

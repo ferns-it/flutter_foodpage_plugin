@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
@@ -27,7 +28,19 @@ class FoodpageTableReservation {
     // Do initialization that requires async
     await _preference.saveAuthKeyData(authenticationKey);
 
-    _socketService = SocketService(ApiEndpoints.socketBaseUrl);
+    _socketService = SocketService(
+      ApiEndpoints.socketBaseUrl,
+      onSocketConnected: () {
+        log("🟢 Socket connected!");
+      },
+      onSocketDisconnected: () {
+        log("🔴 Socket disconnected!");
+      },
+      onSocketError: (error) {
+        log("🔴 Socket has error! $error");
+      },
+    );
+
     _joinSocketRoom(shopId);
     _listenToSocketEvents();
 
@@ -43,7 +56,7 @@ class FoodpageTableReservation {
     _socketService.on(
         event: "joinedInRoom",
         onEvent: (room) {
-          log("Successfully connected to room $room");
+          log("🟢 Successfully connected to room (response):  $room");
         });
     _socketService.on(
         event: "new_reservation",
@@ -54,12 +67,25 @@ class FoodpageTableReservation {
         event: "message_from_shop",
         onEvent: (payload) {
           log(payload.toString());
+
+          var chatMessageData = payload['chatMessageData'];
+          chatMessageData['reservationId'] = payload['reservationId'];
+          var chatMessageModel = ChatMessage.fromMap(chatMessageData);
+          chatMessageData = chatMessageModel.copyWith(socketMessage: true);
+          inspect(chatMessageModel);
         });
     _socketService.on(
-        event: "message_from_customer",
-        onEvent: (payload) {
-          log(payload.toString());
-        });
+      event: "message_from_customer",
+      onEvent: (payload) {
+        log(payload.toString());
+
+        var chatMessageData = payload['chatMessageData'];
+        chatMessageData['reservationId'] = payload['reservationId'];
+        var chatMessageModel = ChatMessage.fromMap(chatMessageData);
+        chatMessageData = chatMessageModel.copyWith(socketMessage: true);
+        inspect(chatMessageModel);
+      },
+    );
   }
 
   APIResponse<T> _throwNotFoundException<T>() {
