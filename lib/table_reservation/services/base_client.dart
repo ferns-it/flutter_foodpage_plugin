@@ -28,14 +28,14 @@ class BaseClient {
         onResponse: responseInterceptorHandler,
         onError: errorResponseHandler,
       ),
-    )
-    ..interceptors.add(LogInterceptor(
-      error: true,
-      request: true,
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
-    ));
+    );
+  // ..interceptors.add(LogInterceptor(
+  //   error: true,
+  //   request: true,
+  //   requestHeader: true,
+  //   requestBody: true,
+  //   responseBody: true,
+  // ));
 
   static void requestInterceptorHandler(
     RequestOptions options,

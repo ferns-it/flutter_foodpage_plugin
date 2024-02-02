@@ -4,7 +4,6 @@ import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
-
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
@@ -59,18 +58,15 @@ class _DashboardPageState extends State<DashboardPage>
       "message": "message",
       "shopmessage": "message from shop - optional",
       "bookingTime": "2024-02-20 10:10:10",
-      "advancePayment": "NO",
-      "advanceAmount": "0",
+      "advancePayment": "Yes",
+      "advanceAmount": "100",
       "amountStatus": "Ready",
       "paymentMethod": "STRIPE",
       "transactionID": "123",
       "source": "Flutter"
     };
     final reservation = NewReservationModel.fromMap(payload);
-
-    final response = await foodpageTableReservation.newReservation(reservation);
-
-    inspect(response);
+    await foodpageTableReservation.newReservation(reservation);
   }
 
   @override
@@ -85,14 +81,19 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   @override
-  void onNewReservationReceived() {
-    // TODO: implement onNewReservationReceived
+  void onNewReservationReceived(EnquirieModel reservation) {
+    inspect(reservation);
   }
 
   @override
   void onNewShopChatReceived(ChatMessage message) {
     log("onNewShopChatReceived");
     inspect(message);
+  }
+
+  @override
+  void onNewApprovedReservationRecieved(EnquirieModel reservation) {
+    inspect(reservation);
   }
 
   @override

@@ -61,18 +61,28 @@ class FoodpageTableReservation {
     _socketService.on(
         event: "joinedInRoom",
         onEvent: (data) {
-          log("🟢 Successfully connected to room!");
-          _socketHandler.onJoinedRoom("merchant-${data["id"]}");
+          final roomId = "merchant-${data["id"]}";
+          log("🟢 Successfully connected to room! ($roomId)");
+          _socketHandler.onJoinedRoom(roomId);
         });
     _socketService.on(
         event: "new_reservation",
         onEvent: (payload) {
-          log(payload.toString());
+          final status = ReservationStatus.fromLabel(payload['status']);
+          final reservation = EnquirieModel.fromMap(payload);
+          if (status == ReservationStatus.requested) {
+            _socketHandler.onNewReservationReceived(reservation);
+            return;
+          }
+          if (status == ReservationStatus.approved) {
+            _socketHandler.onNewApprovedReservationRecieved(reservation);
+            return;
+          }
         });
     _socketService.on(
         event: "message_from_shop",
         onEvent: (payload) {
-          var chatMessageModel = ChatMessage.fromMap({
+          final chatMessageModel = ChatMessage.fromMap({
             ...payload['chatMessageData'],
             'reservationId': payload['reservationId'],
           }).copyWith(
@@ -84,7 +94,7 @@ class FoodpageTableReservation {
     _socketService.on(
       event: "message_from_customer",
       onEvent: (payload) {
-        var chatMessageModel = ChatMessage.fromMap({
+        final chatMessageModel = ChatMessage.fromMap({
           ...payload['chatMessageData'],
           'reservationId': payload['reservationId'],
         }).copyWith(
