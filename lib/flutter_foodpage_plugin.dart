@@ -31,3 +31,4 @@ export 'package:flutter_foodpage_plugin/table_reservation/models/common/api_resp
 export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/new_reservation_model.dart';
 export 'package:flutter_foodpage_plugin/table_reservation/models/upcoming_request/upcoming_request_collection_model.dart';
 export 'package:flutter_foodpage_plugin/table_reservation/constants/enums.dart';
+export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/reservation_socket_handler.dart';

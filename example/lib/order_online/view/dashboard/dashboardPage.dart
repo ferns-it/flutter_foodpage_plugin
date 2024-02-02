@@ -18,9 +18,9 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class _DashboardPageState extends State<DashboardPage>
+    with ReservationSocketHandler {
   late FoodpageTableReservation foodpageTableReservation;
-
   APIResponse<UpcomingRequestCollection> newRequestCollection =
       APIResponse<UpcomingRequestCollection>.initial();
 
@@ -34,6 +34,7 @@ class _DashboardPageState extends State<DashboardPage> {
     foodpageTableReservation = await FoodpageTableReservation.create(
       authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae",
       shopId: '1',
+      socketHandler: this,
     );
     getNewRequests();
   }
@@ -70,6 +71,43 @@ class _DashboardPageState extends State<DashboardPage> {
     final response = await foodpageTableReservation.newReservation(reservation);
 
     inspect(response);
+  }
+
+  @override
+  void onJoinedRoom(String roomId) {
+    log(roomId);
+  }
+
+  @override
+  void onNewCustomerChatReceived(ChatMessage message) {
+    log("onNewCustomerChatReceived");
+    inspect(message);
+  }
+
+  @override
+  void onNewReservationReceived() {
+    // TODO: implement onNewReservationReceived
+  }
+
+  @override
+  void onNewShopChatReceived(ChatMessage message) {
+    log("onNewShopChatReceived");
+    inspect(message);
+  }
+
+  @override
+  void onSocketConnected() {
+    // TODO: implement onSocketConnected
+  }
+
+  @override
+  void onSocketDisconnected() {
+    // TODO: implement onSocketDisconnected
+  }
+
+  @override
+  void onSocketError(error) {
+    // TODO: implement onSocketError
   }
 
   @override

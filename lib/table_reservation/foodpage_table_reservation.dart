@@ -15,13 +15,16 @@ import 'models/history/history_request_collection_model.dart';
 class FoodpageTableReservation {
   static final _preference = AuthPreference();
   static late SocketService _socketService;
+  static late ReservationSocketHandler _socketHandler;
 
   FoodpageTableReservation._internal();
 
   static Future<FoodpageTableReservation> create({
     required String authenticationKey,
     required String shopId,
+    required ReservationSocketHandler socketHandler,
   }) async {
+    _socketHandler = socketHandler;
     // Call the private constructor
     final instance = FoodpageTableReservation._internal();
     // Do initialization that requires async
@@ -31,12 +34,15 @@ class FoodpageTableReservation {
       ApiEndpoints.socketBaseUrl,
       onSocketConnected: () {
         log("🟢 Socket connected!");
+        _socketHandler.onSocketConnected();
       },
       onSocketDisconnected: () {
         log("🔴 Socket disconnected!");
+        _socketHandler.onSocketDisconnected();
       },
       onSocketError: (error) {
         log("🔴 Socket has error! $error");
+        _socketHandler.onSocketError(error);
       },
     );
 
@@ -54,8 +60,9 @@ class FoodpageTableReservation {
   static void _listenToSocketEvents() {
     _socketService.on(
         event: "joinedInRoom",
-        onEvent: (room) {
-          log("🟢 Successfully connected to room (response):  $room");
+        onEvent: (data) {
+          log("🟢 Successfully connected to room!");
+          _socketHandler.onJoinedRoom("merchant-${data["id"]}");
         });
     _socketService.on(
         event: "new_reservation",
@@ -65,24 +72,26 @@ class FoodpageTableReservation {
     _socketService.on(
         event: "message_from_shop",
         onEvent: (payload) {
-          log(payload.toString());
-
-          var chatMessageData = payload['chatMessageData'];
-          chatMessageData['reservationId'] = payload['reservationId'];
-          var chatMessageModel = ChatMessage.fromMap(chatMessageData);
-          chatMessageData = chatMessageModel.copyWith(socketMessage: true);
-          inspect(chatMessageModel);
+          var chatMessageModel = ChatMessage.fromMap({
+            ...payload['chatMessageData'],
+            'reservationId': payload['reservationId'],
+          }).copyWith(
+            socketMessage: true,
+            source: "Flutter",
+          );
+          _socketHandler.onNewShopChatReceived(chatMessageModel);
         });
     _socketService.on(
       event: "message_from_customer",
       onEvent: (payload) {
-        log(payload.toString());
-
-        var chatMessageData = payload['chatMessageData'];
-        chatMessageData['reservationId'] = payload['reservationId'];
-        var chatMessageModel = ChatMessage.fromMap(chatMessageData);
-        chatMessageData = chatMessageModel.copyWith(socketMessage: true);
-        inspect(chatMessageModel);
+        var chatMessageModel = ChatMessage.fromMap({
+          ...payload['chatMessageData'],
+          'reservationId': payload['reservationId'],
+        }).copyWith(
+          socketMessage: true,
+          source: "Flutter",
+        );
+        _socketHandler.onNewCustomerChatReceived(chatMessageModel);
       },
     );
   }
