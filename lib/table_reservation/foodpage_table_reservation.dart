@@ -143,7 +143,10 @@ class FoodpageTableReservation {
           newChatMessage: true,
         );
         _updateNotificationHistory(reservationNotification);
-        _socketHandler.onNewCustomerChatReceived(chatMessageModel);
+        _socketHandler.onNewCustomerChatReceived(
+          chatMessageModel,
+          reservationNotification,
+        );
       },
     );
   }

@@ -75,7 +75,7 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   @override
-  void onNewCustomerChatReceived(ChatMessage message) {
+  void onNewCustomerChatReceived(ChatMessage message, notification) {
     log("onNewCustomerChatReceived");
     inspect(message);
   }
