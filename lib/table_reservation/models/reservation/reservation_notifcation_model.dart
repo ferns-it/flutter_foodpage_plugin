@@ -39,7 +39,7 @@ class ReservationNoticationHistoryModel {
   String toJson() => json.encode(toMap());
 
   List<ReservationNotificationModel> get newNotifications =>
-      reservations.where((reservation) => reservation.opened).toList();
+      reservations.where((reservation) => !reservation.opened).toList();
 
   int get newNotificationsCount => newNotifications.length;
 
