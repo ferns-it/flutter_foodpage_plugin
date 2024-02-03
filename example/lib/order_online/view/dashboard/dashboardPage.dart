@@ -20,8 +20,8 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage>
     with ReservationSocketHandler {
   late FoodpageTableReservation foodpageTableReservation;
-  APIResponse<UpcomingRequestCollection> newRequestCollection =
-      APIResponse<UpcomingRequestCollection>.initial();
+  APIResponse<NewRequestCollectionModel> newRequestCollection =
+      APIResponse<NewRequestCollectionModel>.initial();
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ class _DashboardPageState extends State<DashboardPage>
     setState(() {
       newRequestCollection = APIResponse.loading();
     });
-    final response = await foodpageTableReservation.getUpcomingRequests();
+    final response = await foodpageTableReservation.getNewRequests();
     setState(() {
       newRequestCollection = response;
     });
@@ -131,9 +131,9 @@ class _DashboardPageState extends State<DashboardPage>
               },
               completed: (data) {
                 return ListView.builder(
-                  itemCount: data.upcomingEnquiries.length,
+                  itemCount: data.enquiries.length,
                   itemBuilder: (context, index) {
-                    final enquiry = data.upcomingEnquiries[index];
+                    final enquiry = data.enquiries[index];
                     return ListTile(
                       title: Text("${enquiry.name} (${enquiry.id})"),
                       subtitle: Text(enquiry.amountStatus.toString()),

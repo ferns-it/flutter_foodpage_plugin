@@ -185,7 +185,7 @@ class FoodpageTableReservation {
 
   Future<APIResponse<NewRequestCollectionModel>> getNewRequests(
       {String? searchQuery}) async {
-    try {
+    // try {
       var response = await ReservationService.instance
           .getNewRequests(searchQuery: searchQuery);
       if (response == null) {
@@ -196,11 +196,11 @@ class FoodpageTableReservation {
       );
       response = response.copyWith(enquiries: modifiedList);
       return APIResponse.completed(response);
-    } on AppExceptions catch (error) {
-      return APIResponse.error(error.message, exception: error);
-    } catch (e) {
-      return _throwUnknownErrorException<NewRequestCollectionModel>();
-    }
+    // } on AppExceptions catch (error) {
+    //   return APIResponse.error(error.message, exception: error);
+    // } catch (e) {
+    //   return _throwUnknownErrorException<NewRequestCollectionModel>();
+    // }
   }
 
   Future<APIResponse<UpcomingRequestCollection>> getUpcomingRequests(
