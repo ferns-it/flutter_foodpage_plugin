@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter_foodpage_plugin/table_reservation/models/reservation/reservation_notifcation_model.dart';
+
 import '../../constants/enums.dart';
 
 class EnquirieModel {
@@ -19,6 +21,7 @@ class EnquirieModel {
   final String? advanceAmount;
   final AmountStatus? amountStatus;
   final String? paymentMethod;
+  final ReservationNotificationModel? notificationModel;
   EnquirieModel({
     required this.id,
     required this.formattedID,
@@ -35,6 +38,7 @@ class EnquirieModel {
     required this.advanceAmount,
     required this.amountStatus,
     required this.paymentMethod,
+    this.notificationModel,
   });
 
   EnquirieModel copyWith({
@@ -53,6 +57,7 @@ class EnquirieModel {
     String? advanceAmount,
     AmountStatus? amountStatus,
     String? paymentMethod,
+    ReservationNotificationModel? notificationModel,
   }) {
     return EnquirieModel(
       id: id ?? this.id,
@@ -70,6 +75,7 @@ class EnquirieModel {
       advanceAmount: advanceAmount ?? this.advanceAmount,
       amountStatus: amountStatus ?? this.amountStatus,
       paymentMethod: paymentMethod ?? this.paymentMethod,
+      notificationModel: notificationModel ?? this.notificationModel,
     );
   }
 
@@ -90,6 +96,7 @@ class EnquirieModel {
       'advanceAmount': advanceAmount,
       'amountStatus': amountStatus,
       'paymentMethod': paymentMethod,
+      'notificationModel': notificationModel?.toMap(),
     };
   }
 
@@ -117,10 +124,14 @@ class EnquirieModel {
       advanceAmount:
           map['advanceAmount'] != null ? map['advanceAmount'] as String : null,
       amountStatus: map['amountStatus'] != null
-          ? AmountStatus.fromLabel(map['amountStatus'])
-          : AmountStatus.initial,
+          ? AmountStatus.fromLabel(map['amountStatus'] as String)
+          : null,
       paymentMethod:
           map['paymentMethod'] != null ? map['paymentMethod'] as String : null,
+      notificationModel: map['notificationModel'] != null
+          ? ReservationNotificationModel.fromMap(
+              map['notificationModel'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -131,7 +142,7 @@ class EnquirieModel {
 
   @override
   String toString() {
-    return 'EnquirieModel(id: $id, formattedID: $formattedID, name: $name, phone: $phone, email: $email, chairs: $chairs, message: $message, status: $status, shopMessage: $shopMessage, bookingTime: $bookingTime, addedTime: $addedTime, advancePayment: $advancePayment, advanceAmount: $advanceAmount, amountStatus: $amountStatus, paymentMethod: $paymentMethod)';
+    return 'EnquirieModel(id: $id, formattedID: $formattedID, name: $name, phone: $phone, email: $email, chairs: $chairs, message: $message, status: $status, shopMessage: $shopMessage, bookingTime: $bookingTime, addedTime: $addedTime, advancePayment: $advancePayment, advanceAmount: $advanceAmount, amountStatus: $amountStatus, paymentMethod: $paymentMethod, notificationModel: $notificationModel)';
   }
 
   @override
@@ -152,7 +163,8 @@ class EnquirieModel {
         other.advancePayment == advancePayment &&
         other.advanceAmount == advanceAmount &&
         other.amountStatus == amountStatus &&
-        other.paymentMethod == paymentMethod;
+        other.paymentMethod == paymentMethod &&
+        other.notificationModel == notificationModel;
   }
 
   @override
@@ -171,6 +183,7 @@ class EnquirieModel {
         advancePayment.hashCode ^
         advanceAmount.hashCode ^
         amountStatus.hashCode ^
-        paymentMethod.hashCode;
+        paymentMethod.hashCode ^
+        notificationModel.hashCode;
   }
 }
