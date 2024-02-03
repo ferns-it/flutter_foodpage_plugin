@@ -102,12 +102,17 @@ class FoodpageTableReservation {
 
           if (status == ReservationStatus.requested) {
             _updateNotificationHistory(reservationNotification);
-            _socketHandler.onNewReservationReceived(reservation);
+            _socketHandler.onNewReservationReceived(reservation.copyWith(
+              notificationModel: reservationNotification,
+            ));
             return;
           }
           if (status == ReservationStatus.approved) {
             _updateNotificationHistory(reservationNotification);
-            _socketHandler.onNewApprovedReservationRecieved(reservation);
+            _socketHandler
+                .onNewApprovedReservationRecieved(reservation.copyWith(
+              notificationModel: reservationNotification,
+            ));
             return;
           }
         });
