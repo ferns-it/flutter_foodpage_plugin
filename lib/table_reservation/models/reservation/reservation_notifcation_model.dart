@@ -28,7 +28,7 @@ class ReservationNoticationHistoryModel {
   factory ReservationNoticationHistoryModel.fromMap(Map<String, dynamic> map) {
     return ReservationNoticationHistoryModel(
       reservations: List<ReservationNotificationModel>.from(
-        (map['reservations'] as List<int>).map<ReservationNotificationModel>(
+        (map['reservations'] ?? []).map<ReservationNotificationModel>(
           (x) =>
               ReservationNotificationModel.fromMap(x as Map<String, dynamic>),
         ),
