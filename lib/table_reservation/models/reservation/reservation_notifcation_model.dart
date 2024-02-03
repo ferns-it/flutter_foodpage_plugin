@@ -38,6 +38,14 @@ class ReservationNoticationHistoryModel {
 
   String toJson() => json.encode(toMap());
 
+  List<ReservationNotificationModel> get newNotifications =>
+      reservations.where((reservation) => reservation.opened).toList();
+
+  int get newNotificationsCount => newNotifications.length;
+
+  List<ReservationNotificationModel> get openedNotifications =>
+      reservations.where((reservation) => reservation.opened).toList();
+
   factory ReservationNoticationHistoryModel.fromJson(String source) =>
       ReservationNoticationHistoryModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
