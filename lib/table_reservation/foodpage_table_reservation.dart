@@ -61,7 +61,7 @@ class FoodpageTableReservation {
     _socketService.emit(event: 'join-merchant-room', data: shopId);
   }
 
-  static Future<ReservationNoticationHistoryModel?> notificationHistory() {
+  Future<ReservationNoticationHistoryModel?> notificationHistory() {
     return _reservationHistoryPreference.readReservationNotication();
   }
 
