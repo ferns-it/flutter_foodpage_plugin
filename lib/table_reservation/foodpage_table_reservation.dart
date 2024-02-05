@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 import 'package:flutter_foodpage_plugin/order_online/constants/api_endpoints.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/auth/auth_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/app_exception/app_exception.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/reservation_service_abstract.dart';
@@ -26,12 +27,18 @@ class FoodpageTableReservation {
     required String authenticationKey,
     required String shopId,
     required ReservationSocketHandler socketHandler,
+    DevelopmentMode developmentMode = DevelopmentMode.development,
   }) async {
     _socketHandler = socketHandler;
     // Call the private constructor
     final instance = FoodpageTableReservation._internal();
+
+    final authModel = AuthModel(
+      authenticatioKey: authenticationKey,
+      mode: developmentMode,
+    );
     // Do initialization that requires async
-    await _preference.saveAuthKeyData(authenticationKey);
+    await _preference.saveAuthKeyData(authModel);
 
     _socketService = SocketService(
       ApiEndpoints.socketBaseUrl,

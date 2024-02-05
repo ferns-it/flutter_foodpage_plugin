@@ -1,3 +1,12 @@
+enum DevelopmentMode {
+  release,
+  development;
+
+  static DevelopmentMode fromName(String name) {
+    return DevelopmentMode.values.firstWhere((e) => e.name == name);
+  }
+}
+
 enum ResponseResult {
   success,
   failure;
@@ -49,7 +58,6 @@ enum AmountStatus {
 }
 
 enum AmountStatusRequest {
-  
   ready(label: "Ready"),
   received(label: "Received");
 

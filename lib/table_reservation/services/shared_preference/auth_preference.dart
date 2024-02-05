@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/auth/auth_model.dart';
+
 class AuthPreference {
   String get storageKey => 'auth_key';
   Future<bool> checkAuthKeyIsExist() async {
@@ -7,16 +9,16 @@ class AuthPreference {
     return instance.containsKey(storageKey);
   }
 
-  Future<bool> saveAuthKeyData(String authKey) async {
+  Future<bool> saveAuthKeyData(AuthModel model) async {
     final instance = await SharedPreferences.getInstance();
-    return await instance.setString(storageKey, authKey);
+    return await instance.setString(storageKey, model.toJson());
   }
 
-  Future<String?> readAuthKeyData() async {
+  Future<AuthModel?> readAuthKeyData() async {
     final instance = await SharedPreferences.getInstance();
     final data = instance.getString(storageKey);
     if (data == null) return null;
-    return data;
+    return AuthModel.fromJson(data);
   }
 
   Future<bool> clearAuthKeyData() async {
