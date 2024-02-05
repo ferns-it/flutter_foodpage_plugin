@@ -38,6 +38,7 @@ class FoodpageTableReservation {
       onSocketConnected: () {
         log("🟢 Socket connected!");
         _socketHandler.onSocketConnected();
+        _joinSocketRoom(shopId);
       },
       onSocketDisconnected: () {
         log("🔴 Socket disconnected!");
@@ -49,7 +50,6 @@ class FoodpageTableReservation {
       },
     );
 
-    _joinSocketRoom(shopId);
     _listenToSocketEvents();
 
     // Return the fully initialized object
