@@ -11,9 +11,13 @@ import 'package:flutter_foodpage_plugin/table_reservation/services/shared_prefer
 import 'package:flutter_foodpage_plugin/table_reservation/services/socket/socket_service.dart';
 
 import 'models/history/history_request_collection_model.dart';
+import 'models/reservation/reservation_notifcation_model.dart';
+import 'services/shared_preference/reservation_notification_preference.dart';
 
 class FoodpageTableReservation {
   static final _preference = AuthPreference();
+  static final _reservationHistoryPreference =
+      ReservationNotificationPreference();
   static late SocketService _socketService;
   static late ReservationSocketHandler _socketHandler;
 
@@ -57,6 +61,27 @@ class FoodpageTableReservation {
     _socketService.emit(event: 'join-merchant-room', data: shopId);
   }
 
+  Future<ReservationNoticationHistoryModel?> notificationHistory() {
+    return _reservationHistoryPreference.readReservationNotication();
+  }
+
+  static void _updateNotificationHistory(
+    ReservationNotificationModel reservationNotification,
+  ) async {
+    final reservationHistory =
+        await _reservationHistoryPreference.readReservationNotication();
+    var reservations = reservationHistory?.reservations ?? [];
+    reservations.removeWhere((x) {
+      return x.reservationId == reservationNotification.reservationId;
+    });
+    final reservationNoticationHistory = ReservationNoticationHistoryModel(
+      reservations: [...reservations, reservationNotification],
+    );
+    await _reservationHistoryPreference.updateReservationNotification(
+      reservationNoticationHistory,
+    );
+  }
+
   static void _listenToSocketEvents() {
     _socketService.on(
         event: "joinedInRoom",
@@ -70,12 +95,24 @@ class FoodpageTableReservation {
         onEvent: (payload) {
           final status = ReservationStatus.fromLabel(payload['status']);
           final reservation = EnquirieModel.fromMap(payload);
+          final reservationNotification = ReservationNotificationModel(
+            reservationId: reservation.id ?? "",
+            newReservation: true,
+          );
+
           if (status == ReservationStatus.requested) {
-            _socketHandler.onNewReservationReceived(reservation);
+            _updateNotificationHistory(reservationNotification);
+            _socketHandler.onNewReservationReceived(reservation.copyWith(
+              notificationModel: reservationNotification,
+            ));
             return;
           }
           if (status == ReservationStatus.approved) {
-            _socketHandler.onNewApprovedReservationRecieved(reservation);
+            _updateNotificationHistory(reservationNotification);
+            _socketHandler
+                .onNewApprovedReservationRecieved(reservation.copyWith(
+              notificationModel: reservationNotification,
+            ));
             return;
           }
         });
@@ -101,7 +138,15 @@ class FoodpageTableReservation {
           socketMessage: true,
           source: "Flutter",
         );
-        _socketHandler.onNewCustomerChatReceived(chatMessageModel);
+        final reservationNotification = ReservationNotificationModel(
+          reservationId: payload['reservationId'],
+          newChatMessage: true,
+        );
+        _updateNotificationHistory(reservationNotification);
+        _socketHandler.onNewCustomerChatReceived(
+          chatMessageModel,
+          reservationNotification,
+        );
       },
     );
   }
@@ -128,30 +173,56 @@ class FoodpageTableReservation {
     );
   }
 
+  Future<List<EnquirieModel>> _modifyReservationRequestsList(
+      List<EnquirieModel> list) async {
+    final reservationHistory =
+        (await _reservationHistoryPreference.readReservationNotication())
+                ?.reservations ??
+            [];
+    List<EnquirieModel> newModifiedList = [];
+    for (var reservation in list) {
+      final index = reservationHistory
+          .indexWhere((element) => element.reservationId == reservation.id);
+      newModifiedList.add(index == -1
+          ? reservation
+          : reservation.copyWith(notificationModel: reservationHistory[index]));
+    }
+
+    return List<EnquirieModel>.from(newModifiedList);
+  }
+
   Future<APIResponse<NewRequestCollectionModel>> getNewRequests(
       {String? searchQuery}) async {
-    // try {
-    final response = await ReservationService.instance
-        .getNewRequests(searchQuery: searchQuery);
-    if (response == null) {
-      return _throwNotFoundException<NewRequestCollectionModel>();
+    try {
+      var response = await ReservationService.instance
+          .getNewRequests(searchQuery: searchQuery);
+      if (response == null) {
+        return _throwNotFoundException<NewRequestCollectionModel>();
+      }
+      final modifiedList = await _modifyReservationRequestsList(
+        response.enquiries,
+      );
+      response = response.copyWith(enquiries: modifiedList);
+      return APIResponse.completed(response);
+    } on AppExceptions catch (error) {
+      return APIResponse.error(error.message, exception: error);
+    } catch (e) {
+      return _throwUnknownErrorException<NewRequestCollectionModel>();
     }
-    return APIResponse.completed(response);
-    // } on AppExceptions catch (error) {
-    //   return APIResponse.error(error.message, exception: error);
-    // } catch (e) {
-    //   return _throwUnknownErrorException<NewRequestCollectionModel>();
-    // }
   }
 
   Future<APIResponse<UpcomingRequestCollection>> getUpcomingRequests(
       {String? searchQuery}) async {
     try {
-      final response = await ReservationService.instance
+      var response = await ReservationService.instance
           .getUpcomingList(searchQuery: searchQuery);
       if (response == null) {
         return _throwNotFoundException<UpcomingRequestCollection>();
       }
+      final modifiedList = await _modifyReservationRequestsList(
+        response.upcomingEnquiries,
+      );
+      response = response.copyWith(upcomingEnquiries: modifiedList);
       return APIResponse.completed(response);
     } on AppExceptions catch (error) {
       return APIResponse.error(error.message, exception: error);
@@ -186,6 +257,13 @@ class FoodpageTableReservation {
         reservationID,
       );
       if (response == null) _throwNotFoundException<ReservationDetailsModel>();
+      final reservationNotification = ReservationNotificationModel(
+        reservationId: reservationID,
+        newReservation: false,
+        newChatMessage: false,
+        openedDateTime: DateTime.now(),
+      );
+      _updateNotificationHistory(reservationNotification);
       return APIResponse.completed(response);
     } on AppExceptions catch (error) {
       return APIResponse.error(error.message, exception: error);

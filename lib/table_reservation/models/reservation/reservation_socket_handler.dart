@@ -1,3 +1,5 @@
+import 'package:flutter_foodpage_plugin/table_reservation/models/reservation/reservation_notifcation_model.dart';
+
 import '../../../flutter_foodpage_plugin.dart';
 
 abstract class ReservationSocketHandler {
@@ -7,7 +9,7 @@ abstract class ReservationSocketHandler {
   void onJoinedRoom(String roomId);
   void onNewReservationReceived(EnquirieModel reservation);
   void onNewApprovedReservationRecieved(EnquirieModel reservation);
-  void onNewCustomerChatReceived(ChatMessage message);
+  void onNewCustomerChatReceived(ChatMessage message, ReservationNotificationModel notification);
   void onNewShopChatReceived(ChatMessage message);
   void onNotificationStatusUpdated(EnquirieModel enquire);
 }
