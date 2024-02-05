@@ -1,5 +1,7 @@
 class ApiEndpoints {
-  static const baseUrl =
+  static const productionUrl =
+      'https://foodpage.co.uk/v2/shop/custome/tablereservation';
+  static const developmentUrl =
       'https://foodpage.co.uk/development/v2/shop/custome/tablereservation';
   static const newReservation = '/newreservation';
   static const getNewRequests = '/getnewrequests';

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 
 import '../constants/api_endpoints.dart';
 import 'app_exception/app_exception.dart';
@@ -16,7 +17,7 @@ class BaseClient {
   static BaseOptions get _baseOptions => BaseOptions(
       connectTimeout: const Duration(seconds: _timeLimit),
       receiveTimeout: const Duration(seconds: _timeLimit),
-      baseUrl: ApiEndpoints.baseUrl,
+      baseUrl: ApiEndpoints.developmentUrl,
       contentType: contentType,
       responseType: responeType,
       headers: {"SOURCE": "OWNER", "Language": "en"});
@@ -41,8 +42,8 @@ class BaseClient {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final authenticationKey = await AuthPreference().readAuthKeyData();
-    if (authenticationKey == null) {
+    final authModel = await AuthPreference().readAuthKeyData();
+    if (authModel == null) {
       final error = UnauthorizedAccessException();
       return handler.reject(
         DioException(
@@ -54,7 +55,11 @@ class BaseClient {
       );
     }
 
-    options.headers.addAll({"x-shopToken": authenticationKey});
+    if (authModel.mode == DevelopmentMode.development) {
+      options.baseUrl = ApiEndpoints.developmentUrl;
+    }
+
+    options.headers.addAll({"x-shopToken": authModel.authenticatioKey});
     handler.next(options);
   }
 
