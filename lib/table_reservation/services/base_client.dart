@@ -17,7 +17,6 @@ class BaseClient {
   static BaseOptions get _baseOptions => BaseOptions(
       connectTimeout: const Duration(seconds: _timeLimit),
       receiveTimeout: const Duration(seconds: _timeLimit),
-      baseUrl: ApiEndpoints.developmentUrl,
       contentType: contentType,
       responseType: responeType,
       headers: {"SOURCE": "OWNER", "Language": "en"});
@@ -57,6 +56,8 @@ class BaseClient {
 
     if (authModel.mode == DevelopmentMode.development) {
       options.baseUrl = ApiEndpoints.developmentUrl;
+    } else {
+      options.baseUrl = ApiEndpoints.productionUrl;
     }
 
     options.headers.addAll({"x-shopToken": authModel.authenticatioKey});
