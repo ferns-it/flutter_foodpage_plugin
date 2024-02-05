@@ -11,7 +11,6 @@ import 'package:flutter_foodpage_plugin/table_reservation/services/shared_prefer
 import 'package:flutter_foodpage_plugin/table_reservation/services/socket/socket_service.dart';
 
 import 'models/history/history_request_collection_model.dart';
-import 'models/reservation/reservation_notifcation_model.dart';
 import 'services/shared_preference/reservation_notification_preference.dart';
 
 class FoodpageTableReservation {
@@ -264,6 +263,7 @@ class FoodpageTableReservation {
         openedDateTime: DateTime.now(),
       );
       _updateNotificationHistory(reservationNotification);
+      _socketHandler.onNotificationStatusUpdated(reservationNotification);
       return APIResponse.completed(response);
     } on AppExceptions catch (error) {
       return APIResponse.error(error.message, exception: error);
