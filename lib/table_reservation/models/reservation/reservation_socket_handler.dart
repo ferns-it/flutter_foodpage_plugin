@@ -9,4 +9,5 @@ abstract class ReservationSocketHandler {
   void onNewApprovedReservationRecieved(EnquirieModel reservation);
   void onNewCustomerChatReceived(ChatMessage message);
   void onNewShopChatReceived(ChatMessage message);
+  void onNotificationStatusUpdated(EnquirieModel enquire);
 }

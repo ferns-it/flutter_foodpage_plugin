@@ -112,6 +112,11 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   @override
+  void onNotificationStatusUpdated(EnquirieModel enquire) {
+    inspect(enquire);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
