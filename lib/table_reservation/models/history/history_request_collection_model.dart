@@ -1,7 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 
 class ReservationHistoryRequestCollectionModel {
@@ -54,7 +55,6 @@ class ReservationHistoryRequestCollectionModel {
   @override
   bool operator ==(covariant ReservationHistoryRequestCollectionModel other) {
     if (identical(this, other)) return true;
-    final listEquals = const DeepCollectionEquality().equals;
 
     return other.statusMessage == statusMessage &&
         listEquals(other.historyList, historyList);

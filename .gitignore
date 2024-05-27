@@ -28,3 +28,10 @@ migrate_working_dir/
 .dart_tool/
 .packages
 build/
+
+# If the following line exists, it might ignore the necessary files:
+linux/flutter/ephemeral/
+
+# To specifically include certain files or directories, you can use a negation rule:
+!linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux
+!linux/flutter/ephemeral/.plugin_symlinks/shared_preferences_linux
