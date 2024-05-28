@@ -5,7 +5,7 @@ homepage: https://github.com/hashcode404/flutter_foodpage_plugin
 
 
 environment:
-  sdk: '>=2.19.5 <3.0.0'
+  sdk: '>=2.19.5 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
