@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/dashboard/dashboard_screen.dart';
 import 'package:get/get.dart';
 
-import 'order_online/bindings/app_binding.dart';
-import 'order_online/constants/app_routes.dart';
-import 'order_online/constants/route_names.dart';
 import 'order_online/utils/app_theme.dart';
 
 void main() {
@@ -18,9 +16,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: appTheme(context),
-      initialBinding: AppBinding(),
-      initialRoute: RouteNames.kDashBoard,
-      getPages: appRoutes,
+      home: const DashboardScreen(),
     );
   }
 }
