@@ -12,6 +12,9 @@ ThemeData menuBuilderTheme(BuildContext context) {
       primarySwatch: getMaterialColor(MenuBuilderColors.kPrimaryColor),
       backgroundColor: MenuBuilderColors.kBackgroundColor,
     ),
+    cardTheme: CardTheme(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+    ),
     textTheme: GoogleFonts.poppinsTextTheme(textTheme),
   );
 }
