@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: appTheme(context),
+      debugShowCheckedModeBanner: false,
       home: const DashboardScreen(),
     );
   }

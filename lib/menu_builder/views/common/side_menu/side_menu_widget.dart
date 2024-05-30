@@ -9,28 +9,62 @@ class SideMenuWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final textTheme = Theme.of(context).textTheme;
     return Container(
       width: size.width * 0.2,
-      padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(vertical: 30.0),
       decoration: BoxDecoration(
         color: MenuBuilderColors.kWhite,
         border: Border.all(color: Colors.grey.shade300),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Image.network("https://foodpage.co.uk/theme/img/logo.png"),
-          const Divider(),
-          verticalSpaceMedium,
-          Text(
-            "GENERAL",
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          verticalSpaceMedium,
-          Row(
-            children: <Widget>[Icon(FluentIcons.home_24_regular)],
-          )
-        ],
+      child: ListTileTheme(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+        selectedTileColor: MenuBuilderColors.kPrimaryColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Center(
+              child: Image.network(
+                "https://foodpage.co.uk/theme/img/logo.png",
+              ),
+            ),
+            const Divider(),
+            verticalSpaceMedium,
+            Container(
+              color: MenuBuilderColors.kPrimaryColor.withOpacity(0.1),
+              child: Center(
+                child: ListTile(
+                  onTap: () {},
+                  selected: true,
+                  leading: const Icon(FluentIcons.home_20_regular),
+                  title: const Text("Dashboard"),
+                  titleTextStyle: textTheme.labelMedium,
+                ),
+              ),
+            ),
+            verticalSpaceSmall,
+            ListTile(
+              onTap: () {},
+              leading: const Icon(FluentIcons.food_20_regular),
+              title: const Text("Food Menu"),
+              titleTextStyle: textTheme.labelMedium,
+            ),
+            verticalSpaceSmall,
+            ListTile(
+              onTap: () {},
+              leading: const Icon(FluentIcons.apps_list_20_regular),
+              title: const Text("Categories"),
+              titleTextStyle: textTheme.labelMedium,
+            ),
+            verticalSpaceSmall,
+            ListTile(
+              onTap: () {},
+              leading: const Icon(FluentIcons.apps_add_in_20_regular),
+              title: const Text("Modifiers"),
+              titleTextStyle: textTheme.labelMedium,
+            ),
+          ],
+        ),
       ),
     );
   }
