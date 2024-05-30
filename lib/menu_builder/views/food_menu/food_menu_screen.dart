@@ -2,8 +2,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../common/root/base_root_widget.dart';
+import '../widgets/food_details_tile.dart';
 import '../widgets/search_bar_widget.dart';
 
 class FoodMenuScreen extends StatelessWidget {
@@ -67,7 +69,18 @@ class FoodMenuScreen extends StatelessWidget {
                     )
                   ],
                 ),
-              )
+              ),
+              verticalSpaceRegular,
+              Expanded(
+                child: AlignedGridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 2,
+                  crossAxisSpacing: 2,
+                  itemBuilder: (context, index) {
+                    return const FoodDetailsTile();
+                  },
+                ),
+              ),
             ],
           ),
         ),
