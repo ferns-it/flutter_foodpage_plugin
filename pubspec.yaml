@@ -23,6 +23,9 @@ dependencies:
   # Utils
   flutter_gen: ^5.5.0+1
 
+  # Icons
+  fluentui_system_icons: ^1.1.239
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -54,6 +57,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/food-page-logo.png
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages
