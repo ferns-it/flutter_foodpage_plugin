@@ -21,17 +21,43 @@ class FoodMenuScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text("Food Menu", style: textTheme.titleMedium),
-              verticalSpaceTiny,
-              Text(
-                "Manage Your Restaurant Menu From Here",
-                style: textTheme.bodyMedium!.copyWith(
-                  color: MenuBuilderColors.kGrey2,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text("Food Menu", style: textTheme.titleLarge),
+                      verticalSpaceTiny,
+                      Text(
+                        "Manage Your Restaurant Menu From Here",
+                        style: textTheme.bodyMedium!.copyWith(
+                          color: MenuBuilderColors.kGrey2,
+                        ),
+                      ),
+                    ],
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(FluentIcons.settings_16_filled),
+                    label: const Text("Manage Menu"),
+                    style: OutlinedButton.styleFrom(
+                      textStyle: textTheme.titleMedium,
+                      foregroundColor: MenuBuilderColors.kPurple,
+                      backgroundColor:
+                          MenuBuilderColors.kPurple.withOpacity(0.1),
+                      elevation: 0,
+                      side: BorderSide(
+                        width: 0.8,
+                        color: MenuBuilderColors.kPurple.withOpacity(0.3),
+                      ),
+                    ),
+                  )
+                ],
               ),
-              verticalSpaceRegular,
+              verticalSpaceMedium,
               Container(
-                height: 50,
+                height: 60,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: MenuBuilderColors.kWhite,
@@ -57,16 +83,13 @@ class FoodMenuScreen extends StatelessWidget {
                       icon: const Icon(FluentIcons.add_16_regular),
                       label: const Text("Add Product"),
                       style: FilledButton.styleFrom(
-                        textStyle: textTheme.bodyMedium,
+                        textStyle: textTheme.titleMedium,
                         foregroundColor: MenuBuilderColors.kPrimaryColor,
                         backgroundColor:
                             MenuBuilderColors.kPrimaryColor.withOpacity(0.1),
                         elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

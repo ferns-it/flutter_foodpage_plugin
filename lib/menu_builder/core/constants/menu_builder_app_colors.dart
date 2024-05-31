@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class MenuBuilderColors {
@@ -19,4 +17,5 @@ class MenuBuilderColors {
   static const kMaterialRed = Colors.red;
   static const kBlack = Colors.black;
   static const kBlue = Colors.blue;
+  static const kPurple = Color(0xFFA020F0);
 }
