@@ -22,7 +22,6 @@ class FoodMenuScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,6 +36,7 @@ class FoodMenuScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const Spacer(),
                   OutlinedButton.icon(
                     onPressed: () {},
                     icon: const Icon(FluentIcons.settings_16_filled),
@@ -50,6 +50,23 @@ class FoodMenuScreen extends StatelessWidget {
                       side: BorderSide(
                         width: 0.8,
                         color: MenuBuilderColors.kPurple.withOpacity(0.3),
+                      ),
+                    ),
+                  ),
+                  horizontalSpaceSmall,
+                  OutlinedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(FluentIcons.add_16_filled),
+                    label: const Text("Add Product"),
+                    style: OutlinedButton.styleFrom(
+                      textStyle: textTheme.titleMedium,
+                      foregroundColor: MenuBuilderColors.kOrange,
+                      backgroundColor:
+                          MenuBuilderColors.kOrange.withOpacity(0.1),
+                      elevation: 0,
+                      side: BorderSide(
+                        width: 0.8,
+                        color: MenuBuilderColors.kOrange.withOpacity(0.3),
                       ),
                     ),
                   )
@@ -78,18 +95,6 @@ class FoodMenuScreen extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    FilledButton.tonalIcon(
-                      onPressed: () {},
-                      icon: const Icon(FluentIcons.add_16_regular),
-                      label: const Text("Add Product"),
-                      style: FilledButton.styleFrom(
-                        textStyle: textTheme.titleMedium,
-                        foregroundColor: MenuBuilderColors.kPrimaryColor,
-                        backgroundColor:
-                            MenuBuilderColors.kPrimaryColor.withOpacity(0.1),
-                        elevation: 0,
-                      ),
-                    ),
                   ],
                 ),
               ),
