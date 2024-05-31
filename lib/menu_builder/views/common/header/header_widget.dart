@@ -24,13 +24,13 @@ class HeaderWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(
-              FluentIcons.building_shop_20_regular,
+              FluentIcons.building_shop_24_regular,
               color: Colors.grey.shade600,
             ),
             horizontalSpaceSmall,
             Text(
               "Le Arabia Restaurant",
-              style: textTheme.bodyLarge!.copyWith(
+              style: textTheme.titleMedium!.copyWith(
                 color: Colors.grey.shade600,
               ),
             ),
@@ -38,6 +38,7 @@ class HeaderWidget extends StatelessWidget {
             Icon(
               Icons.keyboard_arrow_down,
               color: Colors.grey.shade400,
+              size: 28,
             ),
             horizontalSpaceRegular,
           ],

@@ -53,7 +53,7 @@ class FoodMenuScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  horizontalSpaceSmall,
+                  horizontalSpaceRegular,
                   OutlinedButton.icon(
                     onPressed: () {},
                     icon: const Icon(FluentIcons.add_16_filled),
