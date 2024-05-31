@@ -8,7 +8,9 @@ ThemeData appTheme(BuildContext context) {
     colorSchemeSeed: AppColors.primaryColor,
     cardTheme: CardTheme(
       color: AppColors.secondaryColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.0),
+      ),
     ),
   );
 }
