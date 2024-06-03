@@ -9,7 +9,7 @@ class SideMenuWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final textTheme = Theme.of(context).textTheme;
+
     return Container(
       width: size.width * 0.2,
       padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -21,7 +21,6 @@ class SideMenuWidget extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
         selectedTileColor: MenuBuilderColors.kPrimaryColor,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Center(
               child: Image.asset(
@@ -32,40 +31,57 @@ class SideMenuWidget extends StatelessWidget {
             verticalSpaceSmall,
             const Divider(),
             verticalSpaceMedium,
-            Container(
-              color: MenuBuilderColors.kPrimaryColor.withOpacity(0.1),
-              child: Center(
-                child: ListTile(
-                  onTap: () {},
-                  selected: true,
-                  leading: const Icon(FluentIcons.home_20_regular),
-                  title: const Text("Dashboard"),
-                  titleTextStyle: textTheme.labelLarge,
-                ),
-              ),
+            _buildMenuItem(
+              context,
+              icon: FluentIcons.home_20_regular,
+              title: "Dashboard",
+              selected: true,
+              onTap: () {},
             ),
             verticalSpaceSmall,
-            ListTile(
+            _buildMenuItem(
+              context,
+              icon: FluentIcons.food_20_regular,
+              title: "Food Menu",
               onTap: () {},
-              leading: const Icon(FluentIcons.food_20_regular),
-              title: const Text("Food Menu"),
-              titleTextStyle: textTheme.labelLarge,
             ),
             verticalSpaceSmall,
-            ListTile(
+            _buildMenuItem(
+              context,
+              icon: FluentIcons.apps_list_20_regular,
+              title: "Categories",
               onTap: () {},
-              leading: const Icon(FluentIcons.apps_list_20_regular),
-              title: const Text("Categories"),
-              titleTextStyle: textTheme.labelLarge,
             ),
             verticalSpaceSmall,
-            ListTile(
+            _buildMenuItem(
+              context,
+              icon: FluentIcons.apps_add_in_20_regular,
+              title: "Modifiers",
               onTap: () {},
-              leading: const Icon(FluentIcons.apps_add_in_20_regular),
-              title: const Text("Modifiers"),
-              titleTextStyle: textTheme.labelLarge,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    bool selected = false,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    return Container(
+      color: selected ? MenuBuilderColors.kPrimaryColor.withOpacity(0.1) : null,
+      child: Center(
+        child: ListTile(
+          onTap: onTap,
+          selected: selected,
+          leading: Icon(icon),
+          title: Text(title),
+          titleTextStyle: textTheme.labelLarge,
         ),
       ),
     );
