@@ -31,7 +31,10 @@ class FoodDetailsSideSheetWidget extends StatelessWidget {
                 ),
                 child: Row(
                   children: <Widget>[
-                    const Icon(FluentIcons.chevron_left_24_regular),
+                    const Icon(
+                      FluentIcons.chevron_left_28_filled,
+                      color: MenuBuilderColors.kGrey,
+                    ),
                     const Spacer(),
                     Container(
                       padding: const EdgeInsets.all(8.0),
