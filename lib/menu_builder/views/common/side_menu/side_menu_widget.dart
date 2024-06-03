@@ -24,10 +24,12 @@ class SideMenuWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Center(
-              child: Image.network(
-                "https://foodpage.co.uk/theme/img/logo.png",
+              child: Image.asset(
+                "packages/flutter_foodpage_plugin/assets/images/food-page-logo.png",
+                height: 30,
               ),
             ),
+            verticalSpaceSmall,
             const Divider(),
             verticalSpaceMedium,
             Container(

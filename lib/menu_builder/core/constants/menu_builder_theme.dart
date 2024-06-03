@@ -12,9 +12,11 @@ ThemeData menuBuilderTheme(BuildContext context) {
       primarySwatch: getMaterialColor(MenuBuilderColors.kPrimaryColor),
       backgroundColor: MenuBuilderColors.kBackgroundColor,
     ),
+    dividerColor: Colors.grey.shade300,
+    dividerTheme: DividerThemeData(color: Colors.grey.shade300),
     cardTheme: CardTheme(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
     ),
-    textTheme: GoogleFonts.poppinsTextTheme(textTheme),
+    textTheme: GoogleFonts.merriweatherSansTextTheme(textTheme),
   );
 }

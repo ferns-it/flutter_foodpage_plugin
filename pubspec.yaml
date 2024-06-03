@@ -27,6 +27,7 @@ dependencies:
   # Icons
   fluentui_system_icons: ^1.1.239
   google_fonts: ^6.2.1
+  font_awesome_flutter: ^10.7.0
   
 
 dev_dependencies:
@@ -60,7 +61,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/images/food-page-logo.png
+    - assets/icons/
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages

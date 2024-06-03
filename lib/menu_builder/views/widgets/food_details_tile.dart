@@ -12,7 +12,7 @@ class FoodDetailsTile extends StatelessWidget {
     return Card(
       elevation: 0,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           children: <Widget>[
             ClipRRect(
@@ -28,6 +28,7 @@ class FoodDetailsTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text("Noodles", style: textTheme.titleMedium),
+                  verticalSpaceTiny,
                   Row(
                     children: <Widget>[
                       Flexible(

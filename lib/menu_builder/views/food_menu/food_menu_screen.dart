@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/food_details_side_sheet_widget.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../common/root/base_root_widget.dart';
@@ -15,6 +16,7 @@ class FoodMenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return BaseRootWidget(
+      endDrawer: const FoodDetailsSideSheetWidget(),
       child: Expanded(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -105,7 +107,12 @@ class FoodMenuScreen extends StatelessWidget {
                   mainAxisSpacing: 2,
                   crossAxisSpacing: 2,
                   itemBuilder: (context, index) {
-                    return const FoodDetailsTile();
+                    return InkWell(
+                      onTap: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                      child: const FoodDetailsTile(),
+                    );
                   },
                 ),
               ),
