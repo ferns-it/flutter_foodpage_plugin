@@ -83,65 +83,51 @@ class AddFoodScreen extends StatelessWidget {
           ),
           body: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: ListView(
+            child: Row(
               children: <Widget>[
-                IntrinsicHeight(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Card(
-                          child: Padding(
-                            padding: defaultCardPadding,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  "Basic Information",
-                                  style: textTheme.titleMedium,
-                                ),
-                                verticalSpaceMedium,
-                                CustomRoundedTextField.topText(
-                                  hintText: "Enter dish name",
-                                  topText: "Dish name",
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  keyboardType: TextInputType.name,
-                                  textInputAction: TextInputAction.next,
-                                ),
-                                verticalSpaceRegular,
-                                CustomRoundedTextField.topText(
-                                  hintText: "Short note about dish..",
-                                  topText: "Description",
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  maxLines: 2,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
-                                ),
-                                verticalSpaceMedium,
-                                const CustomRadioCheckboxGroup(
-                                  title1: "Veg/Non Veg",
-                                  title2: "Available On",
-                                  options1: ["Veg", "Non Veg"],
-                                  options2: ["Online", "Dine In"],
-                                ),
-                              ],
-                            ),
+                Expanded(
+                  flex: 2,
+                  child: ListView(
+                    children: <Widget>[
+                      Card(
+                        child: Padding(
+                          padding: defaultCardPadding,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "Basic Information",
+                                style: textTheme.titleMedium,
+                              ),
+                              verticalSpaceMedium,
+                              CustomRoundedTextField.topText(
+                                hintText: "Enter dish name",
+                                topText: "Dish name",
+                                borderRadius: BorderRadius.circular(8.0),
+                                keyboardType: TextInputType.name,
+                                textInputAction: TextInputAction.next,
+                              ),
+                              verticalSpaceRegular,
+                              CustomRoundedTextField.topText(
+                                hintText: "Short note about dish..",
+                                topText: "Description",
+                                borderRadius: BorderRadius.circular(8.0),
+                                maxLines: 2,
+                                keyboardType: TextInputType.text,
+                                textInputAction: TextInputAction.done,
+                              ),
+                              verticalSpaceMedium,
+                              const CustomRadioCheckboxGroup(
+                                title1: "Veg/Non Veg",
+                                title2: "Available On",
+                                options1: ["Veg", "Non Veg"],
+                                options2: ["Online", "Dine In"],
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const Expanded(
-                        child: Card(child: Column(children: <Widget>[])),
-                      ),
-                    ],
-                  ),
-                ),
-                verticalSpaceTiny,
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Card(
+                      Card(
                         child: Padding(
                           padding: defaultCardPadding,
                           child: Center(
@@ -209,16 +195,6 @@ class AddFoodScreen extends StatelessWidget {
                                             color: Colors.grey.shade400,
                                           ),
                                         ),
-                                        // trailing: IconButton(
-                                        //   onPressed: () {},
-                                        //   padding: EdgeInsets.zero,
-                                        //   icon: Icon(
-                                        //     FluentIcons.edit_20_filled,
-                                        //     color: MenuBuilderColors
-                                        //         .kPrimaryColor
-                                        //         .withOpacity(0.8),
-                                        //   ),
-                                        // ),
                                         trailing: TextButton.icon(
                                           onPressed: () {},
                                           icon: Icon(
@@ -245,47 +221,26 @@ class AddFoodScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            width: double.infinity,
-                            child: Card(
-                              child: Padding(
-                                padding: defaultCardPadding,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      "Category",
-                                      style: textTheme.titleMedium,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        width: double.infinity,
+                        child: Card(
+                          child: Padding(
+                            padding: defaultCardPadding,
+                            child: Text(
+                              "Categories",
+                              style: textTheme.titleMedium,
                             ),
                           ),
-                          verticalSpaceRegular,
-                          SizedBox(
-                            width: double.infinity,
-                            child: Card(
-                              child: Padding(
-                                padding: defaultCardPadding,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text("Category",
-                                        style: textTheme.titleMedium),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    )
-                  ],
+                    ],
+                  ),
                 )
               ],
             ),

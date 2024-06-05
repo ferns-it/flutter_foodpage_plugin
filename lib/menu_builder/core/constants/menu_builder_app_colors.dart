@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MenuBuilderColors {
-  static const kPrimaryColor = Color(0xFFEC2027);
+  static const kPrimaryColor = Color.fromARGB(255, 238, 89, 63);
   static const kBackgroundColor = Color(0xFFF2F2F5);
   static const kWhite = Color(0xFFFFFFFF);
   static const kWhite2 = Color(0xFFf6f6f6);
