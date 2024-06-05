@@ -38,6 +38,9 @@ class AddFoodScreen extends StatelessWidget {
               height: size.height - bottom,
               child: Drawer(
                 width: size.width * 0.5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10.0,

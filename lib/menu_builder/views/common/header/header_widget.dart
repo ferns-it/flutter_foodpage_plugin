@@ -9,9 +9,9 @@ class HeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
+    final mq = MediaQuery.of(context);
     return Container(
-      height: MediaQuery.of(context).size.height * 0.1,
+      height: mq.size.height * 0.1,
       width: double.infinity,
       decoration: BoxDecoration(
         color: MenuBuilderColors.kWhite,
