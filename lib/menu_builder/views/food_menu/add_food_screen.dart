@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../core/constants/menu_builder_app_colors.dart';
 import '../../widgets/custom_rounded_textfield.dart';
@@ -46,12 +47,35 @@ class AddFoodScreen extends StatelessWidget {
                     horizontal: 10.0,
                     vertical: 24.0,
                   ),
-                  child: ListView(
-                    children: const <Widget>[
-                      FoodVariationItem(),
-                      verticalSpaceSmall,
-                      FoodVariationItem(),
-                    ],
+                  child: DefaultTabController(
+                    length: 2,
+                    child: Column(
+                      children: <Widget>[
+                        TabBar(
+                          tabs: [
+                            Tab(text: "Variations".toUpperCase()),
+                            Tab(text: "Modifiers/Addons".toUpperCase()),
+                          ],
+                        ),
+                        Expanded(
+                            child: TabBarView(children: [
+                          ListView(
+                            children: const <Widget>[
+                              FoodVariationItem(),
+                              verticalSpaceSmall,
+                              FoodVariationItem(),
+                            ],
+                          ),
+                          ListView(
+                            children: const <Widget>[
+                              FoodVariationItem(),
+                              verticalSpaceSmall,
+                              FoodVariationItem(),
+                            ],
+                          ),
+                        ]))
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -129,7 +153,7 @@ class AddFoodScreen extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      "Food Variations",
+                                      "Variations",
                                       style: textTheme.titleMedium,
                                     ),
                                     Builder(builder: (context) {
@@ -160,9 +184,62 @@ class AddFoodScreen extends StatelessWidget {
                                   ],
                                 ),
                                 verticalSpaceRegular,
-                                const FoodVariationItem(),
-                                verticalSpaceRegular,
-                                const FoodVariationItem()
+                                SizedBox(
+                                  height: mq.size.height * 0.3,
+                                  child: AlignedGridView.count(
+                                    crossAxisCount: 2,
+                                    itemCount: 3,
+                                    mainAxisSpacing: 14.0,
+                                    crossAxisSpacing: 14.0,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                            color: Colors.grey.shade300,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(6.0),
+                                        ),
+                                        title: const Text(
+                                          "Chicken Biriyani 1/2",
+                                        ),
+                                        subtitle: Text(
+                                          "£100.00",
+                                          style: textTheme.bodyLarge!.copyWith(
+                                            color: Colors.grey.shade400,
+                                          ),
+                                        ),
+                                        // trailing: IconButton(
+                                        //   onPressed: () {},
+                                        //   padding: EdgeInsets.zero,
+                                        //   icon: Icon(
+                                        //     FluentIcons.edit_20_filled,
+                                        //     color: MenuBuilderColors
+                                        //         .kPrimaryColor
+                                        //         .withOpacity(0.8),
+                                        //   ),
+                                        // ),
+                                        trailing: TextButton.icon(
+                                          onPressed: () {},
+                                          icon: Icon(
+                                            FluentIcons.edit_20_filled,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            size: 18,
+                                          ),
+                                          label: Text(
+                                            "Edit",
+                                            style:
+                                                textTheme.titleSmall!.copyWith(
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -180,8 +257,10 @@ class AddFoodScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text("Category",
-                                        style: textTheme.titleMedium),
+                                    Text(
+                                      "Category",
+                                      style: textTheme.titleMedium,
+                                    ),
                                   ],
                                 ),
                               ),
