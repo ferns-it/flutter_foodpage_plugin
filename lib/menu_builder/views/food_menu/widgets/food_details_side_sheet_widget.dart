@@ -56,7 +56,7 @@ class FoodDetailsSideSheetWidget extends StatelessWidget {
                             MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
                       ),
                       child: const Icon(
-                        Icons.close_rounded,
+                        Icons.delete_forever,
                         color: MenuBuilderColors.kPrimaryColor,
                       ),
                     ),
