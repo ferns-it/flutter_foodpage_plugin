@@ -622,6 +622,7 @@ class _BuildAllergensWidget extends StatelessWidget {
       ),
       width: double.infinity,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
             height: 40,
@@ -639,23 +640,29 @@ class _BuildAllergensWidget extends StatelessWidget {
             ),
           ),
           verticalSpaceSmall,
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 0.0,
-            children: foodAllergens.map((item) {
-              return FilterChip(
-                label: Text(item),
-                selected: false,
-                selectedColor:
-                    MenuBuilderColors.kPrimaryColor.withOpacity(0.15),
-                backgroundColor: MenuBuilderColors.kOrange2.withOpacity(0.15),
-                labelStyle: textTheme.titleMedium!.copyWith(
-                  color: MenuBuilderColors.kOrange2,
-                ),
-                checkmarkColor: MenuBuilderColors.kOrange2,
-                onSelected: (_) {},
-              );
-            }).toList(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Wrap(
+              spacing: 8.0,
+              runSpacing: 0.0,
+              children: foodAllergens.map((item) {
+                final backgroundColor =
+                    MenuBuilderColors.kPrimaryColor.withOpacity(
+                  0.1,
+                );
+                return FilterChip(
+                  label: Text(item),
+                  selected: false,
+                  selectedColor: backgroundColor,
+                  backgroundColor: backgroundColor,
+                  labelStyle: textTheme.titleSmall!.copyWith(
+                    color: MenuBuilderColors.kPrimaryColor,
+                  ),
+                  checkmarkColor: MenuBuilderColors.kPrimaryColor,
+                  onSelected: (_) {},
+                );
+              }).toList(),
+            ),
           ),
           verticalSpaceRegular,
         ],
@@ -737,6 +744,7 @@ class _BuildMasterModifiersWidget extends StatelessWidget {
       ),
       width: double.infinity,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
             height: 40,
@@ -754,22 +762,25 @@ class _BuildMasterModifiersWidget extends StatelessWidget {
             ),
           ),
           verticalSpaceSmall,
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 0.0,
-            children: List.generate(20, (_) {
-              return FilterChip(
-                label: const Text("Test"),
-                selected: false,
-                selectedColor: MenuBuilderColors.kBlue.withOpacity(0.15),
-                backgroundColor: MenuBuilderColors.kBlue.withOpacity(0.15),
-                labelStyle: textTheme.titleMedium!.copyWith(
-                  color: MenuBuilderColors.kBlue,
-                ),
-                checkmarkColor: MenuBuilderColors.kBlue,
-                onSelected: (_) {},
-              );
-            }),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Wrap(
+              spacing: 8.0,
+              runSpacing: 0.0,
+              children: List.generate(20, (_) {
+                return FilterChip(
+                  label: const Text("Test"),
+                  selected: false,
+                  selectedColor: MenuBuilderColors.kBlue.withOpacity(0.15),
+                  backgroundColor: MenuBuilderColors.kBlue.withOpacity(0.15),
+                  labelStyle: textTheme.titleSmall!.copyWith(
+                    color: MenuBuilderColors.kBlue,
+                  ),
+                  checkmarkColor: MenuBuilderColors.kBlue,
+                  onSelected: (_) {},
+                );
+              }),
+            ),
           ),
           verticalSpaceRegular,
         ],
