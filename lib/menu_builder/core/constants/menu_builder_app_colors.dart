@@ -19,4 +19,5 @@ class MenuBuilderColors {
   static const kBlack = Colors.black;
   static const kBlue = Colors.blue;
   static const kPurple = Color(0xFFA020F0);
+  static const kYellow = Color(0xFFffad01);
 }

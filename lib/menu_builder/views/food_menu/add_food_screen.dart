@@ -2,11 +2,11 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_variation_modifiers_side_sheet.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../core/constants/menu_builder_app_colors.dart';
 import '../../widgets/custom_rounded_textfield.dart';
-import 'widgets/add_variation_modifiers_side_sheet.dart';
 
 class AddFoodScreen extends StatelessWidget {
   const AddFoodScreen({super.key});
@@ -16,64 +16,6 @@ class AddFoodScreen extends StatelessWidget {
     final mq = MediaQuery.of(context);
     final size = mq.size;
     final bottom = mq.viewInsets.bottom;
-
-    final categoriesDemoData = [
-      {
-        "category": "Soft Drinks",
-        "sub-categories": ["Pepsi", "Coca-cola", "Sprite", "Fanta"]
-      },
-      {
-        "category": "Juices",
-        "sub-categories": [
-          "Orange Juice",
-          "Apple Juice",
-          "Grape Juice",
-          "Pineapple Juice"
-        ]
-      },
-      {
-        "category": "Snacks",
-        "sub-categories": ["Chips", "Nuts", "Popcorn", "Pretzels"]
-      },
-      {
-        "category": "Dairy Products",
-        "sub-categories": ["Milk", "Cheese", "Yogurt", "Butter"]
-      },
-      {
-        "category": "Bakery",
-        "sub-categories": ["Bread", "Croissant", "Muffins", "Bagels"]
-      },
-      {
-        "category": "Fruits",
-        "sub-categories": ["Apple", "Banana", "Grapes", "Orange"]
-      },
-      {
-        "category": "Vegetables",
-        "sub-categories": ["Carrot", "Broccoli", "Spinach", "Potato"]
-      },
-      {
-        "category": "Frozen Foods",
-        "sub-categories": [
-          "Ice Cream",
-          "Frozen Pizza",
-          "Frozen Vegetables",
-          "Frozen Meals"
-        ]
-      },
-      {
-        "category": "Canned Goods",
-        "sub-categories": [
-          "Canned Beans",
-          "Canned Corn",
-          "Canned Tomatoes",
-          "Canned Soup"
-        ]
-      },
-      {
-        "category": "Condiments",
-        "sub-categories": ["Ketchup", "Mustard", "Mayonnaise", "BBQ Sauce"]
-      },
-    ];
 
     return Theme(
       data: menuBuilderTheme(context).copyWith(
@@ -98,7 +40,7 @@ class AddFoodScreen extends StatelessWidget {
             child: SizedBox(
               height: size.height - bottom,
               child: Drawer(
-                width: size.width * 0.5,
+                width: size.width * 0.5, // size.width * 0.5
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4.0),
                 ),
@@ -150,6 +92,8 @@ class AddFoodScreen extends StatelessWidget {
                                 options1: ["Veg", "Non Veg"],
                                 options2: ["Online", "Dine In"],
                               ),
+                              verticalSpaceMedium,
+                              _BuildAllergensWidget()
                             ],
                           ),
                         ),
@@ -288,6 +232,9 @@ class AddFoodScreen extends StatelessWidget {
                                     return const FoodModifiersDetailsWidget();
                                   },
                                 ),
+                                verticalSpaceRegular,
+                                const Divider(),
+                                const _BuildMasterModifiersWidget()
                               ],
                             ),
                           ),
@@ -297,10 +244,16 @@ class AddFoodScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: SizedBox(
+                  child: Theme(
+                    data: Theme.of(context).copyWith(
+                      dividerTheme: const DividerThemeData(
+                        color: Colors.transparent,
+                      ),
+                      dividerColor: Colors.transparent,
+                    ),
+                    child: ListView(
+                      children: <Widget>[
+                        SizedBox(
                           width: double.infinity,
                           child: Card(
                             child: Padding(
@@ -308,90 +261,197 @@ class AddFoodScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(
-                                    "Availability",
-                                    style: textTheme.titleMedium,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Availability",
+                                        style: textTheme.titleMedium,
+                                      ),
+                                      Icon(
+                                        FluentIcons.edit_20_regular,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ],
+                                  ),
+                                  verticalSpaceMedium,
+                                  _buildExpansionTileContainer(
+                                    context,
+                                    icon: FluentIcons.calendar_24_regular,
+                                    title: "Sunday",
+                                    children: <Widget>[
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "10:00 AM to 07:30 PM",
+                                          style: textTheme.bodyMedium!.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                      verticalSpaceVerySmall,
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "10:00 AM to 07:30 PM",
+                                          style: textTheme.bodyMedium!.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                      verticalSpaceTiny,
+                                    ],
+                                  ),
+                                  verticalSpaceSmall,
+                                  _buildExpansionTileContainer(
+                                    context,
+                                    icon: FluentIcons.calendar_24_regular,
+                                    title: "Monday",
+                                    children: <Widget>[
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "10:00 AM to 07:30 PM",
+                                          style: textTheme.bodyMedium!.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                      verticalSpaceVerySmall,
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "10:00 AM to 07:30 PM",
+                                          style: textTheme.bodyMedium!.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                      verticalSpaceTiny,
+                                    ],
+                                  ),
+                                  verticalSpaceSmall,
+                                  _buildExpansionTileContainer(
+                                    context,
+                                    icon: FluentIcons.calendar_24_regular,
+                                    title: "Tuesday",
+                                    children: <Widget>[
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "10:00 AM to 07:30 PM",
+                                          style: textTheme.bodyMedium!.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                      verticalSpaceVerySmall,
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "10:00 AM to 07:30 PM",
+                                          style: textTheme.bodyMedium!.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                      verticalSpaceTiny,
+                                    ],
                                   ),
                                 ],
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Card(
-                          child: Padding(
-                            padding: defaultCardPadding,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  "Categories",
-                                  style: textTheme.titleMedium,
-                                ),
-                                verticalSpaceSmall,
-                                Expanded(
-                                    child: ListView(
-                                  children: categoriesDemoData.map((data) {
-                                    final subCategories =
-                                        data["sub-categories"] as List<String>;
-                                    return Container(
-                                      margin: const EdgeInsets.symmetric(
-                                        vertical: 6.0,
+                        SizedBox(
+                          width: double.infinity,
+                          child: Card(
+                            child: Padding(
+                              padding: defaultCardPadding,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        "Categories",
+                                        style: textTheme.titleMedium,
                                       ),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.grey.shade300,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          8.0,
-                                        ),
+                                      Icon(
+                                        FluentIcons.add_20_filled,
+                                        color: Theme.of(context).primaryColor,
                                       ),
-                                      child: ExpansionTile(
-                                        title: Text(
-                                          data["category"] as String,
-                                          style: textTheme.bodyMedium,
-                                        ),
-                                        leading: Checkbox(
-                                          value: false,
-                                          onChanged: (_) {},
-                                        ),
-                                        dense: true,
-                                        children: <Widget>[
-                                          ListView.builder(
-                                            itemCount: subCategories.length,
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            padding: EdgeInsets.zero,
-                                            itemBuilder: (context, index) {
-                                              final category =
-                                                  subCategories[index];
-                                              return CheckboxListTile(
-                                                value: false,
-                                                onChanged: (_) {},
-                                                controlAffinity:
-                                                    ListTileControlAffinity
-                                                        .leading,
-                                                title: Text(
-                                                  category,
-                                                  style: textTheme.bodyMedium,
-                                                ),
-                                              );
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ))
-                              ],
+                                    ],
+                                  ),
+                                  verticalSpaceSmall,
+                                  Chip(
+                                    onDeleted: () {},
+                                    backgroundColor: MenuBuilderColors.kPurple
+                                        .withOpacity(0.1),
+                                    side: BorderSide.none,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0,
+                                    ),
+                                    label: const Text("Drinks"),
+                                    labelStyle: textTheme.bodyLarge!.copyWith(
+                                      color: MenuBuilderColors.kPurple,
+                                    ),
+                                    deleteIcon:
+                                        const Icon(Icons.close, size: 20),
+                                    deleteIconColor: MenuBuilderColors.kPurple,
+                                    // selected: true,
+                                    // selectedColor: AppColors.backgroundColor,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: double.infinity,
+                          child: Card(
+                            child: Padding(
+                              padding: defaultCardPadding,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Menus",
+                                        style: textTheme.titleMedium,
+                                      ),
+                                      Icon(
+                                        FluentIcons.add_20_filled,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ],
+                                  ),
+                                  verticalSpaceSmall,
+                                  Chip(
+                                    backgroundColor: MenuBuilderColors.kOrange
+                                        .withOpacity(0.1),
+                                    side: BorderSide.none,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0,
+                                    ),
+                                    label: const Text("Default"),
+                                    labelStyle: textTheme.bodyLarge!.copyWith(
+                                      color: MenuBuilderColors.kOrange,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -399,6 +459,37 @@ class AddFoodScreen extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildExpansionTileContainer(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required List<Widget> children,
+    EdgeInsets? childrenPadding,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ExpansionTile(
+        dense: true,
+        initiallyExpanded: false,
+        leading: Icon(icon, size: 20),
+        childrenPadding: childrenPadding ??
+            const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 4.0,
+            ),
+        title: Text(
+          title,
+          style: textTheme.titleMedium,
+        ),
+        children: children,
+      ),
     );
   }
 }
@@ -500,6 +591,79 @@ class CustomOptionGroup extends StatelessWidget {
   }
 }
 
+class _BuildAllergensWidget extends StatelessWidget {
+  _BuildAllergensWidget({Key? key}) : super(key: key);
+
+  final List<String> foodAllergens = [
+    "Milk",
+    "Eggs",
+    "Fish",
+    "Crustacean shellfish",
+    "Tree nuts",
+    "Peanuts",
+    "Wheat",
+    "Soybeans",
+    "Sesame",
+    "Mustard",
+    "Celery",
+    "Sulphur dioxide and sulphites",
+    "Lupin",
+    "Molluscs"
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      width: double.infinity,
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 40,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 10.0,
+            ),
+            color: MenuBuilderColors.kWhite2,
+            child: Center(
+              child: Text(
+                "Allergens",
+                style: textTheme.titleMedium,
+              ),
+            ),
+          ),
+          verticalSpaceSmall,
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 0.0,
+            children: foodAllergens.map((item) {
+              return FilterChip(
+                label: Text(item),
+                selected: false,
+                selectedColor:
+                    MenuBuilderColors.kPrimaryColor.withOpacity(0.15),
+                backgroundColor: MenuBuilderColors.kOrange2.withOpacity(0.15),
+                labelStyle: textTheme.titleMedium!.copyWith(
+                  color: MenuBuilderColors.kOrange2,
+                ),
+                checkmarkColor: MenuBuilderColors.kOrange2,
+                onSelected: (_) {},
+              );
+            }).toList(),
+          ),
+          verticalSpaceRegular,
+        ],
+      ),
+    );
+  }
+}
+
 class FoodModifiersDetailsWidget extends StatelessWidget {
   const FoodModifiersDetailsWidget({super.key});
 
@@ -553,6 +717,61 @@ class FoodModifiersDetailsWidget extends StatelessWidget {
               ),
             ),
           )
+        ],
+      ),
+    );
+  }
+}
+
+class _BuildMasterModifiersWidget extends StatelessWidget {
+  const _BuildMasterModifiersWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      width: double.infinity,
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 40,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 10.0,
+            ),
+            color: MenuBuilderColors.kWhite2,
+            child: Center(
+              child: Text(
+                "Master Addons",
+                style: textTheme.titleMedium,
+              ),
+            ),
+          ),
+          verticalSpaceSmall,
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 0.0,
+            children: List.generate(20, (_) {
+              return FilterChip(
+                label: const Text("Test"),
+                selected: false,
+                selectedColor: MenuBuilderColors.kBlue.withOpacity(0.15),
+                backgroundColor: MenuBuilderColors.kBlue.withOpacity(0.15),
+                labelStyle: textTheme.titleMedium!.copyWith(
+                  color: MenuBuilderColors.kBlue,
+                ),
+                checkmarkColor: MenuBuilderColors.kBlue,
+                onSelected: (_) {},
+              );
+            }),
+          ),
+          verticalSpaceRegular,
         ],
       ),
     );
