@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/food_menu_screen.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/flutter_foodpage_menu_builder.dart';
 import 'package:get/get.dart';
 
 import 'order_online/utils/app_theme.dart';
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: appTheme(context),
       debugShowCheckedModeBanner: false,
-      home: const FoodMenuScreen(),
+      home: const FlutterFoodpageMenuBuilder(),
     );
   }
 }

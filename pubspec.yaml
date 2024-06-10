@@ -28,6 +28,9 @@ dependencies:
   fluentui_system_icons: ^1.1.239
   google_fonts: ^6.2.1
   font_awesome_flutter: ^10.7.0
+
+  # State Management
+  provider: ^6.1.2
   
 
 dev_dependencies:

@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_navigation_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/core/providers_list.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/common/root/base_root_widget.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/dashboard/dashboard_screen.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/food_menu_screen.dart';
+import 'package:provider/provider.dart';
+
+class FlutterFoodpageMenuBuilder extends StatelessWidget {
+  const FlutterFoodpageMenuBuilder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> screens = [
+      const DashboardScreen(),
+      const FoodMenuScreen(),
+    ];
+
+    return MultiProvider(
+      providers: ProviderRegistrar.providers,
+      child: Builder(builder: (context) {
+        final pageNavigationController =
+            context.watch<PageNavigationController>();
+        return BaseRootWidget(
+          child: Expanded(
+            child: screens[
+                pageNavigationController.currentPageIndex % screens.length],
+          ),
+        );
+      }),
+    );
+  }
+}
