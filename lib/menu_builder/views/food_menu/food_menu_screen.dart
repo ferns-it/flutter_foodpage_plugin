@@ -1,9 +1,11 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/add_food_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/food_details_tile.dart';
 import '../widgets/search_bar_widget.dart';
@@ -13,6 +15,7 @@ class FoodMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<DishesController>();
     return Builder(builder: (context) {
       final textTheme = Theme.of(context).textTheme;
       return Padding(
@@ -103,21 +106,32 @@ class FoodMenuScreen extends StatelessWidget {
               ),
             ),
             verticalSpaceRegular,
-            Expanded(
-              child: AlignedGridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 2,
-                crossAxisSpacing: 2,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                    child: const FoodDetailsTile(),
-                  );
-                },
-              ),
-            ),
+            controller.dishCollection.when(initial: () {
+              return const SizedBox();
+            }, loading: () {
+              return const Center(child: CircularProgressIndicator());
+            }, completed: (collection) {
+              final dishes = controller.dishCollection.data!.dishes;
+              return Expanded(
+                child: AlignedGridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 2,
+                  crossAxisSpacing: 2,
+                  itemCount: dishes.length,
+                  itemBuilder: (context, index) {
+                    final dish = dishes[index];
+                    return InkWell(
+                      onTap: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                      child: FoodDetailsTile(dish: dish),
+                    );
+                  },
+                ),
+              );
+            }, error: (message, error) {
+              return Center(child: Text(message ?? "Something went wrong!"));
+            }),
           ],
         ),
       );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_navigation_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/core/providers_list.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/category/categories_screen.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/common/root/base_root_widget.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/dashboard/dashboard_screen.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/food_menu_screen.dart';
@@ -15,6 +16,7 @@ class FlutterFoodpageMenuBuilder extends StatelessWidget {
     List<Widget> screens = [
       const DashboardScreen(),
       const FoodMenuScreen(),
+      const CategoriesScreen(),
     ];
 
     return MultiProvider(

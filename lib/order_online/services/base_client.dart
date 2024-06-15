@@ -8,7 +8,6 @@ import '../constants/api_endpoints.dart';
 import 'exceptions/app_exceptions.dart';
 import 'sharedpreference/user_preference.dart';
 
-
 class BaseClient {
   static const _connectionTimeOut = Duration(milliseconds: 30000);
   static const _recieveTimeOut = Duration(milliseconds: 30000);
@@ -62,7 +61,7 @@ class BaseClient {
     if (error == true || error is int) {
       final errMsg = res['error'];
 
-      return handler.reject(DioError(
+      return handler.reject(DioException(
         requestOptions: response.requestOptions,
         error: InvalidRequest(message: errMsg),
         type: DioErrorType.badResponse,
@@ -72,7 +71,7 @@ class BaseClient {
   }
 
   static void errorResponseHandler(
-    DioError error,
+    DioException error,
     ErrorInterceptorHandler handler,
   ) {
     final response = error.response?.data;
@@ -84,16 +83,15 @@ class BaseClient {
     if (errorObject is Map<String, dynamic>) {
       message =
           errorObject["messages"]["error"] ?? errorObject['No order found'];
-      
     }
 
     if (error.error is SocketException) {
       throw ConnectionLostException();
     }
 
-    if (error.type == DioErrorType.connectionTimeout ||
-        error.type == DioErrorType.receiveTimeout ||
-        error.type == DioErrorType.sendTimeout) {
+    if (error.type == DioExceptionType.connectionTimeout ||
+        error.type == DioExceptionType.receiveTimeout ||
+        error.type == DioExceptionType.sendTimeout) {
       throw TimeOutException();
     }
 

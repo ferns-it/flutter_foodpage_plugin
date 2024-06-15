@@ -5,7 +5,7 @@ import '../../models/dishes/dishes_data.dart';
 import '../base_client.dart';
 
 class DishesService {
-    static Future<List<DishData>> fetchAllDishes() async {
+  static Future<List<DishData>> fetchAllDishes() async {
     final response =
         await BaseClient.get(api: ApiEndpoints.listAllDishes, needAuth: true);
     if (response == null) return <DishData>[];
@@ -15,5 +15,4 @@ class DishesService {
     }).toList();
     return dishList;
   }
-  
 }

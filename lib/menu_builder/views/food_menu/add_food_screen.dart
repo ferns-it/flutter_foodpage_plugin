@@ -646,19 +646,18 @@ class _BuildAllergensWidget extends StatelessWidget {
               spacing: 8.0,
               runSpacing: 0.0,
               children: foodAllergens.map((item) {
-                final backgroundColor =
-                    MenuBuilderColors.kPrimaryColor.withOpacity(
+                final backgroundColor = MenuBuilderColors.kGrey.withOpacity(
                   0.1,
                 );
                 return FilterChip(
                   label: Text(item),
-                  selected: false,
+                  selected: true,
                   selectedColor: backgroundColor,
                   backgroundColor: backgroundColor,
                   labelStyle: textTheme.titleSmall!.copyWith(
-                    color: MenuBuilderColors.kPrimaryColor,
+                    color: Colors.grey.shade600,
                   ),
-                  checkmarkColor: MenuBuilderColors.kPrimaryColor,
+                  checkmarkColor: Colors.grey.shade600,
                   onSelected: (_) {},
                 );
               }).toList(),
@@ -768,15 +767,18 @@ class _BuildMasterModifiersWidget extends StatelessWidget {
               spacing: 8.0,
               runSpacing: 0.0,
               children: List.generate(20, (_) {
+                final backgroundColor = MenuBuilderColors.kGrey.withOpacity(
+                  0.1,
+                );
                 return FilterChip(
                   label: const Text("Test"),
-                  selected: false,
-                  selectedColor: MenuBuilderColors.kBlue.withOpacity(0.15),
-                  backgroundColor: MenuBuilderColors.kBlue.withOpacity(0.15),
+                  selected: true,
+                  selectedColor: backgroundColor,
+                  backgroundColor: backgroundColor,
                   labelStyle: textTheme.titleSmall!.copyWith(
-                    color: MenuBuilderColors.kBlue,
+                    color: Colors.grey.shade600,
                   ),
-                  checkmarkColor: MenuBuilderColors.kBlue,
+                  checkmarkColor: Colors.grey.shade600,
                   onSelected: (_) {},
                 );
               }),

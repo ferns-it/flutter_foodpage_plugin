@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_collection_model.dart';
 
 import '../../core/utils/ui_utils.dart';
 
 class FoodDetailsTile extends StatelessWidget {
-  const FoodDetailsTile({super.key});
+  const FoodDetailsTile({super.key, required this.dish});
+
+  final DishDetails dish;
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +22,14 @@ class FoodDetailsTile extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Image.network(
-                "https://ferns.uk/foodpage/uploads/1631879331/1631879331.png",
+                dish.photo,
                 height: 60,
+                errorBuilder: (BuildContext context, _, __) {
+                  return Image.network(
+                    'https://theme-assets.getbento.com/sensei/e439fc7.sensei/assets/images/catering-item-placeholder-704x520.png',
+                    height: 60,
+                  );
+                },
               ),
             ),
             horizontalSpaceSmall,
@@ -27,13 +37,13 @@ class FoodDetailsTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("Noodles", style: textTheme.titleMedium),
+                  Text(dish.name, style: textTheme.titleMedium),
                   verticalSpaceTiny,
                   Row(
                     children: <Widget>[
                       Flexible(
                         child: Text(
-                          "Maggi is an international brand of seasonings, instant soups",
+                          removeHtmlTags(dish.description),
                           style: textTheme.bodyMedium!.copyWith(
                             color: Colors.grey.shade500,
                           ),
