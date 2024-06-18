@@ -2,15 +2,41 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_collection_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
-class FoodDetailsSideSheetWidget extends StatelessWidget {
+import '../../../controllers/dishes/dishes_controller.dart';
+import '../../../core/utils/helper_utils.dart';
+
+class FoodDetailsSideSheetWidget extends StatefulWidget {
   const FoodDetailsSideSheetWidget({super.key});
+
+  @override
+  State<FoodDetailsSideSheetWidget> createState() =>
+      _FoodDetailsSideSheetWidgetState();
+}
+
+class _FoodDetailsSideSheetWidgetState
+    extends State<FoodDetailsSideSheetWidget> {
+  @override
+  void initState() {
+   
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
+
+    final controller = context.watch<DishesController>();
+
+    if (controller.selectedDish == null) {
+      return const SizedBox();
+    }
+
     return Theme(
       data: Theme.of(context).copyWith(
         dividerColor: Colors.transparent,
@@ -77,9 +103,10 @@ class FoodDetailsSideSheetWidget extends StatelessWidget {
                           width: size.width * 0.15,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
-                            image: const DecorationImage(
+                            image: DecorationImage(
                               image: NetworkImage(
-                                  "https://ferns.uk/foodpage/uploads/1631879331/1631879331.png"),
+                                controller.selectedDish!.photo,
+                              ),
                               fit: BoxFit.fill,
                             ),
                           ),
@@ -91,7 +118,7 @@ class FoodDetailsSideSheetWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Text("Chicken Noodles",
+                            Text(controller.selectedDish!.name,
                                 style: textTheme.titleMedium),
                             horizontalSpaceSmall,
                             const Icon(
@@ -110,42 +137,65 @@ class FoodDetailsSideSheetWidget extends StatelessWidget {
                             segments: [
                               ButtonSegment(
                                 value: "Online",
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: MenuBuilderColors.kMaterialRed,
-                                ),
+                                icon: !controller.selectedDish!.onlineEnabled
+                                    ? const Icon(
+                                        Icons.close,
+                                        color: MenuBuilderColors.kMaterialRed,
+                                      )
+                                    : const Icon(
+                                        Icons.check,
+                                        color: MenuBuilderColors.kSuccessGreen2,
+                                      ),
                                 label: Text(
                                   "Online",
                                   style: textTheme.labelLarge!.copyWith(
-                                    color: MenuBuilderColors.kMaterialRed,
+                                    color:
+                                        !controller.selectedDish!.onlineEnabled
+                                            ? MenuBuilderColors.kMaterialRed
+                                            : MenuBuilderColors.kSuccessGreen2,
                                   ),
                                 ),
                                 tooltip: "Online Status",
                               ),
                               ButtonSegment(
                                 value: "DineIn",
-                                icon: const Icon(
-                                  Icons.check,
-                                  color: MenuBuilderColors.kSuccessGreen2,
-                                ),
+                                icon: !controller.selectedDish!.diningEnabled
+                                    ? const Icon(
+                                        Icons.close,
+                                        color: MenuBuilderColors.kMaterialRed,
+                                      )
+                                    : const Icon(
+                                        Icons.check,
+                                        color: MenuBuilderColors.kSuccessGreen2,
+                                      ),
                                 label: Text(
                                   "Dine In",
                                   style: textTheme.labelLarge!.copyWith(
-                                    color: MenuBuilderColors.kSuccessGreen2,
+                                    color:
+                                        !controller.selectedDish!.diningEnabled
+                                            ? MenuBuilderColors.kMaterialRed
+                                            : MenuBuilderColors.kSuccessGreen2,
                                   ),
                                 ),
                                 tooltip: "DineIn Status",
                               ),
                               ButtonSegment(
                                 value: "Active",
-                                icon: const Icon(
-                                  Icons.check,
-                                  color: MenuBuilderColors.kSuccessGreen2,
-                                ),
+                                icon: !controller.selectedDish!.active
+                                    ? const Icon(
+                                        Icons.close,
+                                        color: MenuBuilderColors.kMaterialRed,
+                                      )
+                                    : const Icon(
+                                        Icons.check,
+                                        color: MenuBuilderColors.kSuccessGreen2,
+                                      ),
                                 label: Text(
                                   "Active",
                                   style: textTheme.labelLarge!.copyWith(
-                                    color: MenuBuilderColors.kSuccessGreen2,
+                                    color: !controller.selectedDish!.active
+                                        ? MenuBuilderColors.kMaterialRed
+                                        : MenuBuilderColors.kSuccessGreen2,
                                   ),
                                 ),
                                 tooltip: "Active Status",
@@ -172,10 +222,16 @@ class FoodDetailsSideSheetWidget extends StatelessWidget {
                         title: "Description",
                         children: [
                           const Divider(),
-                          Text(
-                            "Noodles are a type of food made from unleavened dough which is either rolled flat and cut, stretched, or extruded, into long strips or strings. Noodles are a staple food in many cultures and made into a variety of shapes. The most common noodles are either those derived from Chinese cuisine or Italian cuisine.",
-                            style: textTheme.bodySmall,
-                            textAlign: TextAlign.justify,
+                          verticalSpaceSmall,
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              removeHtmlTags(
+                                controller.selectedDish!.description,
+                              ),
+                              style: textTheme.bodySmall,
+                              textAlign: TextAlign.justify,
+                            ),
                           ),
                         ],
                       ),
@@ -185,8 +241,11 @@ class FoodDetailsSideSheetWidget extends StatelessWidget {
                         icon: FluentIcons.info_20_regular,
                         title: "Basic Info",
                         children: [
-                          _buildInfoRow(context, FluentIcons.food_20_regular,
-                              "Vegetable Noodles"),
+                          _buildInfoRow(
+                            context,
+                            FluentIcons.food_20_regular,
+                            controller.selectedDish!.name,
+                          ),
                           verticalSpaceSmall,
                           _buildInfoRow(
                             context,
@@ -195,10 +254,16 @@ class FoodDetailsSideSheetWidget extends StatelessWidget {
                           ),
                           verticalSpaceSmall,
                           _buildInfoRow(
-                              context, FluentIcons.money_20_regular, "£30.00"),
+                            context,
+                            FluentIcons.money_20_regular,
+                            controller.selectedDish!.price,
+                          ),
                           verticalSpaceSmall,
-                          _buildInfoRow(context, FluentIcons.stack_20_regular,
-                              "Unlimited Stock"),
+                          _buildInfoRow(
+                            context,
+                            FluentIcons.stack_20_regular,
+                            "Unlimited Stock",
+                          ),
                         ],
                       ),
                       verticalSpaceRegular,

@@ -36,7 +36,7 @@ class DishDetails {
   final String activeStatus;
   final String price;
   final String priceValue;
-  final List<Categorie> categories;
+  final List<Category> categories;
   DishDetails({
     required this.pID,
     required this.shopID,
@@ -70,7 +70,7 @@ class DishDetails {
     String? activeStatus,
     String? price,
     String? priceValue,
-    List<Categorie>? categories,
+    List<Category>? categories,
   }) {
     return DishDetails(
       pID: pID ?? this.pID,
@@ -127,13 +127,17 @@ class DishDetails {
       activeStatus: map['activeStatus'] as String,
       price: map['price'] as String,
       priceValue: map['priceValue'] as String,
-      categories: List<Categorie>.from(
-        (map['categories'] ?? []).map<Categorie>(
-          (x) => Categorie.fromMap(x as Map<String, dynamic>),
+      categories: List<Category>.from(
+        (map['categories'] ?? []).map<Category>(
+          (x) => Category.fromMap(x as Map<String, dynamic>),
         ),
       ),
     );
   }
+
+  bool get onlineEnabled => online == "Yes";
+  bool get diningEnabled => dining == "Yes";
+  bool get active => activeStatus == "Yes";
 
   String toJson() => json.encode(toMap());
 
@@ -186,19 +190,19 @@ class DishDetails {
   }
 }
 
-class Categorie {
+class Category {
   final String cID;
   final String name;
-  Categorie({
+  Category({
     required this.cID,
     required this.name,
   });
 
-  Categorie copyWith({
+  Category copyWith({
     String? cID,
     String? name,
   }) {
-    return Categorie(
+    return Category(
       cID: cID ?? this.cID,
       name: name ?? this.name,
     );
@@ -211,8 +215,8 @@ class Categorie {
     };
   }
 
-  factory Categorie.fromMap(Map<String, dynamic> map) {
-    return Categorie(
+  factory Category.fromMap(Map<String, dynamic> map) {
+    return Category(
       cID: map['cID'] as String,
       name: map['name'] as String,
     );
@@ -220,14 +224,14 @@ class Categorie {
 
   String toJson() => json.encode(toMap());
 
-  factory Categorie.fromJson(String source) =>
-      Categorie.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Category.fromJson(String source) =>
+      Category.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() => 'Categorie(cID: $cID, name: $name)';
 
   @override
-  bool operator ==(covariant Categorie other) {
+  bool operator ==(covariant Category other) {
     if (identical(this, other)) return true;
 
     return other.cID == cID && other.name == name;

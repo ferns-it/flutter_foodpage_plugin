@@ -213,6 +213,7 @@ class BaseClient {
   //POST
   static Future<String?> post({
     bool needAuth = false,
+    bool dataKeyChecking = false,
     String? baseUrl,
     String? dataKey,
     required String api,
@@ -226,6 +227,7 @@ class BaseClient {
     var headers = <String, dynamic>{
       'content-type': contentType,
       'dataKey': dataKey,
+      'dataKeyChecking': dataKeyChecking,
     };
 
     if (additionalHeaders != null) {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/base_client.dart';
 
 import '../../constants/api_endpoints.dart';
@@ -16,5 +17,16 @@ class DishesService {
       return DishDetails.fromMap(e);
     }).toList();
     return DishCollectionModel(dishes: dishes);
+  }
+
+  static Future<DishViewDetailsModel?> getDishDetails(String dishId) async {
+    final dishDetailsView = await BaseClient.post(
+      needAuth: true,
+      api: ApiEndpoints.productDetailsView,
+      dataKeyChecking: true,
+      dataKey: "productData",
+    );
+    if (dishDetailsView == null) return null;
+    return DishViewDetailsModel.fromJson(dishDetailsView);
   }
 }
