@@ -330,6 +330,9 @@ class VariationData {
 
   String toJson() => json.encode(toMap());
 
+  String get formattedAllergens =>
+      allergens.map((e) => e.name).toList().join(", ");
+
   factory VariationData.fromJson(String source) =>
       VariationData.fromMap(json.decode(source) as Map<String, dynamic>);
 

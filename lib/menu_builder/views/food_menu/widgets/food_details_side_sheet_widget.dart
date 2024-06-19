@@ -4,9 +4,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-
+import 'package:collection/collection.dart';
 import '../../../controllers/dishes/dishes_controller.dart';
 import '../../../core/utils/helper_utils.dart';
 import '../../../services/app_exception/app_exception.dart';
@@ -268,18 +269,11 @@ class _FoodDetailsSideSheetWidgetState
                               FluentIcons.food_20_regular,
                               controller.selectedDish!.name,
                             ),
-                            verticalSpaceSmall,
-                            _buildInfoRow(
-                              context,
-                              FluentIcons.money_20_regular,
-                              controller.selectedDish!.price,
-                            ),
-                            verticalSpaceSmall,
-                            _buildInfoRow(
-                              context,
-                              FluentIcons.stack_20_regular,
-                              "Unlimited Stock",
-                            ),
+                            verticalSpaceRegular,
+                            ...data.variationData.mapIndexed((index, data) {
+                              return _buildVariationDetailsTile(
+                                  index + 1, data);
+                            }).toList(),
                           ],
                         ),
                         verticalSpaceRegular,
@@ -389,8 +383,9 @@ class _FoodDetailsSideSheetWidgetState
   Widget _buildInfoRow(
     BuildContext context,
     IconData icon,
-    String text,
-  ) {
+    String text, {
+    bool smallText = false,
+  }) {
     final textTheme = Theme.of(context).textTheme;
     return Row(
       children: <Widget>[
@@ -399,38 +394,16 @@ class _FoodDetailsSideSheetWidgetState
           color: Colors.grey.shade700,
         ),
         horizontalSpaceSmall,
-        Text(
-          text,
-          style: textTheme.bodyMedium!.copyWith(
-            color: Colors.grey.shade700,
-          ),
-        ),
-      ],
-    );
-  }
-
-  TableRow _buildTableRow(BuildContext context, String day, String timing) {
-    final textTheme = Theme.of(context).textTheme;
-    return TableRow(
-      children: <Widget>[
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Text(
-              day,
-              style:
-                  textTheme.bodyMedium!.copyWith(color: Colors.grey.shade500),
-            ),
-          ),
-        ),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Text(
-              timing,
-              style:
-                  textTheme.bodyMedium!.copyWith(color: Colors.grey.shade500),
-            ),
+        Flexible(
+          child: Text(
+            text,
+            style: smallText
+                ? textTheme.bodySmall!.copyWith(
+                    color: Colors.grey.shade700,
+                  )
+                : textTheme.bodyMedium!.copyWith(
+                    color: Colors.grey.shade700,
+                  ),
           ),
         ),
       ],
@@ -475,6 +448,67 @@ class _FoodDetailsSideSheetWidgetState
           ],
         )
       ],
+    );
+  }
+
+  Widget _buildVariationDetailsTile(int number, VariationData data) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10.0,
+          vertical: 8.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text("Variation $number"),
+            const Divider(height: 20.0),
+            _buildInfoRow(
+              context,
+              FluentIcons.star_20_regular,
+              data.name,
+              smallText: true,
+            ),
+            verticalSpaceSmall,
+            _buildInfoRow(
+              context,
+              FluentIcons.money_20_regular,
+              data.displayPrice,
+              smallText: true,
+            ),
+            if (data.ingredients.isNotEmpty) ...[
+              verticalSpaceSmall,
+              _buildInfoRow(
+                context,
+                FluentIcons.book_star_20_regular,
+                data.ingredients.trimRight()..trimLeft(),
+                smallText: true,
+              ),
+            ],
+            if (data.allergens.isNotEmpty) ...[
+              verticalSpaceSmall,
+              _buildInfoRow(
+                context,
+                FluentIcons.warning_20_regular,
+                data.formattedAllergens,
+                smallText: true,
+              ),
+            ],
+            verticalSpaceSmall,
+            _buildInfoRow(
+              context,
+              FluentIcons.stack_20_regular,
+              "${data.stock} Stocks Available",
+              smallText: true,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
