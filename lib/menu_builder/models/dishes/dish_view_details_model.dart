@@ -3,12 +3,14 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import '../../core/utils/helper_utils.dart';
+
 class DishViewDetailsModel {
   final BasicData basicData;
   final List<VariationData> variationData;
   final List<SelectedCategorie> selectedCategories;
-  final List<String> selectedAddonGroups;
-  final List<String> selectedMenuList;
+  final List<dynamic> selectedAddonGroups;
+  final List<dynamic> selectedMenuList;
   final Availability availability;
   DishViewDetailsModel({
     required this.basicData,
@@ -52,19 +54,18 @@ class DishViewDetailsModel {
     return DishViewDetailsModel(
       basicData: BasicData.fromMap(map['basicData'] as Map<String, dynamic>),
       variationData: List<VariationData>.from(
-        (map['variationData'] ?? []).map<VariationData>(
-          (x) => VariationData.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+          (map['variationData'] ?? []).map<VariationData>(
+        (x) => VariationData.fromMap(x as Map<String, dynamic>),
+      )),
       selectedCategories: List<SelectedCategorie>.from(
         (map['selectedCategories'] ?? []).map<SelectedCategorie>(
           (x) => SelectedCategorie.fromMap(x as Map<String, dynamic>),
         ),
       ),
       selectedAddonGroups:
-          List<String>.from((map['selectedAddonGroups'] as List<String>)),
+          List<dynamic>.from((map['selectedAddonGroups'] ?? [])),
       selectedMenuList:
-          List<String>.from((map['selectedMenuList'] as List<String>)),
+          List<dynamic>.from((map['selectedMenuList'] as List<dynamic>)),
       availability:
           Availability.fromMap(map['availability'] as Map<String, dynamic>),
     );
@@ -79,6 +80,9 @@ class DishViewDetailsModel {
   String toString() {
     return 'DishViewDetailsModel(basicData: $basicData, variationData: $variationData, selectedCategories: $selectedCategories, selectedAddonGroups: $selectedAddonGroups, selectedMenuList: $selectedMenuList, availability: $availability)';
   }
+
+  List<String> get formattedTiming =>
+      availability.timing.map((e) => e.formatTime).toList();
 
   @override
   bool operator ==(covariant DishViewDetailsModel other) {
@@ -249,8 +253,8 @@ class VariationData {
   final String isUnlimitedStock;
   final String stock;
   final List<Allergen> allergens;
-  final List<String> selectedallergens;
-  final List<String> allergensMaster;
+  final List<dynamic> selectedallergens;
+  final List<dynamic> allergensMaster;
   VariationData({
     required this.pvID,
     required this.name,
@@ -315,14 +319,12 @@ class VariationData {
       isUnlimitedStock: map['isUnlimitedStock'] as String,
       stock: map['stock'] as String,
       allergens: List<Allergen>.from(
-        (map['allergens'] as List<int>).map<Allergen>(
+        (map['allergens'] ?? []).map<Allergen>(
           (x) => Allergen.fromMap(x as Map<String, dynamic>),
         ),
       ),
-      selectedallergens:
-          List<String>.from((map['selectedallergens'] as List<String>)),
-      allergensMaster:
-          List<String>.from((map['allergensMaster'] as List<String>)),
+      selectedallergens: List<dynamic>.from((map['selectedallergens'] ?? [])),
+      allergensMaster: List<dynamic>.from((map['allergensMaster'] ?? [])),
     );
   }
 
@@ -471,7 +473,7 @@ class SelectedCategorie {
 
 class Availability {
   final bool isAllday;
-  final List<String> days;
+  final List<dynamic> days;
   final List<Timing> timing;
   Availability({
     required this.isAllday,
@@ -502,9 +504,9 @@ class Availability {
   factory Availability.fromMap(Map<String, dynamic> map) {
     return Availability(
       isAllday: map['isAllday'] as bool,
-      days: List<String>.from((map['days'] as List<String>)),
+      days: List<dynamic>.from((map['days'] as List<dynamic>)),
       timing: List<Timing>.from(
-        (map['timing'] as List<int>).map<Timing>(
+        (map['timing'] ?? []).map<Timing>(
           (x) => Timing.fromMap(x as Map<String, dynamic>),
         ),
       ),
@@ -572,6 +574,9 @@ class Timing {
 
   @override
   String toString() => 'Timing(startTime: $startTime, endTime: $endTime)';
+
+  String get formatTime =>
+      '${convertToAMPM(startTime)} to ${convertToAMPM(endTime)}';
 
   @override
   bool operator ==(covariant Timing other) {

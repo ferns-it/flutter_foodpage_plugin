@@ -27,3 +27,15 @@ String formatDoubleWithThousandsSeparator(double value) {
   final formatter = NumberFormat("#,##0.00", "en_US");
   return formatter.format(value);
 }
+
+String convertToAMPM(String time24) {
+  List<String> parts = time24.split(":");
+  int hour = int.parse(parts[0]);
+  int minute = int.parse(parts[1]);
+
+  String period = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12;
+  hour = hour == 0 ? 12 : hour; // Adjust for 12-hour format
+
+  return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+}

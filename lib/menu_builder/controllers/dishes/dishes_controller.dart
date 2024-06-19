@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
@@ -63,10 +65,13 @@ class DishesController extends ChangeNotifier with BaseController {
       notifyListeners();
 
       final response = await DishesService.getDishDetails(dishId);
+      log(response.toString());
       _viewDishDetails = response != null
           ? APIResponse.completed(response)
           : throwNotFoundException<DishViewDetailsModel>();
       notifyListeners();
+
+      inspect(_viewDishDetails);
     } on AppExceptions catch (error) {
       _viewDishDetails = APIResponse.error(error.message, exception: error);
       notifyListeners();
