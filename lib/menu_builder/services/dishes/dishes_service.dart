@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/base_client.dart';
@@ -20,13 +21,14 @@ class DishesService {
   }
 
   static Future<DishViewDetailsModel?> getDishDetails(String dishId) async {
-    final dishDetailsView = await BaseClient.post(
+    final dishDetailsView = await BaseClient.get(
       needAuth: true,
-      api: ApiEndpoints.productDetailsView,
+      api: ApiEndpoints.productDetailsView + dishId,
       dataKeyChecking: true,
       dataKey: "productData",
     );
     if (dishDetailsView == null) return null;
+    inspect(jsonDecode(dishDetailsView));
     return DishViewDetailsModel.fromJson(dishDetailsView);
   }
 }
