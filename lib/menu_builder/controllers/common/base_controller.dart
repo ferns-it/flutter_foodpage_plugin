@@ -2,7 +2,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.
 import 'package:flutter_foodpage_plugin/menu_builder/services/app_exception/app_exception.dart';
 
 mixin BaseController {
-  void init();
+  Future<void> init();
 
   APIResponse<T> throwNotFoundException<T>() {
     return APIResponse.error(
