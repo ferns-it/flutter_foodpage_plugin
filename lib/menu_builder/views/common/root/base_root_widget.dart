@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../controllers/core/providers_list.dart';
 import '../../../core/constants/menu_builder_theme.dart';
 import '../../../core/utils/ui_utils.dart';
 import '../header/header_widget.dart';
@@ -21,12 +20,6 @@ class BaseRootWidget extends StatefulWidget {
 }
 
 class _BaseRootWidgetState extends State<BaseRootWidget> {
-  @override
-  void initState() {
-    ProviderRegistrar.initializeAllProviders(context);
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Theme(

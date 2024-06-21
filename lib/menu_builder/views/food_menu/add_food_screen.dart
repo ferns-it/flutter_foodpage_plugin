@@ -1,15 +1,36 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_variation_modifiers_side_sheet.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/constants/menu_builder_app_colors.dart';
 import '../../widgets/custom_rounded_textfield.dart';
 
-class AddFoodScreen extends StatelessWidget {
+class AddFoodScreen extends StatefulWidget {
   const AddFoodScreen({super.key});
+
+  @override
+  State<AddFoodScreen> createState() => _AddFoodScreenState();
+}
+
+class _AddFoodScreenState extends State<AddFoodScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DishesController>().initalizeAllFormControllers();
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    context.read<DishesController>().disposeAllFormControllers();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
