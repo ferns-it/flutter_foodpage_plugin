@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_data.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/base_client.dart';
 
 import '../../constants/api_endpoints.dart';
+import '../../models/dishes/add_dish_initialise_data_model.dart';
 import '../../models/dishes/dish_collection_model.dart';
 
 class DishesService {
@@ -28,7 +29,28 @@ class DishesService {
       dataKey: "productData",
     );
     if (dishDetailsView == null) return null;
-    inspect(jsonDecode(dishDetailsView));
     return DishViewDetailsModel.fromJson(dishDetailsView);
+  }
+
+  static Future<Map<String, dynamic>?> addNewDish(AddDishData data) async {
+    final response = await BaseClient.post(
+      api: ApiEndpoints.addNewProduct,
+      needAuth: true,
+      data: data.toJson(),
+    );
+    if (response == null) return null;
+    final enCodeData = jsonDecode(response);
+    return enCodeData;
+  }
+
+  static Future<AddDishInitializeDataModel?>
+      initializeAddDishRequiredData() async {
+    final response = await BaseClient.get(
+      api: ApiEndpoints.initialiseAddDish,
+      needAuth: true,
+    );
+    if (response == null) return null;
+    final responseData = AddDishInitializeDataModel.fromJson(response);
+    return responseData;
   }
 }
