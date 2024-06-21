@@ -181,6 +181,22 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  flutter_gen:
+    dependency: transitive
+    description:
+      name: flutter_gen
+      sha256: a518a4a319511346ace92e550e14df35797f15d56ff1c79dc481c069d063259b
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.5.0+1"
+  flutter_gen_core:
+    dependency: transitive
+    description:
+      name: flutter_gen_core
+      sha256: b9894396b2a790cc2d6eb3ed86e5e113aaed993765b21d4b981c9da4476e0f52
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.5.0+1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -223,6 +239,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.6"
+  glob:
+    dependency: transitive
+    description:
+      name: glob
+      sha256: "0e7014b3b7d4dac1ca4d6114f82bf1782ee86745b9b42a92c9289c23d8a0ab63"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
+  google_fonts:
+    dependency: transitive
+    description:
+      name: google_fonts
+      sha256: b1ac0fe2832c9cc95e5e88b57d627c5e68c223b9657f4b96e1487aa9098c7b82
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.1"
+  hashcodes:
+    dependency: transitive
+    description:
+      name: hashcodes
+      sha256: "80f9410a5b3c8e110c4b7604546034749259f5d6dcca63e0d3c17c9258f1a651"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  html:
+    dependency: transitive
+    description:
+      name: html
+      sha256: "3a7812d5bcd2894edf53dfaf8cd640876cf6cef50a8f238745c8b8120ea74d3a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.4"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      sha256: "761a297c042deedc1ffbb156d6e2af13886bb305c2a343a4d972504cd67dd938"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   http_parser:
     dependency: transitive
     description:

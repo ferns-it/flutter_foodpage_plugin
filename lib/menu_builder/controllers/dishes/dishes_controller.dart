@@ -52,32 +52,32 @@ class DishesController extends ChangeNotifier with BaseController {
   void onSelectDish(int index) => _selectedDishIndex = index;
 
   Future<void> getDishDetails() async {
-    try {
-      if (selectedDish == null) {
-        _viewDishDetails = throwNotFoundException<DishViewDetailsModel>();
-        notifyListeners();
-        return;
-      }
-
-      final dishId = selectedDish!.pID;
-
-      _viewDishDetails = APIResponse.loading();
+    // try {
+    if (selectedDish == null) {
+      _viewDishDetails = throwNotFoundException<DishViewDetailsModel>();
       notifyListeners();
-
-      final response = await DishesService.getDishDetails(dishId);
-      log(response.toString());
-      _viewDishDetails = response != null
-          ? APIResponse.completed(response)
-          : throwNotFoundException<DishViewDetailsModel>();
-      notifyListeners();
-
-      inspect(_viewDishDetails);
-    } on AppExceptions catch (error) {
-      _viewDishDetails = APIResponse.error(error.message, exception: error);
-      notifyListeners();
-    } catch (e) {
-      _viewDishDetails = throwUnknownErrorException<DishViewDetailsModel>();
-      notifyListeners();
+      return;
     }
+
+    final dishId = selectedDish!.pID;
+
+    _viewDishDetails = APIResponse.loading();
+    notifyListeners();
+
+    final response = await DishesService.getDishDetails(dishId);
+    log(response.toString());
+    _viewDishDetails = response != null
+        ? APIResponse.completed(response)
+        : throwNotFoundException<DishViewDetailsModel>();
+    notifyListeners();
+
+    inspect(_viewDishDetails);
+    // } on AppExceptions catch (error) {
+    //   _viewDishDetails = APIResponse.error(error.message, exception: error);
+    //   notifyListeners();
+    // } catch (e) {
+    //   _viewDishDetails = throwUnknownErrorException<DishViewDetailsModel>();
+    //   notifyListeners();
+    // }
   }
 }
