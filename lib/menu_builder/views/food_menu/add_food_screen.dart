@@ -189,16 +189,22 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                   ),
                                   const Divider(),
                                   verticalSpaceRegular,
-                                  SizedBox(
-                                    height: mq.size.height * 0.3,
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight: mq.size.height * 0.3,
+                                    ),
                                     child: AlignedGridView.count(
                                       crossAxisCount: 2,
-                                      itemCount: 3,
+                                      itemCount: controller
+                                          .variationsFormEntries.length,
                                       mainAxisSpacing: 14.0,
                                       crossAxisSpacing: 14.0,
+                                      shrinkWrap: true,
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) {
+                                        final entry = controller
+                                            .variationsFormEntries[index];
                                         return ListTile(
                                           shape: RoundedRectangleBorder(
                                             side: BorderSide(
@@ -207,11 +213,13 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(6.0),
                                           ),
-                                          title: const Text(
-                                            "Chicken Biriyani 1/2",
+                                          title: Text(
+                                            (entry["name"]
+                                                    as TextEditingController)
+                                                .text,
                                           ),
                                           subtitle: Text(
-                                            "£100.00",
+                                            "£${(entry["price"] as TextEditingController).text}",
                                             style:
                                                 textTheme.bodyLarge!.copyWith(
                                               color: Colors.grey.shade400,
