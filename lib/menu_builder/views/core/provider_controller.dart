@@ -8,11 +8,13 @@ abstract class ProviderController<T extends ChangeNotifier>
 
 abstract class ProviderControllerState<T extends ChangeNotifier,
     W extends ProviderController<T>> extends State<W> {
-  late T controller;
+  late T wController;
+  late T rController;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    controller = Provider.of<T>(context);
+    wController = context.watch<T>();
+    rController = context.read<T>();
   }
 }
