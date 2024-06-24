@@ -272,7 +272,9 @@ class _FoodDetailsSideSheetWidgetState
                             verticalSpaceRegular,
                             ...data.variationData.mapIndexed((index, data) {
                               return _buildVariationDetailsTile(
-                                  index + 1, data);
+                                index + 1,
+                                data,
+                              );
                             }).toList(),
                           ],
                         ),
@@ -281,7 +283,23 @@ class _FoodDetailsSideSheetWidgetState
                           context,
                           icon: FluentIcons.app_folder_20_regular,
                           title: "Categories",
-                          children: const <Widget>[],
+                          children: data.formattedCategories.map((category) {
+                            return Align(
+                              alignment: Alignment.centerLeft,
+                              child: Chip(
+                                label: Text(
+                                  category,
+                                  style: textTheme.labelMedium,
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                backgroundColor: MenuBuilderColors.kWhite,
+                                side: const BorderSide(
+                                  color: MenuBuilderColors.kLightGrey,
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
                         verticalSpaceRegular,
                         _buildExpansionTileContainer(
@@ -295,23 +313,25 @@ class _FoodDetailsSideSheetWidgetState
                           context,
                           icon: FluentIcons.app_folder_20_regular,
                           title: "Menu Group",
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: FilterChip(
-                                label: Text("Default",
-                                    style: textTheme.labelMedium),
-                                onSelected: (_) {},
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                showCheckmark: false,
-                                backgroundColor: MenuBuilderColors.kWhite,
-                                side: const BorderSide(
-                                  color: MenuBuilderColors.kLightGrey,
-                                ),
-                              ),
-                            )
-                          ],
+                          children: data.selectedMenuList.isEmpty
+                              ? <Widget>[
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: FilterChip(
+                                      label: Text("Default",
+                                          style: textTheme.labelMedium),
+                                      onSelected: (_) {},
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      showCheckmark: false,
+                                      backgroundColor: MenuBuilderColors.kWhite,
+                                      side: const BorderSide(
+                                        color: MenuBuilderColors.kLightGrey,
+                                      ),
+                                    ),
+                                  )
+                                ]
+                              : [],
                         ),
                         verticalSpaceRegular,
                         _buildExpansionTileContainer(

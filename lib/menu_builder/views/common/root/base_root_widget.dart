@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/core/menu_builder_dependency_registrar.dart';
 
 import '../../../core/constants/menu_builder_theme.dart';
 import '../../../core/utils/ui_utils.dart';
@@ -20,6 +21,14 @@ class BaseRootWidget extends StatefulWidget {
 }
 
 class _BaseRootWidgetState extends State<BaseRootWidget> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      MenuBuilderDependencyRegistrar.initializeAllProviders(context);
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Theme(

@@ -40,6 +40,67 @@ class DishesController extends ChangeNotifier with BaseController {
       ? _dishCollection.data!.dishes.elementAt(_selectedDishIndex)
       : null;
 
+  String? _dishType;
+  String get dishType => _dishType ?? "";
+
+  void onChangeDishType(String dishType) {
+    _dishType = dishType;
+    notifyListeners();
+  }
+
+  bool _onlineStatus = false;
+  bool _dineInStatus = false;
+  bool get onlineStatus => _onlineStatus;
+  bool get dineInStatus => _dineInStatus;
+
+  void onChangeOnlineStatus(bool status) {
+    _onlineStatus = status;
+    notifyListeners();
+  }
+
+  void onChangeDineInStatus(bool status) {
+    _dineInStatus = status;
+    notifyListeners();
+  }
+
+  List<AllergensInitialiseSubData> choosedAllergens = [];
+
+  void onChangeAllergensSelection(AllergensInitialiseSubData allergen) {
+    if (choosedAllergens.contains(allergen)) {
+      choosedAllergens.remove(allergen);
+      notifyListeners();
+      return;
+    }
+    choosedAllergens.add(allergen);
+    notifyListeners();
+  }
+
+  Map<String, dynamic> get variationFormEntry => {
+        "name": TextEditingController(),
+        "price": TextEditingController(),
+        "ingredients": TextEditingController(),
+        "allergens": <AllergensInitialiseSubData>[]
+      };
+
+  List<Map<String, dynamic>> variationsFormEntries = [
+    {
+      "name": TextEditingController(),
+      "price": TextEditingController(),
+      "ingredients": TextEditingController(),
+      "allergens": <AllergensInitialiseSubData>[]
+    }
+  ];
+
+  void addNewVariationFormEntry() {
+    variationsFormEntries.add(variationFormEntry);
+    notifyListeners();
+  }
+
+  void removeVariationFormEntry(int index) {
+    variationsFormEntries.removeAt(index);
+    notifyListeners();
+  }
+
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
   late TextEditingController nameController;
   late TextEditingController priceController;
@@ -54,8 +115,10 @@ class DishesController extends ChangeNotifier with BaseController {
 
   @override
   Future<void> init() async {
+    initalizeAllFormControllers();
     fetchDishes();
     initializeAddDishRequiredData();
+    _dishType = _addDishInitializeData?.dishtype.data.firstOrNull;
   }
 
   void initalizeAllFormControllers() {

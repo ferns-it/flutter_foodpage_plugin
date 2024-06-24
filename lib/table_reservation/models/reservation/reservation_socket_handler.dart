@@ -1,6 +1,6 @@
 import '../../../flutter_foodpage_plugin.dart';
 
-abstract class ReservationSocketHandler {
+abstract mixin class ReservationSocketHandler {
   void onSocketConnected();
   void onSocketDisconnected();
   void onSocketError(dynamic error);

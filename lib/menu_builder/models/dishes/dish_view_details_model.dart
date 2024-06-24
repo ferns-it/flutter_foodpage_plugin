@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 
@@ -51,12 +52,22 @@ class DishViewDetailsModel {
   }
 
   factory DishViewDetailsModel.fromMap(Map<String, dynamic> map) {
+    List<VariationData> variationDataList = [];
+    if (map['variationData'] is Map<String, dynamic>) {
+      variationDataList = [
+        VariationData.fromMap(map['variationData'] as Map<String, dynamic>)
+      ];
+    } else {
+      variationDataList = List<VariationData>.from(
+        (map['variationData'] ?? []).map<VariationData>(
+          (x) => VariationData.fromMap(x as Map<String, dynamic>),
+        ),
+      );
+    }
+
     return DishViewDetailsModel(
       basicData: BasicData.fromMap(map['basicData'] as Map<String, dynamic>),
-      variationData: List<VariationData>.from(
-          (map['variationData'] ?? []).map<VariationData>(
-        (x) => VariationData.fromMap(x as Map<String, dynamic>),
-      )),
+      variationData: variationDataList,
       selectedCategories: List<SelectedCategorie>.from(
         (map['selectedCategories'] ?? []).map<SelectedCategorie>(
           (x) => SelectedCategorie.fromMap(x as Map<String, dynamic>),
@@ -83,6 +94,9 @@ class DishViewDetailsModel {
 
   List<String> get formattedTiming =>
       availability.timing.map((e) => e.formatTime).toList();
+
+  List<String> get formattedCategories =>
+      selectedCategories.map((e) => e.cName).toList();
 
   @override
   bool operator ==(covariant DishViewDetailsModel other) {
@@ -310,9 +324,10 @@ class VariationData {
   }
 
   factory VariationData.fromMap(Map<String, dynamic> map) {
+    log(map.toString());
     return VariationData(
       pvID: map['pvID'] as String,
-      name: map['name'] as String,
+      name: map['name'] ?? "",
       price: map['price'] as String,
       displayPrice: map['displayPrice'] as String,
       ingredients: map['ingredients'] as String,

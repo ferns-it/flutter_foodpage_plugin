@@ -20,17 +20,15 @@ class AddFoodScreen extends StatefulWidget {
 class _AddFoodScreenState extends State<AddFoodScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DishesController>().initalizeAllFormControllers();
-    });
+    context.read<DishesController>().initalizeAllFormControllers();
     super.initState();
   }
 
-  @override
-  void dispose() {
-    context.read<DishesController>().disposeAllFormControllers();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   context.read<DishesController>().disposeAllFormControllers();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +52,11 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
           horizontal: 20.0,
           vertical: 18.0,
         );
+
+        final controller = context.watch<DishesController>();
+
+        final addDishInitializeData = controller.addDishInitializeData;
+
         return Scaffold(
           appBar: AppBar(title: const Text("Add Food Item")),
           endDrawer: Align(
@@ -69,403 +72,220 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
               ),
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: ListView(
-                    children: <Widget>[
-                      Card(
-                        child: Padding(
-                          padding: defaultCardPadding,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                "Basic Information",
-                                style: textTheme.titleMedium,
-                              ),
-                              verticalSpaceSmall,
-                              const Divider(),
-                              verticalSpaceRegular,
-                              CustomRoundedTextField.topText(
-                                hintText: "Enter dish name",
-                                topText: "Dish name",
-                                borderRadius: BorderRadius.circular(8.0),
-                                keyboardType: TextInputType.name,
-                                textInputAction: TextInputAction.next,
-                              ),
-                              verticalSpaceRegular,
-                              CustomRoundedTextField.topText(
-                                hintText: "Short note about dish..",
-                                topText: "Description",
-                                borderRadius: BorderRadius.circular(8.0),
-                                maxLines: 2,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.done,
-                              ),
-                              verticalSpaceMedium,
-                              const CustomRadioCheckboxGroup(
-                                title1: "Veg/Non Veg",
-                                title2: "Available On",
-                                options1: ["Veg", "Non Veg"],
-                                options2: ["Online", "Dine In"],
-                              ),
-                              verticalSpaceMedium,
-                              _BuildAllergensWidget()
-                            ],
-                          ),
-                        ),
-                      ),
-                      Card(
-                        child: Padding(
-                          padding: defaultCardPadding,
-                          child: Center(
+          body: Form(
+            key: controller.addNewDishFormKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: ListView(
+                      children: <Widget>[
+                        Card(
+                          child: Padding(
+                            padding: defaultCardPadding,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Variations",
-                                      style: textTheme.titleMedium,
-                                    ),
-                                    const Spacer(),
-                                    Builder(builder: (context) {
-                                      return OutlinedButton.icon(
-                                        onPressed: () {
-                                          Scaffold.of(context).openEndDrawer();
-                                        },
-                                        icon: const Icon(
-                                          FluentIcons.add_24_filled,
-                                        ),
-                                        label: const Text("Add Variation"),
-                                        style: OutlinedButton.styleFrom(
-                                          textStyle: textTheme.titleMedium,
-                                          foregroundColor:
-                                              MenuBuilderColors.kBlue,
-                                          backgroundColor: MenuBuilderColors
-                                              .kBlue
-                                              .withOpacity(0.1),
-                                          elevation: 0,
-                                          side: BorderSide(
-                                            width: 0.8,
-                                            color: MenuBuilderColors.kBlue
-                                                .withOpacity(0.3),
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ],
+                                Text(
+                                  "Basic Information",
+                                  style: textTheme.titleMedium,
                                 ),
+                                verticalSpaceSmall,
                                 const Divider(),
                                 verticalSpaceRegular,
-                                SizedBox(
-                                  height: mq.size.height * 0.3,
-                                  child: AlignedGridView.count(
-                                    crossAxisCount: 2,
-                                    itemCount: 3,
+                                CustomRoundedTextField.topText(
+                                  hintText: "Enter dish name",
+                                  topText: "Dish name",
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  keyboardType: TextInputType.name,
+                                  textInputAction: TextInputAction.next,
+                                  textEditingController:
+                                      controller.nameController,
+                                ),
+                                verticalSpaceRegular,
+                                CustomRoundedTextField.topText(
+                                  hintText: "Short note about dish..",
+                                  topText: "Description",
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  maxLines: 2,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.done,
+                                  textEditingController:
+                                      controller.descriptionController,
+                                ),
+                                verticalSpaceMedium,
+                                CustomRadioCheckboxGroup(
+                                  title1: "Veg/Non Veg",
+                                  title2: "Available On",
+                                  options1:
+                                      addDishInitializeData!.dishtype.data,
+                                  groupValue: controller.dishType,
+                                  options2: const ["Online", "Dine In"],
+                                  checkboxValues: [
+                                    controller.onlineStatus,
+                                    controller.dineInStatus
+                                  ],
+                                  onChangedCheckbox: (index, value) {
+                                    if (value == null) return;
+                                    if (index == 0) {
+                                      controller.onChangeOnlineStatus(value);
+                                    } else {
+                                      controller.onChangeDineInStatus(value);
+                                    }
+                                  },
+                                  onChangedRadio: (dishType) {
+                                    if (dishType == null) return;
+                                    controller.onChangeDishType(dishType);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Card(
+                          child: Padding(
+                            padding: defaultCardPadding,
+                            child: Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Variations",
+                                        style: textTheme.titleMedium,
+                                      ),
+                                      const Spacer(),
+                                      Builder(builder: (context) {
+                                        return OutlinedButton.icon(
+                                          onPressed: () {
+                                            Scaffold.of(context)
+                                                .openEndDrawer();
+                                          },
+                                          icon: const Icon(
+                                            FluentIcons.add_24_filled,
+                                          ),
+                                          label: const Text("Add Variation"),
+                                          style: OutlinedButton.styleFrom(
+                                            textStyle: textTheme.titleMedium,
+                                            foregroundColor:
+                                                MenuBuilderColors.kBlue,
+                                            backgroundColor: MenuBuilderColors
+                                                .kBlue
+                                                .withOpacity(0.1),
+                                            elevation: 0,
+                                            side: BorderSide(
+                                              width: 0.8,
+                                              color: MenuBuilderColors.kBlue
+                                                  .withOpacity(0.3),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ],
+                                  ),
+                                  const Divider(),
+                                  verticalSpaceRegular,
+                                  SizedBox(
+                                    height: mq.size.height * 0.3,
+                                    child: AlignedGridView.count(
+                                      crossAxisCount: 2,
+                                      itemCount: 3,
+                                      mainAxisSpacing: 14.0,
+                                      crossAxisSpacing: 14.0,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                              color: Colors.grey.shade300,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(6.0),
+                                          ),
+                                          title: const Text(
+                                            "Chicken Biriyani 1/2",
+                                          ),
+                                          subtitle: Text(
+                                            "£100.00",
+                                            style:
+                                                textTheme.bodyLarge!.copyWith(
+                                              color: Colors.grey.shade400,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Card(
+                          child: Padding(
+                            padding: defaultCardPadding,
+                            child: Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Choices & Addons",
+                                        style: textTheme.titleMedium,
+                                      ),
+                                      Builder(builder: (context) {
+                                        return OutlinedButton.icon(
+                                          onPressed: () {
+                                            Scaffold.of(context)
+                                                .openEndDrawer();
+                                          },
+                                          icon: const Icon(
+                                            FluentIcons.add_24_filled,
+                                          ),
+                                          label: const Text("Add Modifier"),
+                                          style: OutlinedButton.styleFrom(
+                                            textStyle: textTheme.titleMedium,
+                                            foregroundColor:
+                                                MenuBuilderColors.kOrange2,
+                                            backgroundColor: MenuBuilderColors
+                                                .kOrange2
+                                                .withOpacity(0.1),
+                                            elevation: 0,
+                                            side: BorderSide(
+                                              width: 0.8,
+                                              color: MenuBuilderColors.kOrange2
+                                                  .withOpacity(0.3),
+                                            ),
+                                          ),
+                                        );
+                                      })
+                                    ],
+                                  ),
+                                  const Divider(),
+                                  verticalSpaceRegular,
+                                  AlignedGridView.count(
+                                    crossAxisCount: 3,
+                                    itemCount: 4,
                                     mainAxisSpacing: 14.0,
                                     crossAxisSpacing: 14.0,
+                                    shrinkWrap: true,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
-                                      return ListTile(
-                                        shape: RoundedRectangleBorder(
-                                          side: BorderSide(
-                                            color: Colors.grey.shade300,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(6.0),
-                                        ),
-                                        title: const Text(
-                                          "Chicken Biriyani 1/2",
-                                        ),
-                                        subtitle: Text(
-                                          "£100.00",
-                                          style: textTheme.bodyLarge!.copyWith(
-                                            color: Colors.grey.shade400,
-                                          ),
-                                        ),
-                                      );
+                                      return const FoodModifiersDetailsWidget();
                                     },
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Card(
-                        child: Padding(
-                          padding: defaultCardPadding,
-                          child: Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Choices & Addons",
-                                      style: textTheme.titleMedium,
-                                    ),
-                                    Builder(builder: (context) {
-                                      return OutlinedButton.icon(
-                                        onPressed: () {
-                                          Scaffold.of(context).openEndDrawer();
-                                        },
-                                        icon: const Icon(
-                                          FluentIcons.add_24_filled,
-                                        ),
-                                        label: const Text("Add Modifier"),
-                                        style: OutlinedButton.styleFrom(
-                                          textStyle: textTheme.titleMedium,
-                                          foregroundColor:
-                                              MenuBuilderColors.kOrange2,
-                                          backgroundColor: MenuBuilderColors
-                                              .kOrange2
-                                              .withOpacity(0.1),
-                                          elevation: 0,
-                                          side: BorderSide(
-                                            width: 0.8,
-                                            color: MenuBuilderColors.kOrange2
-                                                .withOpacity(0.3),
-                                          ),
-                                        ),
-                                      );
-                                    })
-                                  ],
-                                ),
-                                const Divider(),
-                                verticalSpaceRegular,
-                                AlignedGridView.count(
-                                  crossAxisCount: 3,
-                                  itemCount: 4,
-                                  mainAxisSpacing: 14.0,
-                                  crossAxisSpacing: 14.0,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return const FoodModifiersDetailsWidget();
-                                  },
-                                ),
-                                verticalSpaceRegular,
-                                const Divider(),
-                                const _BuildMasterModifiersWidget()
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Theme(
-                    data: Theme.of(context).copyWith(
-                      dividerTheme: const DividerThemeData(
-                        color: Colors.transparent,
-                      ),
-                      dividerColor: Colors.transparent,
-                    ),
-                    child: ListView(
-                      children: <Widget>[
-                        SizedBox(
-                          width: double.infinity,
-                          child: Card(
-                            child: Padding(
-                              padding: defaultCardPadding,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Availability",
-                                        style: textTheme.titleMedium,
-                                      ),
-                                      Icon(
-                                        FluentIcons.edit_20_regular,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ],
-                                  ),
-                                  verticalSpaceMedium,
-                                  _buildExpansionTileContainer(
-                                    context,
-                                    icon: FluentIcons.calendar_24_regular,
-                                    title: "Sunday",
-                                    children: <Widget>[
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "10:00 AM to 07:30 PM",
-                                          style: textTheme.bodyMedium!.copyWith(
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ),
-                                      verticalSpaceVerySmall,
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "10:00 AM to 07:30 PM",
-                                          style: textTheme.bodyMedium!.copyWith(
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ),
-                                      verticalSpaceTiny,
-                                    ],
-                                  ),
-                                  verticalSpaceSmall,
-                                  _buildExpansionTileContainer(
-                                    context,
-                                    icon: FluentIcons.calendar_24_regular,
-                                    title: "Monday",
-                                    children: <Widget>[
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "10:00 AM to 07:30 PM",
-                                          style: textTheme.bodyMedium!.copyWith(
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ),
-                                      verticalSpaceVerySmall,
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "10:00 AM to 07:30 PM",
-                                          style: textTheme.bodyMedium!.copyWith(
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ),
-                                      verticalSpaceTiny,
-                                    ],
-                                  ),
-                                  verticalSpaceSmall,
-                                  _buildExpansionTileContainer(
-                                    context,
-                                    icon: FluentIcons.calendar_24_regular,
-                                    title: "Tuesday",
-                                    children: <Widget>[
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "10:00 AM to 07:30 PM",
-                                          style: textTheme.bodyMedium!.copyWith(
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ),
-                                      verticalSpaceVerySmall,
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "10:00 AM to 07:30 PM",
-                                          style: textTheme.bodyMedium!.copyWith(
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ),
-                                      verticalSpaceTiny,
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: Card(
-                            child: Padding(
-                              padding: defaultCardPadding,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        "Categories",
-                                        style: textTheme.titleMedium,
-                                      ),
-                                      Icon(
-                                        FluentIcons.add_20_filled,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ],
-                                  ),
-                                  verticalSpaceSmall,
-                                  Chip(
-                                    onDeleted: () {},
-                                    backgroundColor: MenuBuilderColors.kPurple
-                                        .withOpacity(0.1),
-                                    side: BorderSide.none,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0,
-                                    ),
-                                    label: const Text("Drinks"),
-                                    labelStyle: textTheme.bodyLarge!.copyWith(
-                                      color: MenuBuilderColors.kPurple,
-                                    ),
-                                    deleteIcon:
-                                        const Icon(Icons.close, size: 20),
-                                    deleteIconColor: MenuBuilderColors.kPurple,
-                                    // selected: true,
-                                    // selectedColor: AppColors.backgroundColor,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: Card(
-                            child: Padding(
-                              padding: defaultCardPadding,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Menus",
-                                        style: textTheme.titleMedium,
-                                      ),
-                                      Icon(
-                                        FluentIcons.add_20_filled,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ],
-                                  ),
-                                  verticalSpaceSmall,
-                                  Chip(
-                                    backgroundColor: MenuBuilderColors.kOrange
-                                        .withOpacity(0.1),
-                                    side: BorderSide.none,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0,
-                                    ),
-                                    label: const Text("Default"),
-                                    labelStyle: textTheme.bodyLarge!.copyWith(
-                                      color: MenuBuilderColors.kOrange,
-                                    ),
-                                  ),
+                                  verticalSpaceRegular,
+                                  const Divider(),
+                                  const _BuildMasterModifiersWidget()
                                 ],
                               ),
                             ),
@@ -474,8 +294,226 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                       ],
                     ),
                   ),
-                )
-              ],
+                  Expanded(
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        dividerTheme: const DividerThemeData(
+                          color: Colors.transparent,
+                        ),
+                        dividerColor: Colors.transparent,
+                      ),
+                      child: ListView(
+                        children: <Widget>[
+                          SizedBox(
+                            width: double.infinity,
+                            child: Card(
+                              child: Padding(
+                                padding: defaultCardPadding,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Availability",
+                                          style: textTheme.titleMedium,
+                                        ),
+                                        Icon(
+                                          FluentIcons.edit_20_regular,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ],
+                                    ),
+                                    verticalSpaceMedium,
+                                    _buildExpansionTileContainer(
+                                      context,
+                                      icon: FluentIcons.calendar_24_regular,
+                                      title: "Sunday",
+                                      children: <Widget>[
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "10:00 AM to 07:30 PM",
+                                            style:
+                                                textTheme.bodyMedium!.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
+                                        verticalSpaceVerySmall,
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "10:00 AM to 07:30 PM",
+                                            style:
+                                                textTheme.bodyMedium!.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
+                                        verticalSpaceTiny,
+                                      ],
+                                    ),
+                                    verticalSpaceSmall,
+                                    _buildExpansionTileContainer(
+                                      context,
+                                      icon: FluentIcons.calendar_24_regular,
+                                      title: "Monday",
+                                      children: <Widget>[
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "10:00 AM to 07:30 PM",
+                                            style:
+                                                textTheme.bodyMedium!.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
+                                        verticalSpaceVerySmall,
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "10:00 AM to 07:30 PM",
+                                            style:
+                                                textTheme.bodyMedium!.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
+                                        verticalSpaceTiny,
+                                      ],
+                                    ),
+                                    verticalSpaceSmall,
+                                    _buildExpansionTileContainer(
+                                      context,
+                                      icon: FluentIcons.calendar_24_regular,
+                                      title: "Tuesday",
+                                      children: <Widget>[
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "10:00 AM to 07:30 PM",
+                                            style:
+                                                textTheme.bodyMedium!.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
+                                        verticalSpaceVerySmall,
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "10:00 AM to 07:30 PM",
+                                            style:
+                                                textTheme.bodyMedium!.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
+                                        verticalSpaceTiny,
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Card(
+                              child: Padding(
+                                padding: defaultCardPadding,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          "Categories",
+                                          style: textTheme.titleMedium,
+                                        ),
+                                        Icon(
+                                          FluentIcons.add_20_filled,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ],
+                                    ),
+                                    verticalSpaceSmall,
+                                    Chip(
+                                      onDeleted: () {},
+                                      backgroundColor: MenuBuilderColors.kPurple
+                                          .withOpacity(0.1),
+                                      side: BorderSide.none,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6.0,
+                                      ),
+                                      label: const Text("Drinks"),
+                                      labelStyle: textTheme.bodyLarge!.copyWith(
+                                        color: MenuBuilderColors.kPurple,
+                                      ),
+                                      deleteIcon:
+                                          const Icon(Icons.close, size: 20),
+                                      deleteIconColor:
+                                          MenuBuilderColors.kPurple,
+                                      // selected: true,
+                                      // selectedColor: AppColors.backgroundColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Card(
+                              child: Padding(
+                                padding: defaultCardPadding,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Menus",
+                                          style: textTheme.titleMedium,
+                                        ),
+                                        Icon(
+                                          FluentIcons.add_20_filled,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ],
+                                    ),
+                                    verticalSpaceSmall,
+                                    Chip(
+                                      backgroundColor: MenuBuilderColors.kOrange
+                                          .withOpacity(0.1),
+                                      side: BorderSide.none,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6.0,
+                                      ),
+                                      label: const Text("Default"),
+                                      labelStyle: textTheme.bodyLarge!.copyWith(
+                                        color: MenuBuilderColors.kOrange,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );
@@ -520,6 +558,10 @@ class CustomRadioCheckboxGroup extends StatelessWidget {
   final String title2;
   final List<String> options1;
   final List<String> options2;
+  final String groupValue;
+  final List<bool> checkboxValues;
+  final void Function(String?) onChangedRadio;
+  final void Function(int, bool?) onChangedCheckbox;
 
   const CustomRadioCheckboxGroup({
     required this.title1,
@@ -527,6 +569,10 @@ class CustomRadioCheckboxGroup extends StatelessWidget {
     required this.options1,
     required this.options2,
     Key? key,
+    required this.onChangedRadio,
+    required this.groupValue,
+    required this.checkboxValues,
+    required this.onChangedCheckbox,
   }) : super(key: key);
 
   @override
@@ -538,6 +584,8 @@ class CustomRadioCheckboxGroup extends StatelessWidget {
             title: title1,
             options: options1,
             isRadio: true,
+            groupValue: groupValue,
+            onChangedRadio: onChangedRadio,
           ),
         ),
         Expanded(
@@ -545,6 +593,8 @@ class CustomRadioCheckboxGroup extends StatelessWidget {
             title: title2,
             options: options2,
             isRadio: false,
+            values: checkboxValues,
+            onChangedCheckbox: onChangedCheckbox,
           ),
         ),
       ],
@@ -555,13 +605,21 @@ class CustomRadioCheckboxGroup extends StatelessWidget {
 class CustomOptionGroup extends StatelessWidget {
   final String title;
   final List<String> options;
+  final String? groupValue;
+  final List<bool> values;
   final bool isRadio;
+  final void Function(String?)? onChangedRadio;
+  final void Function(int, bool?)? onChangedCheckbox;
 
   const CustomOptionGroup({
     required this.title,
     required this.options,
     required this.isRadio,
     Key? key,
+    this.groupValue,
+    this.values = const [false, false],
+    this.onChangedRadio,
+    this.onChangedCheckbox,
   }) : super(key: key);
 
   @override
@@ -586,8 +644,8 @@ class CustomOptionGroup extends StatelessWidget {
                       child: isRadio
                           ? RadioListTile(
                               value: option,
-                              groupValue: options.first,
-                              onChanged: (_) {},
+                              groupValue: groupValue,
+                              onChanged: onChangedRadio,
                               controlAffinity: ListTileControlAffinity.leading,
                               title: Text(
                                 option,
@@ -595,8 +653,11 @@ class CustomOptionGroup extends StatelessWidget {
                               ),
                             )
                           : CheckboxListTile(
-                              value: true,
-                              onChanged: (_) {},
+                              value: values[options.indexOf(option)],
+                              onChanged: onChangedCheckbox != null
+                                  ? (value) => onChangedCheckbox!(
+                                      options.indexOf(option), value)
+                                  : null,
                               controlAffinity: ListTileControlAffinity.leading,
                               title: Text(
                                 option,
@@ -608,85 +669,6 @@ class CustomOptionGroup extends StatelessWidget {
               .toList(),
         ),
       ],
-    );
-  }
-}
-
-class _BuildAllergensWidget extends StatelessWidget {
-  _BuildAllergensWidget({Key? key}) : super(key: key);
-
-  final List<String> foodAllergens = [
-    "Milk",
-    "Eggs",
-    "Fish",
-    "Crustacean shellfish",
-    "Tree nuts",
-    "Peanuts",
-    "Wheat",
-    "Soybeans",
-    "Sesame",
-    "Mustard",
-    "Celery",
-    "Sulphur dioxide and sulphites",
-    "Lupin",
-    "Molluscs"
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 40,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 10.0,
-            ),
-            color: MenuBuilderColors.kWhite2,
-            child: Center(
-              child: Text(
-                "Allergens",
-                style: textTheme.titleMedium,
-              ),
-            ),
-          ),
-          verticalSpaceSmall,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Wrap(
-              spacing: 8.0,
-              runSpacing: 0.0,
-              children: foodAllergens.map((item) {
-                final backgroundColor = MenuBuilderColors.kGrey.withOpacity(
-                  0.1,
-                );
-                return FilterChip(
-                  label: Text(item),
-                  selected: true,
-                  selectedColor: backgroundColor,
-                  backgroundColor: backgroundColor,
-                  labelStyle: textTheme.titleSmall!.copyWith(
-                    color: Colors.grey.shade600,
-                  ),
-                  checkmarkColor: Colors.grey.shade600,
-                  onSelected: (_) {},
-                );
-              }).toList(),
-            ),
-          ),
-          verticalSpaceRegular,
-        ],
-      ),
     );
   }
 }

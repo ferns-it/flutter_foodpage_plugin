@@ -28,6 +28,7 @@ class CustomRoundedTextField extends StatelessWidget {
     this.onFieldSubmitted,
     this.initialText,
     this.maxLines,
+    this.readOnly = false,
   })  : _topText = topText,
         super(key: key);
 
@@ -53,6 +54,7 @@ class CustomRoundedTextField extends StatelessWidget {
     this.onFieldSubmitted,
     this.initialText,
     this.maxLines,
+    this.readOnly = false,
   })  : _topText = null,
         super(key: key);
 
@@ -65,6 +67,7 @@ class CustomRoundedTextField extends StatelessWidget {
   final EdgeInsets margin;
   final EdgeInsets? padding;
   final bool isDense;
+  final bool readOnly;
   final BorderRadius? borderRadius;
   final double? hintTextSize;
   final Color? fillColor, topTextColor;
@@ -101,7 +104,7 @@ class CustomRoundedTextField extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 2.0),
             child: Text(
-              _topText!,
+              _topText,
               style: textTheme.titleSmall!.copyWith(
                 color: topTextColor ?? Colors.grey.shade700,
               ),
@@ -126,6 +129,7 @@ class CustomRoundedTextField extends StatelessWidget {
         inputFormatters: inputFormatters, // Pass inputFormatters parameter
         obscureText: obscureText,
         initialValue: initialText,
+        readOnly: readOnly,
         onFieldSubmitted: onFieldSubmitted,
         maxLines: maxLines,
         decoration: InputDecoration(

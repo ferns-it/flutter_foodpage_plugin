@@ -178,10 +178,10 @@ class TypeInitialiseData {
 
 class DishtypeInitialiseData {
   final String? control;
-  final List<String>? data;
+  final List<String> data;
   DishtypeInitialiseData({
     this.control,
-    this.data,
+    this.data = const [],
   });
 
   DishtypeInitialiseData copyWith({
@@ -204,9 +204,7 @@ class DishtypeInitialiseData {
   factory DishtypeInitialiseData.fromMap(Map<String, dynamic> map) {
     return DishtypeInitialiseData(
       control: map['control'] != null ? map['control'] as String : null,
-      data: map['data'] != null
-          ? List<String>.from((map['data'] as List<dynamic>))
-          : null,
+      data: List<String>.from((map['data'] ?? [])),
     );
   }
 
@@ -347,10 +345,10 @@ class AvailabilityInitialiseSubData {
 
 class AvailabilityData {
   final String? control;
-  final List<String>? options;
+  final List<String> options;
   AvailabilityData({
     this.control,
-    this.options,
+    this.options = const [],
   });
 
   AvailabilityData copyWith({
@@ -373,9 +371,7 @@ class AvailabilityData {
   factory AvailabilityData.fromMap(Map<String, dynamic> map) {
     return AvailabilityData(
       control: map['control'] != null ? map['control'] as String : null,
-      options: map['options'] != null
-          ? List<String>.from((map['options'] as List<dynamic>))
-          : null,
+      options: List<String>.from((map['options'] ?? [])),
     );
   }
 
@@ -1035,10 +1031,10 @@ class ProductMenuInitialiseData {
 
 class AllergensInitialiseData {
   final String? control;
-  final List<AllergensInitialiseSubData>? data;
+  final List<AllergensInitialiseSubData> data;
   AllergensInitialiseData({
     this.control,
-    this.data,
+    this.data = const [],
   });
 
   AllergensInitialiseData copyWith({
@@ -1054,21 +1050,18 @@ class AllergensInitialiseData {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'control': control,
-      'data': data?.map((x) => x.toMap()).toList(),
+      'data': data.map((x) => x.toMap()).toList(),
     };
   }
 
   factory AllergensInitialiseData.fromMap(Map<String, dynamic> map) {
     return AllergensInitialiseData(
       control: map['control'] != null ? map['control'] as String : null,
-      data: map['data'] != null
-          ? List<AllergensInitialiseSubData>.from(
-              (map['data'] as List<dynamic>).map<AllergensInitialiseSubData?>(
-                (x) => AllergensInitialiseSubData.fromMap(
-                    x as Map<String, dynamic>),
-              ),
-            )
-          : null,
+      data: List<AllergensInitialiseSubData>.from(
+        (map['data'] ?? []).map<AllergensInitialiseSubData?>(
+          (x) => AllergensInitialiseSubData.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
