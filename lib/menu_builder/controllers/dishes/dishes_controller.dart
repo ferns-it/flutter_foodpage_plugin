@@ -63,17 +63,7 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-  List<AllergensInitialiseSubData> choosedAllergens = [];
-
-  void onChangeAllergensSelection(AllergensInitialiseSubData allergen) {
-    if (choosedAllergens.contains(allergen)) {
-      choosedAllergens.remove(allergen);
-      notifyListeners();
-      return;
-    }
-    choosedAllergens.add(allergen);
-    notifyListeners();
-  }
+  final GlobalKey<FormState> variationFormKey = GlobalKey<FormState>();
 
   Map<String, dynamic> get variationFormEntry => {
         "name": TextEditingController(),
@@ -91,6 +81,19 @@ class DishesController extends ChangeNotifier with BaseController {
     }
   ];
 
+  void onChangeAllergensSelection(
+    int index,
+    AllergensInitialiseSubData allergen,
+  ) {
+    if (variationsFormEntries[index]["allergens"].contains(allergen)) {
+      variationsFormEntries[index]["allergens"].remove(allergen);
+      notifyListeners();
+      return;
+    }
+    variationsFormEntries[index]["allergens"].add(allergen);
+    notifyListeners();
+  }
+
   void addNewVariationFormEntry() {
     variationsFormEntries.add(variationFormEntry);
     notifyListeners();
@@ -98,6 +101,17 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void removeVariationFormEntry(int index) {
     variationsFormEntries.removeAt(index);
+    notifyListeners();
+  }
+
+  void duplicateVariationFormEntry(int index) {
+    final entry = variationsFormEntries[index];
+    variationsFormEntries.add({
+      "name": TextEditingController()..text = entry["name"].text,
+      "price": TextEditingController()..text = entry["price"].text,
+      "ingredients": TextEditingController()..text = entry["ingredients"].text,
+      "allergens": List.from(entry["allergens"]),
+    });
     notifyListeners();
   }
 
