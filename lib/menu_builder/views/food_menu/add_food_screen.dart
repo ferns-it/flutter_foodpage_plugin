@@ -1,8 +1,13 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_availability_side_sheet.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_category_side_sheet.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_menu_side_sheet.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_variation_modifiers_side_sheet.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +22,8 @@ class AddFoodScreen extends StatefulWidget {
   State<AddFoodScreen> createState() => _AddFoodScreenState();
 }
 
-class _AddFoodScreenState extends State<AddFoodScreen> {
+class _AddFoodScreenState extends State<AddFoodScreen>
+    with SingleTickerProviderStateMixin {
   @override
   void initState() {
     context.read<DishesController>().initalizeAllFormControllers();
@@ -29,6 +35,22 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
   //   context.read<DishesController>().disposeAllFormControllers();
   //   super.dispose();
   // }
+
+  Widget getSideSheetWidget(BuildContext context) {
+    final controller = context.read<DishesController>();
+    final activeSideSheetType = controller.activeSideSheetType;
+
+    switch (activeSideSheetType) {
+      case AddDishSideSheetType.variation:
+        return const AddVariationModifiersSideSheet();
+      case AddDishSideSheetType.availability:
+        return const AddAvailabilitySideSheet();
+      case AddDishSideSheetType.category:
+        return const AddCategoriesSideSheet();
+      case AddDishSideSheetType.menu:
+        return const AddMenuSideSheet();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +90,7 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4.0),
                 ),
-                child: const AddVariationModifiersSideSheet(),
+                child: getSideSheetWidget(context),
               ),
             ),
           ),
@@ -162,6 +184,10 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                       Builder(builder: (context) {
                                         return OutlinedButton.icon(
                                           onPressed: () {
+                                            controller.onChangeSideSheetType(
+                                              AddDishSideSheetType.variation,
+                                            );
+
                                             Scaffold.of(context)
                                                 .openEndDrawer();
                                           },
@@ -189,111 +215,137 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                   ),
                                   const Divider(),
                                   verticalSpaceRegular,
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      maxHeight: mq.size.height * 0.3,
-                                    ),
-                                    child: AlignedGridView.count(
-                                      crossAxisCount: 2,
-                                      itemCount: controller
-                                          .variationsFormEntries.length,
-                                      mainAxisSpacing: 14.0,
-                                      crossAxisSpacing: 14.0,
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemBuilder: (context, index) {
-                                        final entry = controller
-                                            .variationsFormEntries[index];
-                                        return ListTile(
-                                          shape: RoundedRectangleBorder(
-                                            side: BorderSide(
-                                              color: Colors.grey.shade300,
+                                  if (controller.variationsFormEntriesEmpty)
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0,
+                                        ),
+                                        child: Text(
+                                          "You have no variations yet. To add a variation, press the Add Variation (+) button.",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium!
+                                              .copyWith(
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxHeight: mq.size.height * 0.3,
+                                      ),
+                                      child: AlignedGridView.count(
+                                        crossAxisCount: 2,
+                                        itemCount: controller
+                                            .variationsFormEntries.length,
+                                        mainAxisSpacing: 14.0,
+                                        crossAxisSpacing: 14.0,
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final entry = controller
+                                              .variationsFormEntries[index];
+                                          final hasValues = controller
+                                              .checkVariationEntryIsEmpty(
+                                            index,
+                                          );
+                                          if (hasValues) {
+                                            return const SizedBox.shrink();
+                                          }
+                                          return ListTile(
+                                            shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                color: Colors.grey.shade300,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6.0),
                                             ),
-                                            borderRadius:
-                                                BorderRadius.circular(6.0),
-                                          ),
-                                          title: Text(
-                                            (entry["name"]
-                                                    as TextEditingController)
-                                                .text,
-                                          ),
-                                          subtitle: Text(
-                                            "£${(entry["price"] as TextEditingController).text}",
-                                            style:
-                                                textTheme.bodyLarge!.copyWith(
-                                              color: Colors.grey.shade400,
+                                            title: Text(
+                                              (entry["name"]
+                                                      as TextEditingController)
+                                                  .text,
                                             ),
-                                          ),
-                                        );
-                                      },
+                                            subtitle: Text(
+                                              "£${(entry["price"] as TextEditingController).text}",
+                                              style:
+                                                  textTheme.bodyLarge!.copyWith(
+                                                color: Colors.grey.shade400,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        Card(
+                        const Card(
                           child: Padding(
                             padding: defaultCardPadding,
                             child: Center(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Choices & Addons",
-                                        style: textTheme.titleMedium,
-                                      ),
-                                      Builder(builder: (context) {
-                                        return OutlinedButton.icon(
-                                          onPressed: () {
-                                            Scaffold.of(context)
-                                                .openEndDrawer();
-                                          },
-                                          icon: const Icon(
-                                            FluentIcons.add_24_filled,
-                                          ),
-                                          label: const Text("Add Modifier"),
-                                          style: OutlinedButton.styleFrom(
-                                            textStyle: textTheme.titleMedium,
-                                            foregroundColor:
-                                                MenuBuilderColors.kOrange2,
-                                            backgroundColor: MenuBuilderColors
-                                                .kOrange2
-                                                .withOpacity(0.1),
-                                            elevation: 0,
-                                            side: BorderSide(
-                                              width: 0.8,
-                                              color: MenuBuilderColors.kOrange2
-                                                  .withOpacity(0.3),
-                                            ),
-                                          ),
-                                        );
-                                      })
-                                    ],
-                                  ),
-                                  const Divider(),
-                                  verticalSpaceRegular,
-                                  AlignedGridView.count(
-                                    crossAxisCount: 3,
-                                    itemCount: 4,
-                                    mainAxisSpacing: 14.0,
-                                    crossAxisSpacing: 14.0,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return const FoodModifiersDetailsWidget();
-                                    },
-                                  ),
-                                  verticalSpaceRegular,
-                                  const Divider(),
-                                  const _BuildMasterModifiersWidget()
+                                  // Row(
+                                  //   mainAxisAlignment:
+                                  //       MainAxisAlignment.spaceBetween,
+                                  //   children: [
+                                  //     Text(
+                                  //       "Choices & Addons",
+                                  //       style: textTheme.titleMedium,
+                                  //     ),
+                                  //     Builder(builder: (context) {
+                                  //       return OutlinedButton.icon(
+                                  //         onPressed: () {
+                                  //           Scaffold.of(context)
+                                  //               .openEndDrawer();
+                                  //         },
+                                  //         icon: const Icon(
+                                  //           FluentIcons.add_24_filled,
+                                  //         ),
+                                  //         label: const Text("Add Modifier"),
+                                  //         style: OutlinedButton.styleFrom(
+                                  //           textStyle: textTheme.titleMedium,
+                                  //           foregroundColor:
+                                  //               MenuBuilderColors.kOrange2,
+                                  //           backgroundColor: MenuBuilderColors
+                                  //               .kOrange2
+                                  //               .withOpacity(0.1),
+                                  //           elevation: 0,
+                                  //           side: BorderSide(
+                                  //             width: 0.8,
+                                  //             color: MenuBuilderColors.kOrange2
+                                  //                 .withOpacity(0.3),
+                                  //           ),
+                                  //         ),
+                                  //       );
+                                  //     })
+                                  //   ],
+                                  // ),
+                                  // const Divider(),
+                                  // verticalSpaceRegular,
+                                  // AlignedGridView.count(
+                                  //   crossAxisCount: 3,
+                                  //   itemCount: 4,
+                                  //   mainAxisSpacing: 14.0,
+                                  //   crossAxisSpacing: 14.0,
+                                  //   shrinkWrap: true,
+                                  //   physics:
+                                  //       const NeverScrollableScrollPhysics(),
+                                  //   itemBuilder: (context, index) {
+                                  //     return const FoodModifiersDetailsWidget();
+                                  //   },
+                                  // ),
+                                  // verticalSpaceRegular,
+                                  // const Divider(),
+                                  _BuildMasterModifiersWidget()
                                 ],
                               ),
                             ),
@@ -328,10 +380,23 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                           "Availability",
                                           style: textTheme.titleMedium,
                                         ),
-                                        Icon(
-                                          FluentIcons.edit_20_regular,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
+                                        Builder(builder: (context) {
+                                          return InkWell(
+                                            onTap: () {
+                                              controller.onChangeSideSheetType(
+                                                AddDishSideSheetType
+                                                    .availability,
+                                              );
+                                              Scaffold.of(context)
+                                                  .openEndDrawer();
+                                            },
+                                            child: Icon(
+                                              FluentIcons.edit_20_regular,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
+                                          );
+                                        }),
                                       ],
                                     ),
                                     verticalSpaceMedium,
@@ -445,10 +510,22 @@ class _AddFoodScreenState extends State<AddFoodScreen> {
                                           "Categories",
                                           style: textTheme.titleMedium,
                                         ),
-                                        Icon(
-                                          FluentIcons.add_20_filled,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
+                                        Builder(builder: (context) {
+                                          return InkWell(
+                                            onTap: () {
+                                              controller.onChangeSideSheetType(
+                                                AddDishSideSheetType.category,
+                                              );
+                                              Scaffold.of(context)
+                                                  .openEndDrawer();
+                                            },
+                                            child: Icon(
+                                              FluentIcons.add_20_filled,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
+                                          );
+                                        }),
                                       ],
                                     ),
                                     verticalSpaceSmall,
@@ -656,7 +733,7 @@ class CustomOptionGroup extends StatelessWidget {
                               onChanged: onChangedRadio,
                               controlAffinity: ListTileControlAffinity.leading,
                               title: Text(
-                                option,
+                                capitalizeFirstLetter(option),
                                 style: textTheme.bodyMedium,
                               ),
                             )
@@ -668,7 +745,7 @@ class CustomOptionGroup extends StatelessWidget {
                                   : null,
                               controlAffinity: ListTileControlAffinity.leading,
                               title: Text(
-                                option,
+                                capitalizeFirstLetter(option),
                                 style: textTheme.bodyMedium,
                               ),
                             ),
@@ -746,6 +823,7 @@ class _BuildMasterModifiersWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final controller = context.watch<DishesController>();
 
     return Container(
       decoration: BoxDecoration(
@@ -777,22 +855,25 @@ class _BuildMasterModifiersWidget extends StatelessWidget {
             child: Wrap(
               spacing: 8.0,
               runSpacing: 0.0,
-              children: List.generate(20, (_) {
+              children: controller.listOfMasterAddons.map((addon) {
                 final backgroundColor = MenuBuilderColors.kGrey.withOpacity(
                   0.1,
                 );
+                if (addon.title == null || addon.id == null) {
+                  return const SizedBox.shrink();
+                }
                 return FilterChip(
-                  label: const Text("Test"),
-                  selected: true,
+                  label: Text(addon.title ?? ""),
+                  selected: controller.choosedMasterAddons.contains(addon),
                   selectedColor: backgroundColor,
                   backgroundColor: backgroundColor,
                   labelStyle: textTheme.titleSmall!.copyWith(
                     color: Colors.grey.shade600,
                   ),
                   checkmarkColor: Colors.grey.shade600,
-                  onSelected: (_) {},
+                  onSelected: (_) => controller.onChooseMasterAddons(addon),
                 );
-              }),
+              }).toList(),
             ),
           ),
           verticalSpaceRegular,

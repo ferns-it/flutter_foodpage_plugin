@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AddAvailabilitySideSheet extends StatelessWidget {
-  const AddAvailabilitySideSheet({super.key});
+class AddMenuSideSheet extends StatelessWidget {
+  const AddMenuSideSheet({super.key});
 
   @override
   Widget build(BuildContext context) {

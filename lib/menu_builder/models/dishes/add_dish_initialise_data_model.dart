@@ -463,7 +463,7 @@ class CategoryInitialiseSubData {
   final String? parentID;
   final String? defaultFlag;
   final String? sortOrder;
-  final List<CategoryInitialiseSubChildrensData>? childrens;
+  final List<CategoryInitialiseSubChildrensData> childrens;
   CategoryInitialiseSubData({
     this.cID,
     this.name,
@@ -474,7 +474,7 @@ class CategoryInitialiseSubData {
     this.parentID,
     this.defaultFlag,
     this.sortOrder,
-    this.childrens,
+    this.childrens = const [],
   });
 
   CategoryInitialiseSubData copyWith({
@@ -487,7 +487,7 @@ class CategoryInitialiseSubData {
     String? parentID,
     String? defaultFlag,
     String? sortOrder,
-    List<CategoryInitialiseSubChildrensData>? children,
+    List<CategoryInitialiseSubChildrensData>? childrens,
   }) {
     return CategoryInitialiseSubData(
       cID: cID ?? this.cID,
@@ -514,7 +514,7 @@ class CategoryInitialiseSubData {
       'parentID': parentID,
       'defaultFlag': defaultFlag,
       'sortOrder': sortOrder,
-      'childrens': childrens?.map((x) => x.toMap()).toList(),
+      'childrens': childrens.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -533,15 +533,12 @@ class CategoryInitialiseSubData {
       defaultFlag:
           map['defaultFlag'] != null ? map['defaultFlag'] as String : null,
       sortOrder: map['sortOrder'] != null ? map['sortOrder'] as String : null,
-      childrens: map['childrens'] != null
-          ? List<CategoryInitialiseSubChildrensData>.from(
-              (map['childrens'] as List<dynamic>)
-                  .map<CategoryInitialiseSubChildrensData?>(
-                (x) => CategoryInitialiseSubChildrensData.fromMap(
-                    x as Map<String, dynamic>),
-              ),
-            )
-          : null,
+      childrens: List<CategoryInitialiseSubChildrensData>.from(
+        (map['childrens'] ?? []).map<CategoryInitialiseSubChildrensData>(
+          (x) => CategoryInitialiseSubChildrensData.fromMap(
+              x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 

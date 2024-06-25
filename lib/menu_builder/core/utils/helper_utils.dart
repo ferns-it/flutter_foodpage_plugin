@@ -39,3 +39,10 @@ String convertToAMPM(String time24) {
 
   return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
 }
+
+String capitalizeFirstLetter(String input) {
+  if (input.isEmpty) {
+    return input;
+  }
+  return input[0].toUpperCase() + input.substring(1);
+}

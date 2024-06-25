@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_initialise_data_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_request_model.dart';
@@ -81,6 +83,35 @@ class DishesController extends ChangeNotifier with BaseController {
     }
   ];
 
+  bool get variationsFormEntriesEmpty {
+    if (variationsFormEntries.length != 1) {
+      return false;
+    }
+    final entry = variationsFormEntries.first;
+    final nameController = entry["name"] as TextEditingController;
+    final price = entry["price"] as TextEditingController;
+    final ingredients = entry["allergens"] as List;
+    if (nameController.text.isEmpty &&
+        price.text.isEmpty &&
+        ingredients.isEmpty) {
+      return true;
+    }
+    return false;
+  }
+
+  bool checkVariationEntryIsEmpty(int index) {
+    final entry = variationsFormEntries[index];
+    final nameController = entry["name"] as TextEditingController;
+    final price = entry["price"] as TextEditingController;
+    final ingredients = entry["allergens"] as List;
+    if (nameController.text.isEmpty &&
+        price.text.isEmpty &&
+        ingredients.isEmpty) {
+      return true;
+    }
+    return false;
+  }
+
   void onChangeAllergensSelection(
     int index,
     AllergensInitialiseSubData allergen,
@@ -115,6 +146,86 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
+  List<MasterAddonsInitialiseSubData> choosedMasterAddons = [];
+
+  void onChooseMasterAddons(MasterAddonsInitialiseSubData addon) {
+    try {
+      if (choosedMasterAddons.contains(addon)) {
+        choosedMasterAddons.remove(addon);
+        return;
+      }
+      choosedMasterAddons.add(addon);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  AddDishSideSheetType _activeSideSheetType = AddDishSideSheetType.variation;
+  AddDishSideSheetType get activeSideSheetType => _activeSideSheetType;
+
+  void onChangeSideSheetType(AddDishSideSheetType type) {
+    _activeSideSheetType = type;
+    notifyListeners();
+  }
+
+  List<CategoryInitialiseSubData> selectedDishCategories = [];
+
+  void whenSelectParentCategory(CategoryInitialiseSubData parentCategory) {
+    try {
+      final contains = selectedDishCategories.any((category) {
+        return category.cID == parentCategory.cID;
+      });
+      if (!contains) {
+        selectedDishCategories.add(
+          parentCategory.copyWith(childrens: [...parentCategory.childrens]),
+        );
+        return;
+      }
+      selectedDishCategories.removeWhere((category) {
+        return category.cID != null && category.cID == parentCategory.cID;
+      });
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  void whenSelectSubCategory(
+    String? parentCId,
+    CategoryInitialiseSubChildrensData child,
+  ) {
+    try {
+      final parentCategory = selectedDishCategories
+          .firstWhereOrNull((e) => parentCId != null && e.cID == parentCId);
+      if (parentCategory != null) {
+        if (parentCategory.childrens.contains(child)) {
+          parentCategory.childrens.remove(child);
+        } else {
+          parentCategory.childrens.add(child);
+        }
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  bool checkParentIsSelected(CategoryInitialiseSubData parentCategory) {
+    if (selectedDishCategories.isEmpty) return false;
+    return selectedDishCategories.any((category) {
+      return category.cID == parentCategory.cID;
+    });
+  }
+
+  bool checkChildIsSelected(
+    String? parentCId,
+    CategoryInitialiseSubChildrensData child,
+  ) {
+    if (selectedDishCategories.isEmpty) return false;
+    final parentCategory = selectedDishCategories.firstWhereOrNull((e) {
+      return parentCId != null && e.cID == parentCId;
+    });
+    return parentCategory != null && parentCategory.childrens.contains(child);
+  }
+
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
   late TextEditingController nameController;
   late TextEditingController priceController;
@@ -129,7 +240,6 @@ class DishesController extends ChangeNotifier with BaseController {
 
   @override
   Future<void> init() async {
-    initalizeAllFormControllers();
     fetchDishes();
     initializeAddDishRequiredData();
     _dishType = _addDishInitializeData?.dishtype.data.firstOrNull;

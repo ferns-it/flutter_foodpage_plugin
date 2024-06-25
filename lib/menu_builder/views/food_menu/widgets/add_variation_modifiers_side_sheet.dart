@@ -8,8 +8,33 @@ import '../../../core/constants/menu_builder_app_colors.dart';
 import '../../../core/utils/ui_utils.dart';
 import '../../../widgets/custom_rounded_textfield.dart';
 
-class AddVariationModifiersSideSheet extends StatelessWidget {
-  const AddVariationModifiersSideSheet({super.key});
+class AddVariationModifiersSideSheet extends StatefulWidget {
+  const AddVariationModifiersSideSheet({super.key, this.index = 0});
+
+  final int index;
+
+  @override
+  State<AddVariationModifiersSideSheet> createState() =>
+      _AddVariationModifiersSideSheetState();
+}
+
+class _AddVariationModifiersSideSheetState
+    extends State<AddVariationModifiersSideSheet>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
+
+  @override
+  void initState() {
+    tabController = TabController(length: 2, vsync: this);
+    tabController.animateTo(widget.index);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,112 +43,84 @@ class AddVariationModifiersSideSheet extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 10.0,
+        horizontal: 16.0,
         vertical: 24.0,
       ),
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: <Widget>[
-            TabBar(
-              tabs: [
-                Tab(text: "Variations".toUpperCase()),
-                Tab(text: "Modifiers/Addons".toUpperCase()),
-              ],
+      child: Column(
+        children: <Widget>[
+          verticalSpaceRegular,
+          OutlinedButton.icon(
+            onPressed: () => controller.addNewVariationFormEntry(),
+            icon: const Icon(
+              FluentIcons.add_24_filled,
             ),
-            Expanded(
-              child: TabBarView(children: [
-                Column(
-                  children: <Widget>[
-                    verticalSpaceRegular,
-                    OutlinedButton.icon(
-                      onPressed: () => controller.addNewVariationFormEntry(),
-                      icon: const Icon(
-                        FluentIcons.add_24_filled,
-                      ),
-                      label: const Text("Add Variation"),
-                      style: OutlinedButton.styleFrom(
-                        textStyle: textTheme.titleMedium,
-                        foregroundColor: MenuBuilderColors.kBlue,
-                        backgroundColor:
-                            MenuBuilderColors.kBlue.withOpacity(0.1),
-                        elevation: 0,
-                        side: BorderSide(
-                          width: 0.8,
-                          color: MenuBuilderColors.kBlue.withOpacity(0.3),
+            label: const Text("Add Variation"),
+            style: OutlinedButton.styleFrom(
+              textStyle: textTheme.titleMedium,
+              foregroundColor: MenuBuilderColors.kBlue,
+              backgroundColor: MenuBuilderColors.kBlue.withOpacity(0.1),
+              elevation: 0,
+              side: BorderSide(
+                width: 0.8,
+                color: MenuBuilderColors.kBlue.withOpacity(0.3),
+              ),
+            ),
+          ),
+          verticalSpaceSmall,
+          Expanded(
+            child: Form(
+              key: controller.variationFormKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: MenuBuilderColors.kPrimaryColor,
                         ),
-                      ),
+                        borderRadius: BorderRadius.circular(8.0)),
+                    margin: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 12.0,
                     ),
-                    verticalSpaceSmall,
-                    Expanded(
-                      child: Form(
-                        key: controller.variationFormKey,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        child: Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: MenuBuilderColors.kPrimaryColor,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8.0)),
-                              margin: const EdgeInsets.all(8.0),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0,
-                                vertical: 12.0,
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  const Icon(FluentIcons.info_24_regular),
-                                  horizontalSpaceSmall,
-                                  Flexible(
-                                    child: Text(
-                                      "For a single variation dish, it is not required to enter the dish name. For multiple variations, it is required to enter the dish name. For example, Full and Half for biryani.",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                              color: Colors.grey.shade700),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            verticalSpaceSmall,
-                            Expanded(
-                              child: ListView.separated(
-                                padding: EdgeInsets.zero,
-                                itemCount:
-                                    controller.variationsFormEntries.length,
-                                itemBuilder: (context, index) {
-                                  final entry =
-                                      controller.variationsFormEntries[index];
-                                  return FoodVariationItem(
-                                      index: index, entry: entry);
-                                },
-                                separatorBuilder: (_, __) {
-                                  return verticalSpaceSmall;
-                                },
-                              ),
-                            ),
-                          ],
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Icon(FluentIcons.info_24_regular),
+                        horizontalSpaceSmall,
+                        Flexible(
+                          child: Text(
+                            "For a single variation dish, it is not required to enter the dish name. For multiple variations, it is required to enter the dish name. For example, Full and Half for biryani.",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(color: Colors.grey.shade700),
+                            textAlign: TextAlign.justify,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-                const Column(
-                  children: <Widget>[
-                    verticalSpaceMedium,
-                    AddModifiersFormWidget(),
-                  ],
-                ),
-              ]),
-            )
-          ],
-        ),
+                  ),
+                  verticalSpaceSmall,
+                  Expanded(
+                    child: ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: controller.variationsFormEntries.length,
+                      itemBuilder: (context, index) {
+                        final entry = controller.variationsFormEntries[index];
+                        return FoodVariationItem(index: index, entry: entry);
+                      },
+                      separatorBuilder: (_, __) {
+                        return verticalSpaceSmall;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -171,22 +168,28 @@ class FoodVariationItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                horizontalSpaceRegular,
-                InkWell(
-                  onTap: () => controller.removeVariationFormEntry(index),
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
-                    ),
-                    child: const Icon(
-                      Icons.delete_forever,
-                      color: MenuBuilderColors.kPrimaryColor,
-                      size: 22,
+                if (index != 0) ...[
+                  horizontalSpaceRegular,
+                  InkWell(
+                    onTap: () {
+                      if (index == 0) return;
+                      controller.removeVariationFormEntry(index);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color:
+                            MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
+                      ),
+                      child: const Icon(
+                        Icons.delete_forever,
+                        color: MenuBuilderColors.kPrimaryColor,
+                        size: 22,
+                      ),
                     ),
                   ),
-                ),
+                ]
               ],
             ),
             const Divider(),

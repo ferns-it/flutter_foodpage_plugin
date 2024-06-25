@@ -1,69 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
+import 'package:provider/provider.dart';
 
 class AddCategoriesSideSheet extends StatelessWidget {
   const AddCategoriesSideSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final categoriesDemoData = [
-      {
-        "category": "Soft Drinks",
-        "sub-categories": ["Pepsi", "Coca-cola", "Sprite", "Fanta"]
-      },
-      {
-        "category": "Juices",
-        "sub-categories": [
-          "Orange Juice",
-          "Apple Juice",
-          "Grape Juice",
-          "Pineapple Juice"
-        ]
-      },
-      {
-        "category": "Snacks",
-        "sub-categories": ["Chips", "Nuts", "Popcorn", "Pretzels"]
-      },
-      {
-        "category": "Dairy Products",
-        "sub-categories": ["Milk", "Cheese", "Yogurt", "Butter"]
-      },
-      {
-        "category": "Bakery",
-        "sub-categories": ["Bread", "Croissant", "Muffins", "Bagels"]
-      },
-      {
-        "category": "Fruits",
-        "sub-categories": ["Apple", "Banana", "Grapes", "Orange"]
-      },
-      {
-        "category": "Vegetables",
-        "sub-categories": ["Carrot", "Broccoli", "Spinach", "Potato"]
-      },
-      {
-        "category": "Frozen Foods",
-        "sub-categories": [
-          "Ice Cream",
-          "Frozen Pizza",
-          "Frozen Vegetables",
-          "Frozen Meals"
-        ]
-      },
-      {
-        "category": "Canned Goods",
-        "sub-categories": [
-          "Canned Beans",
-          "Canned Corn",
-          "Canned Tomatoes",
-          "Canned Soup"
-        ]
-      },
-      {
-        "category": "Condiments",
-        "sub-categories": ["Ketchup", "Mustard", "Mayonnaise", "BBQ Sauce"]
-      },
-    ];
-
     final textTheme = Theme.of(context).textTheme;
+    final controller = context.watch<DishesController>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -76,8 +22,9 @@ class AddCategoriesSideSheet extends StatelessWidget {
           Text("Categories", style: textTheme.titleLarge),
           Expanded(
               child: ListView(
-            children: categoriesDemoData.map((data) {
-              final subCategories = data["sub-categories"] as List<String>;
+            children: controller.listOfCategories
+                .mapIndexed((parentIndex, parentCategory) {
+              final subCategories = parentCategory.childrens;
               return Container(
                 margin: const EdgeInsets.symmetric(
                   vertical: 6.0,
@@ -92,12 +39,14 @@ class AddCategoriesSideSheet extends StatelessWidget {
                 ),
                 child: ExpansionTile(
                   title: Text(
-                    data["category"] as String,
+                    parentCategory.name ?? "Unknown",
                     style: textTheme.titleSmall,
                   ),
                   leading: Checkbox(
-                    value: false,
-                    onChanged: (_) {},
+                    value: controller.checkParentIsSelected(parentCategory),
+                    onChanged: (_) {
+                      controller.whenSelectParentCategory(parentCategory);
+                    },
                   ),
                   dense: true,
                   children: <Widget>[
@@ -105,16 +54,23 @@ class AddCategoriesSideSheet extends StatelessWidget {
                       itemCount: subCategories.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       itemBuilder: (context, index) {
                         final category = subCategories[index];
                         return CheckboxListTile(
-                          value: false,
-                          onChanged: (_) {},
+                          value: controller.checkChildIsSelected(
+                              parentCategory.cID, category),
+                          onChanged: (_) {
+                            controller.whenSelectSubCategory(
+                              parentCategory.cID,
+                              category,
+                            );
+                          },
                           controlAffinity: ListTileControlAffinity.leading,
                           title: Text(
-                            category,
-                            style: textTheme.bodyMedium,
+                            category.name ?? "Unknown",
+                            style: textTheme.bodyMedium!
+                                .copyWith(color: Colors.grey.shade800),
                           ),
                         );
                       },
