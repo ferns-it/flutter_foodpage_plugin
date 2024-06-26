@@ -44,9 +44,10 @@ class DishesController extends ChangeNotifier with BaseController {
   int _selectedDishIndex = -1;
   int get selectedDishIndex => _selectedDishIndex;
 
-  DishDetails? get selectedDish => _selectedDishIndex != -1
-      ? _dishCollection.data!.dishes.elementAt(_selectedDishIndex)
-      : null;
+  DishDetails? get selectedDish =>
+      _selectedDishIndex != -1 && _dishCollection.data?.dishes != null
+          ? _dishCollection.data?.dishes.elementAt(_selectedDishIndex)
+          : null;
 
   String? _dishType;
   String get dishType => _dishType ?? "";
@@ -547,6 +548,17 @@ class DishesController extends ChangeNotifier with BaseController {
 
       final response = await DishesService.addNewDish(payload);
       inspect(response);
+    } finally {
+      fetchDishes();
+    }
+  }
+
+  Future<void> deleteDish() async {
+    try {
+      if (viewDishDetails.data?.basicData == null) return;
+      await DishesService.deleteProduct(
+        productID: viewDishDetails.data!.basicData.pID,
+      );
     } finally {
       fetchDishes();
     }

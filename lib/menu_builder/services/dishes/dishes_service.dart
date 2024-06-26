@@ -53,4 +53,14 @@ class DishesService {
     final responseData = AddDishInitializeDataModel.fromJson(response);
     return responseData;
   }
+
+  static Future<Map<String, dynamic>?> deleteProduct(
+      {required String productID}) async {
+    final response = await BaseClient.delete(
+      api: "${ApiEndpoints.deleteProduct}$productID",
+    );
+    if (response == null) return null;
+    final encodedData = jsonDecode(response);
+    return encodedData;
+  }
 }

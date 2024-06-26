@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart';
+
 import '../../../controllers/dishes/dishes_controller.dart';
 import '../../../core/utils/helper_utils.dart';
 import '../../../services/app_exception/app_exception.dart';
@@ -77,16 +78,22 @@ class _FoodDetailsSideSheetWidgetState
                       ),
                     ),
                     horizontalSpaceRegular,
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color:
-                            MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
-                      ),
-                      child: const Icon(
-                        Icons.delete_forever,
-                        color: MenuBuilderColors.kPrimaryColor,
+                    InkWell(
+                      onTap: () {
+                        controller.deleteDish();
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
+                        ),
+                        child: const Icon(
+                          Icons.delete_forever,
+                          color: MenuBuilderColors.kPrimaryColor,
+                        ),
                       ),
                     ),
                   ],
@@ -286,23 +293,30 @@ class _FoodDetailsSideSheetWidgetState
                           context,
                           icon: FluentIcons.app_folder_20_regular,
                           title: "Categories",
-                          children: data.formattedCategories.map((category) {
-                            return Align(
+                          children: [
+                            Align(
                               alignment: Alignment.centerLeft,
-                              child: Chip(
-                                label: Text(
-                                  category,
-                                  style: textTheme.labelMedium,
-                                ),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                backgroundColor: MenuBuilderColors.kWhite,
-                                side: const BorderSide(
-                                  color: MenuBuilderColors.kLightGrey,
-                                ),
+                              child: Wrap(
+                                runSpacing: 2.0,
+                                spacing: 8.0,
+                                children:
+                                    data.formattedCategories.map((category) {
+                                  return Chip(
+                                    label: Text(
+                                      category,
+                                      style: textTheme.labelMedium,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    backgroundColor: MenuBuilderColors.kWhite,
+                                    side: const BorderSide(
+                                      color: MenuBuilderColors.kLightGrey,
+                                    ),
+                                  );
+                                }).toList(),
                               ),
-                            );
-                          }).toList(),
+                            )
+                          ],
                         ),
                         verticalSpaceRegular,
                         _buildExpansionTileContainer(
@@ -501,17 +515,13 @@ class _FoodDetailsSideSheetWidgetState
           Text("Variation $number"),
           const Divider(height: 20.0),
         ],
-        if (data.name.isEmpty) ...[
-          Visibility(
-            visible: data.name.isNotEmpty,
-            child: _buildInfoRow(
-              context,
-              FluentIcons.star_20_regular,
-              data.name,
-              smallText: true,
-            ),
+        if (data.name.isNotEmpty)
+          _buildInfoRow(
+            context,
+            FluentIcons.star_20_regular,
+            data.name,
+            smallText: true,
           ),
-        ],
         verticalSpaceSmall,
         _buildInfoRow(
           context,

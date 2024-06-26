@@ -6,4 +6,5 @@ class ApiEndpoints {
   static const productDetailsView = '/products/view/';
   static const addNewProduct = '/products/addnewproduct';
   static const initialiseAddDish = '/products/initialize/new';
+  static const deleteProduct = '/products/delete/';
 }
