@@ -269,11 +269,14 @@ class _FoodDetailsSideSheetWidgetState
                               FluentIcons.food_20_regular,
                               controller.selectedDish!.name,
                             ),
-                            verticalSpaceRegular,
-                            ...data.variationData.mapIndexed((index, data) {
+                            if (data.variationData.length != 1)
+                              verticalSpaceRegular,
+                            ...data.variationData
+                                .mapIndexed((index, variation) {
                               return _buildVariationDetailsTile(
                                 index + 1,
-                                data,
+                                variation,
+                                data.variationData.length != 1,
                               );
                             }).toList(),
                           ],
@@ -471,64 +474,77 @@ class _FoodDetailsSideSheetWidgetState
     );
   }
 
-  Widget _buildVariationDetailsTile(int number, VariationData data) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        side: BorderSide(color: Colors.grey.shade300),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10.0,
-          vertical: 8.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("Variation $number"),
-            const Divider(height: 20.0),
-            _buildInfoRow(
+  Widget _buildVariationDetailsTile(int number, VariationData data,
+      [bool showCard = true]) {
+    return showCard
+        ? Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              side: BorderSide(color: Colors.grey.shade300),
+            ),
+            child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 8.0,
+                ),
+                child: _buildVariationDetailsTileWidget(number, data)))
+        : _buildVariationDetailsTileWidget(number, data, showCard);
+  }
+
+  Widget _buildVariationDetailsTileWidget(int number, VariationData data,
+      [bool showCard = false]) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (showCard) ...[
+          Text("Variation $number"),
+          const Divider(height: 20.0),
+        ],
+        if (data.name.isEmpty) ...[
+          Visibility(
+            visible: data.name.isNotEmpty,
+            child: _buildInfoRow(
               context,
               FluentIcons.star_20_regular,
               data.name,
               smallText: true,
             ),
-            verticalSpaceSmall,
-            _buildInfoRow(
-              context,
-              FluentIcons.money_20_regular,
-              data.displayPrice,
-              smallText: true,
-            ),
-            if (data.ingredients.isNotEmpty) ...[
-              verticalSpaceSmall,
-              _buildInfoRow(
-                context,
-                FluentIcons.book_star_20_regular,
-                data.ingredients.trimRight()..trimLeft(),
-                smallText: true,
-              ),
-            ],
-            if (data.allergens.isNotEmpty) ...[
-              verticalSpaceSmall,
-              _buildInfoRow(
-                context,
-                FluentIcons.warning_20_regular,
-                data.formattedAllergens,
-                smallText: true,
-              ),
-            ],
-            verticalSpaceSmall,
-            _buildInfoRow(
-              context,
-              FluentIcons.stack_20_regular,
-              "${data.stock} Stocks Available",
-              smallText: true,
-            ),
-          ],
+          ),
+        ],
+        verticalSpaceSmall,
+        _buildInfoRow(
+          context,
+          FluentIcons.money_20_regular,
+          "£${data.price}",
+          smallText: true,
         ),
-      ),
+        if (data.ingredients.isNotEmpty) ...[
+          verticalSpaceSmall,
+          _buildInfoRow(
+            context,
+            FluentIcons.book_star_20_regular,
+            data.ingredients.trimRight()..trimLeft(),
+            smallText: true,
+          ),
+        ],
+        if (data.allergens.isNotEmpty) ...[
+          verticalSpaceSmall,
+          _buildInfoRow(
+            context,
+            FluentIcons.warning_20_regular,
+            data.formattedAllergens,
+            smallText: true,
+          ),
+        ],
+        verticalSpaceSmall,
+        _buildInfoRow(
+          context,
+          FluentIcons.stack_20_regular,
+          "${data.stock} Stocks Available",
+          smallText: true,
+        ),
+      ],
     );
   }
 }

@@ -35,16 +35,11 @@ class AddAvailabilitySideSheet extends StatelessWidget {
               title: const Text("All Days"),
             ),
           ),
-          if (!controller.allDaysEnabled &&
-              controller
-                      .addDishInitializeData?.availability.data?.availability !=
-                  null) ...[
+          if (!controller.allDaysEnabled) ...[
             Wrap(
               runSpacing: 4.0,
               spacing: 10.0,
-              children: controller.addDishInitializeData!.availability.data!
-                  .availability!.options
-                  .map((option) {
+              children: controller.listOfAvailabilityDays.map((option) {
                 return FilterChip(
                   onSelected: (_) => controller.onChangeAvailableDays(option),
                   backgroundColor: Colors.grey.shade300,

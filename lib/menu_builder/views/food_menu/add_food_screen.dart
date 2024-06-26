@@ -404,89 +404,6 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Availability",
-                                          style: textTheme.titleMedium,
-                                        ),
-                                        Builder(builder: (context) {
-                                          return InkWell(
-                                            onTap: () {
-                                              controller.onChangeSideSheetType(
-                                                AddDishSideSheetType
-                                                    .availability,
-                                              );
-                                              Scaffold.of(context)
-                                                  .openEndDrawer();
-                                            },
-                                            child: Icon(
-                                              FluentIcons.edit_20_regular,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            ),
-                                          );
-                                        }),
-                                      ],
-                                    ),
-                                    verticalSpaceMedium,
-                                    if (controller.allDaysEnabled)
-                                      ...[]
-                                    else
-                                      ...controller.availableDays.map((day) {
-                                        return Column(
-                                          children: <Widget>[
-                                            _buildExpansionTileContainer(
-                                              context,
-                                              icon: FluentIcons
-                                                  .calendar_24_regular,
-                                              title: capitalizeFirstLetter(day),
-                                              children: controller
-                                                  .dishAvailabilityEntries
-                                                  .where((entry) =>
-                                                      entry.$1 != null &&
-                                                      entry.$2 != null)
-                                                  .map((entry) {
-                                                return Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical: 4.0,
-                                                  ),
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Text(
-                                                      "${formatTimeOfDay(entry.$1!)} to ${formatTimeOfDay(entry.$2!)}",
-                                                      style: textTheme
-                                                          .bodyMedium!
-                                                          .copyWith(
-                                                        color: Colors
-                                                            .grey.shade600,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                            ),
-                                            verticalSpaceSmall,
-                                          ],
-                                        );
-                                      }).toList(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Card(
-                              child: Padding(
-                                padding: defaultCardPadding,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Text(
                                           "Categories",
@@ -684,6 +601,128 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                         );
                                       }).toList(),
                                     )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Card(
+                              child: Padding(
+                                padding: defaultCardPadding,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Availability",
+                                          style: textTheme.titleMedium,
+                                        ),
+                                        Builder(builder: (context) {
+                                          return InkWell(
+                                            onTap: () {
+                                              controller.onChangeSideSheetType(
+                                                AddDishSideSheetType
+                                                    .availability,
+                                              );
+                                              Scaffold.of(context)
+                                                  .openEndDrawer();
+                                            },
+                                            child: Icon(
+                                              FluentIcons.edit_20_regular,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
+                                          );
+                                        }),
+                                      ],
+                                    ),
+                                    verticalSpaceMedium,
+                                    if (controller.allDaysEnabled)
+                                      ...controller.listOfAvailabilityDays
+                                          .map((day) {
+                                        return Column(
+                                          children: <Widget>[
+                                            _buildExpansionTileContainer(
+                                              context,
+                                              icon: FluentIcons
+                                                  .calendar_24_regular,
+                                              title: capitalizeFirstLetter(day),
+                                              children: controller
+                                                  .dishAvailabilityEntries
+                                                  .where((entry) =>
+                                                      entry.$1 != null &&
+                                                      entry.$2 != null)
+                                                  .map((entry) {
+                                                return Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 4.0,
+                                                  ),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      "${formatTimeOfDay(entry.$1!)} to ${formatTimeOfDay(entry.$2!)}",
+                                                      style: textTheme
+                                                          .bodyMedium!
+                                                          .copyWith(
+                                                        color: Colors
+                                                            .grey.shade600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
+                                            verticalSpaceSmall,
+                                          ],
+                                        );
+                                      }).toList()
+                                    else
+                                      ...controller.availableDays.map((day) {
+                                        return Column(
+                                          children: <Widget>[
+                                            _buildExpansionTileContainer(
+                                              context,
+                                              icon: FluentIcons
+                                                  .calendar_24_regular,
+                                              title: capitalizeFirstLetter(day),
+                                              children: controller
+                                                  .dishAvailabilityEntries
+                                                  .where((entry) =>
+                                                      entry.$1 != null &&
+                                                      entry.$2 != null)
+                                                  .map((entry) {
+                                                return Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 4.0,
+                                                  ),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      "${formatTimeOfDay(entry.$1!)} to ${formatTimeOfDay(entry.$2!)}",
+                                                      style: textTheme
+                                                          .bodyMedium!
+                                                          .copyWith(
+                                                        color: Colors
+                                                            .grey.shade600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
+                                            verticalSpaceSmall,
+                                          ],
+                                        );
+                                      }).toList(),
                                   ],
                                 ),
                               ),

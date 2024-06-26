@@ -329,7 +329,7 @@ class VariationData {
       pvID: map['pvID'] as String,
       name: map['name'] ?? "",
       price: map['price'] as String,
-      displayPrice: map['displayPrice'] as String,
+      displayPrice: map['displayPrice'] ?? "",
       ingredients: map['ingredients'] as String,
       isUnlimitedStock: map['isUnlimitedStock'] as String,
       stock: map['stock'] as String,

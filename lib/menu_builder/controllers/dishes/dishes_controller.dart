@@ -9,6 +9,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_requ
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/dishes/dishes_service.dart';
 
+import '../../core/utils/helper_utils.dart';
 import '../../models/dishes/add_dish_request_with_variation_model.dart';
 import '../../models/dishes/dish_collection_model.dart';
 import '../../services/app_exception/app_exception.dart';
@@ -499,7 +500,10 @@ class DishesController extends ChangeNotifier with BaseController {
     final timing = dishAvailabilityEntries
         .where((entry) => entry.$1 != null && entry.$2 == null)
         .map((entry) {
-      return {"startTime": entry.$1, "endTime": entry.$2};
+      final formatStartTime = convertTimeOfDayTo24hr(entry.$1!);
+      final formatEndTime = convertTimeOfDayTo24hr(entry.$2!);
+      final time = {"startTime": formatStartTime, "endTime": formatEndTime};
+      return time;
     }).toList();
 
     final payload = variationsFormEntries.length == 1
