@@ -292,7 +292,7 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-  bool _allDaysEnabled = false;
+  bool _allDaysEnabled = true;
   bool get allDaysEnabled => _allDaysEnabled;
 
   void onChangeAllDaysEnable(bool? value) {
@@ -445,106 +445,110 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   Future<void> addNewDish() async {
-    if (variationsFormEntries.isEmpty) return;
+    try {
+      if (variationsFormEntries.isEmpty) return;
 
-    final productType =
-        variationsFormEntries.length == 1 ? "single" : "variation";
-    final addonsMasterGroup = choosedMasterAddons
-        .where((addon) => addon.id != null)
-        .map((addon) => addon.id!)
-        .toList();
-    final isOnlineReq = _onlineStatus ? 'Yes' : 'No';
-    final isDineinReq = _dineInStatus ? 'Yes' : 'No';
+      final productType =
+          variationsFormEntries.length == 1 ? "single" : "variation";
+      final addonsMasterGroup = choosedMasterAddons
+          .where((addon) => addon.id != null)
+          .map((addon) => addon.id!)
+          .toList();
+      final isOnlineReq = _onlineStatus ? 'Yes' : 'No';
+      final isDineinReq = _dineInStatus ? 'Yes' : 'No';
 
-    final singleEntry = variationsFormEntries.first;
-    final priceController = singleEntry["price"] as TextEditingController;
-    final priceReq = double.parse(priceController.text);
+      final singleEntry = variationsFormEntries.first;
+      final priceController = singleEntry["price"] as TextEditingController;
+      final priceReq = double.parse(priceController.text);
 
-    final ingredientsController =
-        singleEntry["ingredients"] as TextEditingController;
-    final allergens =
-        singleEntry["allergens"] as List<AllergensInitialiseSubData>;
-    final allergensIds =
-        allergens.where((e) => e.id != null).map((e) => e.id!).toList();
+      final ingredientsController =
+          singleEntry["ingredients"] as TextEditingController;
+      final allergens =
+          singleEntry["allergens"] as List<AllergensInitialiseSubData>;
+      final allergensIds =
+          allergens.where((e) => e.id != null).map((e) => e.id!).toList();
 
-    final listOfParentCategoriesId = choosedParentCategory
-        .where((e) => e.$1 != null)
-        .map((e) => e.$1!)
-        .toList();
-    final listOfSubCategoriesId = choosedSubCategories
-        .where((e) => e.$3 != null)
-        .map((e) => e.$3!)
-        .toList();
-    final listOfCategories = [
-      ...listOfParentCategoriesId,
-      ...listOfSubCategoriesId
-    ];
+      final listOfParentCategoriesId = choosedParentCategory
+          .where((e) => e.$1 != null)
+          .map((e) => e.$1!)
+          .toList();
+      final listOfSubCategoriesId = choosedSubCategories
+          .where((e) => e.$3 != null)
+          .map((e) => e.$3!)
+          .toList();
+      final listOfCategories = [
+        ...listOfParentCategoriesId,
+        ...listOfSubCategoriesId
+      ];
 
-    final variations = variationsFormEntries.map((entry) {
-      final nameController = entry["name"] as TextEditingController;
-      final allergens = entry["allergens"];
-      final price = entry["price"] as TextEditingController;
-      return VariationDishData(
-        pvID: null,
-        name: nameController.text,
-        price: double.parse(price.text),
-        allergensMaster: allergens.map((e) => e.id).toList(),
-        ingredients: ingredientsController.text,
-        isUnlimitedStock: 1,
-        quantity: 0,
-      );
-    }).toList();
+      final variations = variationsFormEntries.map((entry) {
+        final nameController = entry["name"] as TextEditingController;
+        final allergens = entry["allergens"];
+        final price = entry["price"] as TextEditingController;
+        return VariationDishData(
+          pvID: null,
+          name: nameController.text,
+          price: double.parse(price.text),
+          allergensMaster: allergens.map((e) => e.id).toList(),
+          ingredients: ingredientsController.text,
+          isUnlimitedStock: 1,
+          quantity: 0,
+        );
+      }).toList();
 
-    final allDayAvailable = allDaysEnabled ? "on" : null;
+      final allDayAvailable = allDaysEnabled ? "on" : null;
 
-    final timing = dishAvailabilityEntries
-        .where((entry) => entry.$1 != null && entry.$2 == null)
-        .map((entry) {
-      final formatStartTime = convertTimeOfDayTo24hr(entry.$1!);
-      final formatEndTime = convertTimeOfDayTo24hr(entry.$2!);
-      final time = {"startTime": formatStartTime, "endTime": formatEndTime};
-      return time;
-    }).toList();
+      final timing = dishAvailabilityEntries
+          .where((entry) => entry.$1 != null && entry.$2 != null)
+          .map((entry) {
+        final formatStartTime = convertTimeOfDayTo24hr(entry.$1!);
+        final formatEndTime = convertTimeOfDayTo24hr(entry.$2!);
+        final time = {"startTime": formatStartTime, "endTime": formatEndTime};
+        return time;
+      }).toList();
 
-    final payload = variationsFormEntries.length == 1
-        ? AddDishRequestModel(
-            productType: productType,
-            type: dishType,
-            activeStatus: 1,
-            price: priceReq,
-            isUnlimitedStock: 1,
-            online: isOnlineReq,
-            dining: isDineinReq,
-            name: nameController.text,
-            description: descriptionController.text,
-            ingredients: ingredientsController.text,
-            allergns: allergensIds,
-            category: listOfCategories,
-            allDayAvailable: allDayAvailable,
-            availability: availableDays,
-            timing: timing,
-            quantity: 0,
-            addonsMasterGroup: addonsMasterGroup,
-            productMenuGroup: choosedMenus,
-          )
-        : AddDishRequestWithVariationModel(
-            productType: productType,
-            type: dishType,
-            activeStatus: 1,
-            variations: variations,
-            online: isOnlineReq,
-            dining: isDineinReq,
-            name: nameController.text,
-            description: descriptionController.text,
-            category: listOfCategories,
-            addonsMasterGroup: addonsMasterGroup,
-            allDayAvailable: allDayAvailable,
-            availability: availableDays,
-            timing: timing,
-            productMenuGroup: choosedMenus,
-          );
+      final payload = variationsFormEntries.length == 1
+          ? AddDishRequestModel(
+              productType: productType,
+              type: dishType,
+              activeStatus: 1,
+              price: priceReq,
+              isUnlimitedStock: 1,
+              online: isOnlineReq,
+              dining: isDineinReq,
+              name: nameController.text,
+              description: descriptionController.text,
+              ingredients: ingredientsController.text,
+              allergns: allergensIds,
+              category: listOfCategories,
+              allDayAvailable: allDayAvailable,
+              availability: availableDays,
+              timing: timing,
+              quantity: 0,
+              addonsMasterGroup: addonsMasterGroup,
+              productMenuGroup: choosedMenus,
+            )
+          : AddDishRequestWithVariationModel(
+              productType: productType,
+              type: dishType,
+              activeStatus: 1,
+              variations: variations,
+              online: isOnlineReq,
+              dining: isDineinReq,
+              name: nameController.text,
+              description: descriptionController.text,
+              category: listOfCategories,
+              addonsMasterGroup: addonsMasterGroup,
+              allDayAvailable: allDayAvailable,
+              availability: availableDays,
+              timing: timing,
+              productMenuGroup: choosedMenus,
+            );
 
-    final response = await DishesService.addNewDish(payload);
-    inspect(response);
+      final response = await DishesService.addNewDish(payload);
+      inspect(response);
+    } finally {
+      fetchDishes();
+    }
   }
 }
