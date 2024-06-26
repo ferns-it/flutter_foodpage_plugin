@@ -20,4 +20,6 @@ class MenuBuilderColors {
   static const kBlue = Colors.blue;
   static const kPurple = Color(0xFFA020F0);
   static const kYellow = Color(0xFFffad01);
+  static const kDarkBlue = Color(0xFF022E4C);
+  static const kAccentOrange = Color.fromARGB(255, 252, 225, 199);
 }

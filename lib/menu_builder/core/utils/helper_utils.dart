@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 
@@ -45,4 +46,12 @@ String capitalizeFirstLetter(String input) {
     return input;
   }
   return input[0].toUpperCase() + input.substring(1);
+}
+
+String formatTimeOfDay(TimeOfDay timeOfDay) {
+  final hour = timeOfDay.hourOfPeriod == 0 ? 12 : timeOfDay.hourOfPeriod;
+  final minute = timeOfDay.minute.toString().padLeft(2, '0');
+  final period = timeOfDay.period == DayPeriod.am ? 'AM' : 'PM';
+
+  return '$hour:$minute $period';
 }

@@ -80,7 +80,27 @@ class _AddFoodScreenState extends State<AddFoodScreen>
         final addDishInitializeData = controller.addDishInitializeData;
 
         return Scaffold(
-          appBar: AppBar(title: const Text("Add Food Item")),
+          appBar: AppBar(
+            title: const Text("Add Dish"),
+            actions: <Widget>[
+              OutlinedButton.icon(
+                onPressed: () => controller.addNewDish(),
+                icon: const Icon(FluentIcons.save_24_filled),
+                label: const Text("Save Dish"),
+                style: OutlinedButton.styleFrom(
+                  textStyle: textTheme.titleMedium,
+                  foregroundColor: MenuBuilderColors.kPurple,
+                  backgroundColor: MenuBuilderColors.kPurple.withOpacity(0.1),
+                  elevation: 0,
+                  side: BorderSide(
+                    width: 0.8,
+                    color: MenuBuilderColors.kPurple.withOpacity(0.3),
+                  ),
+                ),
+              ),
+              horizontalSpaceRegular,
+            ],
+          ),
           endDrawer: Align(
             alignment: Alignment.topRight,
             child: SizedBox(
@@ -94,6 +114,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
               ),
             ),
           ),
+          endDrawerEnableOpenDragGesture: false,
           body: Form(
             key: controller.addNewDishFormKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -252,11 +273,19 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                               .variationsFormEntries[index];
                                           final hasValues = controller
                                               .checkVariationEntryIsEmpty(
-                                            index,
-                                          );
+                                                  index);
+
                                           if (hasValues) {
                                             return const SizedBox.shrink();
                                           }
+
+                                          final name = (entry["name"]
+                                                  as TextEditingController)
+                                              .text;
+                                          final price = (entry["price"]
+                                                  as TextEditingController)
+                                              .text;
+
                                           return ListTile(
                                             shape: RoundedRectangleBorder(
                                               side: BorderSide(
@@ -266,21 +295,21 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                                   BorderRadius.circular(6.0),
                                             ),
                                             title: Text(
-                                              (entry["name"]
-                                                      as TextEditingController)
-                                                  .text,
+                                              name.isNotEmpty
+                                                  ? name
+                                                  : "Single Variation",
                                             ),
                                             subtitle: Text(
-                                              "£${(entry["price"] as TextEditingController).text}",
+                                              "£$price",
                                               style:
                                                   textTheme.bodyLarge!.copyWith(
-                                                color: Colors.grey.shade400,
+                                                color: Colors.grey.shade500,
                                               ),
                                             ),
                                           );
                                         },
                                       ),
-                                    ),
+                                    )
                                 ],
                               ),
                             ),
@@ -400,95 +429,48 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                       ],
                                     ),
                                     verticalSpaceMedium,
-                                    _buildExpansionTileContainer(
-                                      context,
-                                      icon: FluentIcons.calendar_24_regular,
-                                      title: "Sunday",
-                                      children: <Widget>[
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "10:00 AM to 07:30 PM",
-                                            style:
-                                                textTheme.bodyMedium!.copyWith(
-                                              color: Colors.grey.shade600,
+                                    if (controller.allDaysEnabled)
+                                      ...[]
+                                    else
+                                      ...controller.availableDays.map((day) {
+                                        return Column(
+                                          children: <Widget>[
+                                            _buildExpansionTileContainer(
+                                              context,
+                                              icon: FluentIcons
+                                                  .calendar_24_regular,
+                                              title: capitalizeFirstLetter(day),
+                                              children: controller
+                                                  .dishAvailabilityEntries
+                                                  .where((entry) =>
+                                                      entry.$1 != null &&
+                                                      entry.$2 != null)
+                                                  .map((entry) {
+                                                return Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 4.0,
+                                                  ),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      "${formatTimeOfDay(entry.$1!)} to ${formatTimeOfDay(entry.$2!)}",
+                                                      style: textTheme
+                                                          .bodyMedium!
+                                                          .copyWith(
+                                                        color: Colors
+                                                            .grey.shade600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
                                             ),
-                                          ),
-                                        ),
-                                        verticalSpaceVerySmall,
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "10:00 AM to 07:30 PM",
-                                            style:
-                                                textTheme.bodyMedium!.copyWith(
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                        ),
-                                        verticalSpaceTiny,
-                                      ],
-                                    ),
-                                    verticalSpaceSmall,
-                                    _buildExpansionTileContainer(
-                                      context,
-                                      icon: FluentIcons.calendar_24_regular,
-                                      title: "Monday",
-                                      children: <Widget>[
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "10:00 AM to 07:30 PM",
-                                            style:
-                                                textTheme.bodyMedium!.copyWith(
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                        ),
-                                        verticalSpaceVerySmall,
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "10:00 AM to 07:30 PM",
-                                            style:
-                                                textTheme.bodyMedium!.copyWith(
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                        ),
-                                        verticalSpaceTiny,
-                                      ],
-                                    ),
-                                    verticalSpaceSmall,
-                                    _buildExpansionTileContainer(
-                                      context,
-                                      icon: FluentIcons.calendar_24_regular,
-                                      title: "Tuesday",
-                                      children: <Widget>[
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "10:00 AM to 07:30 PM",
-                                            style:
-                                                textTheme.bodyMedium!.copyWith(
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                        ),
-                                        verticalSpaceVerySmall,
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "10:00 AM to 07:30 PM",
-                                            style:
-                                                textTheme.bodyMedium!.copyWith(
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                        ),
-                                        verticalSpaceTiny,
-                                      ],
-                                    ),
+                                            verticalSpaceSmall,
+                                          ],
+                                        );
+                                      }).toList(),
                                   ],
                                 ),
                               ),
@@ -528,25 +510,117 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                         }),
                                       ],
                                     ),
+                                    Divider(
+                                      color: Colors.grey.shade300,
+                                      height: 40.0,
+                                    ),
+                                    Text(
+                                      "Parent Categories",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                              color: Colors.grey.shade600),
+                                    ),
                                     verticalSpaceSmall,
-                                    Chip(
-                                      onDeleted: () {},
-                                      backgroundColor: MenuBuilderColors.kPurple
-                                          .withOpacity(0.1),
-                                      side: BorderSide.none,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6.0,
+                                    Divider(color: Colors.grey.shade300),
+                                    SizedBox(
+                                      height: 40.0,
+                                      child: ListView.separated(
+                                        scrollDirection: Axis.horizontal,
+                                        shrinkWrap: true,
+                                        itemCount: controller
+                                            .choosedParentCategory.length,
+                                        itemBuilder: (context, index) {
+                                          final element = controller
+                                              .choosedParentCategory[index];
+                                          return Chip(
+                                            onDeleted: () {
+                                              controller.removeParentCategory(
+                                                element.$1,
+                                              );
+                                            },
+                                            backgroundColor: MenuBuilderColors
+                                                .kPurple
+                                                .withOpacity(0.1),
+                                            side: BorderSide.none,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 6.0,
+                                            ),
+                                            label: Text(capitalizeFirstLetter(
+                                                element.$2 ?? "")),
+                                            labelStyle:
+                                                textTheme.bodyLarge!.copyWith(
+                                              color: MenuBuilderColors.kPurple,
+                                            ),
+                                            deleteIcon: const Icon(Icons.close,
+                                                size: 20),
+                                            deleteIconColor:
+                                                MenuBuilderColors.kPurple,
+                                            // selected: true,
+                                            // selectedColor: AppColors.backgroundColor,
+                                          );
+                                        },
+                                        separatorBuilder: (_, __) {
+                                          return horizontalSpaceSmall;
+                                        },
                                       ),
-                                      label: const Text("Drinks"),
-                                      labelStyle: textTheme.bodyLarge!.copyWith(
-                                        color: MenuBuilderColors.kPurple,
+                                    ),
+                                    verticalSpaceSmall,
+                                    Divider(color: Colors.grey.shade300),
+                                    verticalSpaceSmall,
+                                    Text(
+                                      "Childrens",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                              color: Colors.grey.shade600),
+                                    ),
+                                    verticalSpaceSmall,
+                                    Divider(color: Colors.grey.shade300),
+                                    SizedBox(
+                                      height: 40.0,
+                                      child: ListView.separated(
+                                        scrollDirection: Axis.horizontal,
+                                        shrinkWrap: true,
+                                        itemCount: controller
+                                            .choosedSubCategories.length,
+                                        itemBuilder: (context, index) {
+                                          final element = controller
+                                              .choosedSubCategories[index];
+                                          return Chip(
+                                            onDeleted: () {
+                                              controller.removeChildCategory(
+                                                element.$1,
+                                                element.$3,
+                                              );
+                                            },
+                                            backgroundColor: MenuBuilderColors
+                                                .kOrange
+                                                .withOpacity(0.1),
+                                            side: BorderSide.none,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 6.0,
+                                            ),
+                                            label: Text(
+                                                "${capitalizeFirstLetter(element.$4 ?? "")} ( ${capitalizeFirstLetter(element.$2 ?? "")} )"),
+                                            labelStyle:
+                                                textTheme.bodyLarge!.copyWith(
+                                              color: MenuBuilderColors.kOrange,
+                                            ),
+                                            deleteIcon: const Icon(Icons.close,
+                                                size: 20),
+                                            deleteIconColor:
+                                                MenuBuilderColors.kOrange,
+                                            // selected: true,
+                                            // selectedColor: AppColors.backgroundColor,
+                                          );
+                                        },
+                                        separatorBuilder: (_, __) {
+                                          return horizontalSpaceSmall;
+                                        },
                                       ),
-                                      deleteIcon:
-                                          const Icon(Icons.close, size: 20),
-                                      deleteIconColor:
-                                          MenuBuilderColors.kPurple,
-                                      // selected: true,
-                                      // selectedColor: AppColors.backgroundColor,
                                     ),
                                   ],
                                 ),
@@ -569,25 +643,47 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                           "Menus",
                                           style: textTheme.titleMedium,
                                         ),
-                                        Icon(
-                                          FluentIcons.add_20_filled,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
+                                        Builder(builder: (context) {
+                                          return InkWell(
+                                            onTap: () {
+                                              controller.onChangeSideSheetType(
+                                                AddDishSideSheetType.menu,
+                                              );
+                                              Scaffold.of(context)
+                                                  .openEndDrawer();
+                                            },
+                                            child: Icon(
+                                              FluentIcons.add_20_filled,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
+                                          );
+                                        }),
                                       ],
                                     ),
                                     verticalSpaceSmall,
-                                    Chip(
-                                      backgroundColor: MenuBuilderColors.kOrange
-                                          .withOpacity(0.1),
-                                      side: BorderSide.none,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6.0,
-                                      ),
-                                      label: const Text("Default"),
-                                      labelStyle: textTheme.bodyLarge!.copyWith(
-                                        color: MenuBuilderColors.kOrange,
-                                      ),
-                                    ),
+                                    Wrap(
+                                      runSpacing: 2.0,
+                                      spacing: 8.0,
+                                      children:
+                                          controller.choosedMenus.map((key) {
+                                        return Chip(
+                                          backgroundColor: MenuBuilderColors
+                                              .kOrange
+                                              .withOpacity(0.1),
+                                          side: BorderSide.none,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6.0,
+                                          ),
+                                          label:
+                                              Text(controller.listOfMenus[key]),
+                                          labelStyle:
+                                              textTheme.bodyLarge!.copyWith(
+                                            color: MenuBuilderColors.kOrange,
+                                          ),
+                                        );
+                                      }).toList(),
+                                    )
                                   ],
                                 ),
                               ),

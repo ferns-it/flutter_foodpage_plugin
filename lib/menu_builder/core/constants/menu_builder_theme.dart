@@ -30,6 +30,39 @@ ThemeData menuBuilderTheme(BuildContext context) {
         ),
       ),
     ),
+    timePickerTheme: TimePickerThemeData(
+      hourMinuteColor: WidgetStateColor.resolveWith((states) =>
+          states.contains(WidgetState.selected)
+              ? MenuBuilderColors.kPrimaryColor.withOpacity(0.3)
+              : MenuBuilderColors.kWhite),
+      hourMinuteTextColor: WidgetStateColor.resolveWith((states) =>
+          states.contains(WidgetState.selected)
+              ? MenuBuilderColors.kPrimaryColor
+              : MenuBuilderColors.kDarkBlue),
+      dayPeriodColor: WidgetStateColor.resolveWith((states) =>
+          states.contains(WidgetState.selected)
+              ? MenuBuilderColors.kAccentOrange
+              : MenuBuilderColors.kWhite),
+      dayPeriodTextColor: WidgetStateColor.resolveWith((states) =>
+          states.contains(WidgetState.selected)
+              ? MenuBuilderColors.kPrimaryColor
+              : MenuBuilderColors.kDarkBlue),
+      dialHandColor: MenuBuilderColors.kPrimaryColor,
+      dialTextColor: WidgetStateColor.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? MenuBuilderColors.kWhite
+            : MenuBuilderColors.kDarkBlue,
+      ),
+      entryModeIconColor: MenuBuilderColors.kDarkBlue,
+      hourMinuteTextStyle: const TextStyle(fontSize: 60),
+      dialTextStyle: const TextStyle(fontSize: 16),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: WidgetStateColor.resolveWith(
+            (states) => MenuBuilderColors.kDarkBlue),
+      ),
+    ),
     // checkboxTheme: CheckboxThemeData(
     //   shape: RoundedRectangleBorder(
     //     borderRadius: BorderRadius.circular(

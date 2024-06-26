@@ -9,6 +9,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_requ
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/dishes/dishes_service.dart';
 
+import '../../models/dishes/add_dish_request_with_variation_model.dart';
 import '../../models/dishes/dish_collection_model.dart';
 import '../../services/app_exception/app_exception.dart';
 import '../common/base_controller.dart';
@@ -32,6 +33,10 @@ class DishesController extends ChangeNotifier with BaseController {
       _addDishInitializeData?.category.data ?? [];
   Map<String, dynamic> get listOfMenus =>
       _addDishInitializeData?.productMenu.data ?? <String, dynamic>{};
+
+  String? get defaultEntryKey => listOfMenus.entries.firstOrNull != null
+      ? listOfMenus.entries.first.key
+      : null;
   List<AllergensInitialiseSubData> get listOfAllergens =>
       _addDishInitializeData?.allergens.data ?? [];
 
@@ -50,8 +55,8 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-  bool _onlineStatus = false;
-  bool _dineInStatus = false;
+  bool _onlineStatus = true;
+  bool _dineInStatus = true;
   bool get onlineStatus => _onlineStatus;
   bool get dineInStatus => _dineInStatus;
 
@@ -170,6 +175,21 @@ class DishesController extends ChangeNotifier with BaseController {
 
   List<CategoryInitialiseSubData> selectedDishCategories = [];
 
+  List<(String?, String?)> get choosedParentCategory =>
+      selectedDishCategories.map((e) => (e.cID, e.name)).toList();
+
+  List<(String?, String?, String?, String?)> get choosedSubCategories =>
+      selectedDishCategories.expand((parentCategory) {
+        return parentCategory.childrens.map((child) {
+          return (
+            parentCategory.cID,
+            parentCategory.name,
+            child.cID,
+            child.name
+          );
+        });
+      }).toList();
+
   void whenSelectParentCategory(CategoryInitialiseSubData parentCategory) {
     try {
       final contains = selectedDishCategories.any((category) {
@@ -226,10 +246,103 @@ class DishesController extends ChangeNotifier with BaseController {
     return parentCategory != null && parentCategory.childrens.contains(child);
   }
 
+  void removeParentCategory(String? parentCId) {
+    if (parentCId == null) return;
+    selectedDishCategories.removeWhere((category) => category.cID == parentCId);
+    notifyListeners();
+  }
+
+  void removeChildCategory(String? parentCId, String? childCID) {
+    try {
+      if (childCID == null) return;
+      final parentCategory = selectedDishCategories.firstWhereOrNull((e) {
+        return parentCId != null && e.cID == parentCId;
+      });
+      if (parentCategory == null) return;
+      parentCategory.childrens.removeWhere((category) {
+        return category.cID == childCID;
+      });
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  List<(TimeOfDay?, TimeOfDay?)> dishAvailabilityEntries = [
+    (null, null),
+  ];
+
+  void addAvailabilityEntries() {
+    dishAvailabilityEntries.add((null, null));
+    notifyListeners();
+  }
+
+  void removeAvailabilityEntries(int index) {
+    dishAvailabilityEntries.removeAt(index);
+    notifyListeners();
+  }
+
+  void onStartTimeChange(int index, TimeOfDay time) {
+    dishAvailabilityEntries[index] = (time, dishAvailabilityEntries[index].$2);
+    notifyListeners();
+  }
+
+  void onEndTimeChange(int index, TimeOfDay time) {
+    dishAvailabilityEntries[index] = (dishAvailabilityEntries[index].$1, time);
+    notifyListeners();
+  }
+
+  bool _allDaysEnabled = false;
+  bool get allDaysEnabled => _allDaysEnabled;
+
+  void onChangeAllDaysEnable(bool? value) {
+    if (value == null) return;
+    _allDaysEnabled = value;
+    notifyListeners();
+  }
+
+  List<String> availableDays = [];
+
+  void onChangeAvailableDays(String day) {
+    try {
+      if (availableDays.contains(day)) {
+        availableDays.remove(day);
+        return;
+      }
+      availableDays.add(day);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  bool checkDaysIsSelected(String day) {
+    return availableDays.contains(day);
+  }
+
+  List<String> choosedMenus = [];
+
+  void onChangeChooseMenus(String key) {
+    try {
+      if (choosedMenus.contains(key)) {
+        choosedMenus.remove(key);
+        return;
+      }
+      choosedMenus.add(key);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  bool checkMenuIsSelected(String key) => choosedMenus.contains(key);
+
+  void activeDefaultSelectedInMenu() {
+    if (listOfMenus.entries.firstOrNull == null) return;
+    final defaultEntry = listOfMenus.entries.first;
+    if (choosedMenus.contains(defaultEntry.key)) return;
+    choosedMenus.insert(0, defaultEntry.key);
+  }
+
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
   late TextEditingController nameController;
-  late TextEditingController priceController;
-  late TextEditingController quantityController;
   late TextEditingController variationNameController;
   late TextEditingController variationPriceController;
   late TextEditingController descriptionController;
@@ -241,14 +354,16 @@ class DishesController extends ChangeNotifier with BaseController {
   @override
   Future<void> init() async {
     fetchDishes();
-    initializeAddDishRequiredData();
-    _dishType = _addDishInitializeData?.dishtype.data.firstOrNull;
+    await initializeAddDishRequiredData();
+    activeDefaultSelectedInMenu();
+    if (_addDishInitializeData?.dishtype.data.firstOrNull != null) {
+      _dishType = _addDishInitializeData?.dishtype.data.first;
+    }
   }
 
   void initalizeAllFormControllers() {
     nameController = TextEditingController();
-    priceController = TextEditingController();
-    quantityController = TextEditingController();
+
     variationNameController = TextEditingController();
     variationPriceController = TextEditingController();
     descriptionController = TextEditingController();
@@ -260,8 +375,6 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void disposeAllFormControllers() {
     nameController.dispose();
-    priceController.dispose();
-    quantityController.dispose();
     variationNameController.dispose();
     variationPriceController.dispose();
     descriptionController.dispose();
@@ -331,10 +444,103 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   Future<void> addNewDish() async {
-    final payload = AddDishRequestModel(
-      productType: "single",
-    );
+    if (variationsFormEntries.isEmpty) return;
+
+    final productType =
+        variationsFormEntries.length == 1 ? "single" : "variation";
+    final addonsMasterGroup = choosedMasterAddons
+        .where((addon) => addon.id != null)
+        .map((addon) => addon.id!)
+        .toList();
+    final isOnlineReq = _onlineStatus ? 'Yes' : 'No';
+    final isDineinReq = _dineInStatus ? 'Yes' : 'No';
+
+    final singleEntry = variationsFormEntries.first;
+    final priceController = singleEntry["price"] as TextEditingController;
+    final priceReq = double.parse(priceController.text);
+
+    final ingredientsController =
+        singleEntry["ingredients"] as TextEditingController;
+    final allergens =
+        singleEntry["allergens"] as List<AllergensInitialiseSubData>;
+    final allergensIds =
+        allergens.where((e) => e.id != null).map((e) => e.id!).toList();
+
+    final listOfParentCategoriesId = choosedParentCategory
+        .where((e) => e.$1 != null)
+        .map((e) => e.$1!)
+        .toList();
+    final listOfSubCategoriesId = choosedSubCategories
+        .where((e) => e.$3 != null)
+        .map((e) => e.$3!)
+        .toList();
+    final listOfCategories = [
+      ...listOfParentCategoriesId,
+      ...listOfSubCategoriesId
+    ];
+
+    final variations = variationsFormEntries.map((entry) {
+      final nameController = entry["name"] as TextEditingController;
+      final allergens = entry["allergens"];
+      final price = entry["price"] as TextEditingController;
+      return VariationDishData(
+        pvID: null,
+        name: nameController.text,
+        price: double.parse(price.text),
+        allergensMaster: allergens.map((e) => e.id).toList(),
+        ingredients: ingredientsController.text,
+        isUnlimitedStock: 1,
+        quantity: 0,
+      );
+    }).toList();
+
+    final allDayAvailable = allDaysEnabled ? "on" : null;
+
+    final timing = dishAvailabilityEntries
+        .where((entry) => entry.$1 != null && entry.$2 == null)
+        .map((entry) {
+      return {"startTime": entry.$1, "endTime": entry.$2};
+    }).toList();
+
+    final payload = variationsFormEntries.length == 1
+        ? AddDishRequestModel(
+            productType: productType,
+            type: dishType,
+            activeStatus: 1,
+            price: priceReq,
+            isUnlimitedStock: 1,
+            online: isOnlineReq,
+            dining: isDineinReq,
+            name: nameController.text,
+            description: descriptionController.text,
+            ingredients: ingredientsController.text,
+            allergns: allergensIds,
+            category: listOfCategories,
+            allDayAvailable: allDayAvailable,
+            availability: availableDays,
+            timing: timing,
+            quantity: 0,
+            addonsMasterGroup: addonsMasterGroup,
+            productMenuGroup: choosedMenus,
+          )
+        : AddDishRequestWithVariationModel(
+            productType: productType,
+            type: dishType,
+            activeStatus: 1,
+            variations: variations,
+            online: isOnlineReq,
+            dining: isDineinReq,
+            name: nameController.text,
+            description: descriptionController.text,
+            category: listOfCategories,
+            addonsMasterGroup: addonsMasterGroup,
+            allDayAvailable: allDayAvailable,
+            availability: availableDays,
+            timing: timing,
+            productMenuGroup: choosedMenus,
+          );
 
     final response = await DishesService.addNewDish(payload);
+    inspect(response);
   }
 }

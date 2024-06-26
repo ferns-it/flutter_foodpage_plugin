@@ -48,6 +48,8 @@ class _AddVariationModifiersSideSheetState
       ),
       child: Column(
         children: <Widget>[
+          Text("Dish Variations", style: textTheme.titleLarge),
+          const Divider(height: 40.0),
           verticalSpaceRegular,
           OutlinedButton.icon(
             onPressed: () => controller.addNewVariationFormEntry(),
