@@ -10,6 +10,17 @@ class MenuBuilderValidators {
     return null;
   }
 
+  // Validator for category name
+  static String? validateCategoryName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Category name is required';
+    }
+    if (value.length < 3) {
+      return 'Category name must be at least 3 characters long';
+    }
+    return null;
+  }
+
   // Validator for price
   static String? validatePrice(String? value) {
     if (value == null || value.isEmpty) {

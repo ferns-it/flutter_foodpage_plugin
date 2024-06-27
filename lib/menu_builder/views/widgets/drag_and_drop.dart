@@ -166,37 +166,6 @@ class _DragAndDropTreeViewState extends State<DragAndDropTreeView> {
     super.dispose();
   }
 
-  void onNodeAccepted(TreeDragAndDropDetails<Node> details) {
-    Node? newParent;
-    int newIndex = 0;
-
-    details.mapDropPosition(
-      whenAbove: () {
-        // Insert the dragged node as the previous sibling of the target node.
-        newParent = details.targetNode.parent;
-        newIndex = details.targetNode.index;
-      },
-      whenInside: () {
-        // Insert the dragged node as the last child of the target node.
-        newParent = details.targetNode;
-        newIndex = details.targetNode.children.length;
-
-        // Ensure that the dragged node is visible after reordering.
-        treeController.setExpansionState(details.targetNode, true);
-      },
-      whenBelow: () {
-        // Insert the dragged node as the next sibling of the target node.
-        newParent = details.targetNode.parent;
-        newIndex = details.targetNode.index + 1;
-      },
-    );
-
-    (newParent ?? root).insertChild(newIndex, details.draggedNode);
-
-    // Rebuild the tree to show the reordered node in its new vicinity.
-    treeController.rebuild();
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -216,7 +185,7 @@ class _DragAndDropTreeViewState extends State<DragAndDropTreeView> {
         return DragAndDropTreeTile(
           entry: entry,
           borderSide: borderSide,
-          onNodeAccepted: onNodeAccepted,
+          onNodeAccepted: (_) {},
           onFolderPressed: () => treeController.toggleExpansion(entry.node),
         );
       },

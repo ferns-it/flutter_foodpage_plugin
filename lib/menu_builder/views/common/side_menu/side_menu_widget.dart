@@ -23,19 +23,21 @@ class SideMenuWidget extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: ListTileTheme(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
         selectedTileColor: MenuBuilderColors.kPrimaryColor,
         child: Column(
           children: <Widget>[
-            Center(
-              child: Image.asset(
-                "packages/flutter_foodpage_plugin/assets/images/food-page-logo.png",
-                height: 30,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Image.asset(
+                  "packages/flutter_foodpage_plugin/assets/images/food-page-logo.png",
+                  height: 30,
+                ),
               ),
             ),
-            verticalSpaceSmall,
-            const Divider(),
-            verticalSpaceMedium,
+            verticalSpaceLarge,
             _buildMenuItem(
               context,
               icon: pageNavigationController.currentPageIndex == 0
