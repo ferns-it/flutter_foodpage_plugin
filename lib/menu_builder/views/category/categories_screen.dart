@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/menu_builder_app_colors.dart';
 import '../../core/utils/ui_utils.dart';
-import '../../models/dishes/add_dish_initialise_data_model.dart';
 import '../widgets/build_dropdown_base.dart';
 
 class CategoriesScreen extends StatefulWidget {

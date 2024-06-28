@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/category_data_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/base_client.dart';
 
@@ -45,5 +47,29 @@ class DishesCategoryService {
     );
     if (response == null) return null;
     return CategorySuccessResponse.fromJson(response);
+  }
+
+  static Future<APIResultType> updateExistingCategory({
+    required String name,
+    required String description,
+    required String cID,
+  }) async {
+    try {
+      final payload = {
+        "name": name,
+        "description": description,
+      };
+      final response = await BaseClient.put(
+        api: ApiEndpoints.updateCategory,
+        params: cID,
+        data: payload,
+        needAuth: true,
+      );
+      if (response == null) return APIResultType.failed;
+      return APIResultType.success;
+    } on Exception catch (e) {
+      log(e.toString(), name: "updateExistingCategory");
+      return APIResultType.failed;
+    }
   }
 }

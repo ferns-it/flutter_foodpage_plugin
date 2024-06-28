@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/base_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/category_data_model.dart';
@@ -74,8 +72,6 @@ class DishCategoryController extends ChangeNotifier with BaseController {
       _dishCategoryCollection = response != null
           ? APIResponse.completed(response)
           : throwNotFoundException<DishCategoryCollectionModel>();
-
-      inspect(_dishCategoryCollection);
 
       notifyListeners();
     } on AppExceptions catch (error) {

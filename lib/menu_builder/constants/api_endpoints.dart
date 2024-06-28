@@ -11,4 +11,9 @@ class ApiEndpoints {
   static const deleteProduct = '/products/delete/';
   static const categoryList = '/categories/';
   static const addNewCategory = '/products/addnewcategory';
+  static const updateCategory = '/products/updatecategory/';
+  static const modifiersList = '/products/masteraddons/list';
+  static const addModifier = '/products/masteraddons/new';
+  static const updateModifier = '/products/masteraddons/update';
+  static const statusUpdate = '/products/masteraddons/statusupdate';
 }
