@@ -31,7 +31,16 @@ class DishesController extends ChangeNotifier with BaseController {
   List<MasterAddonsInitialiseSubData> get listOfMasterAddons =>
       _addDishInitializeData?.masterAddons.data ?? [];
   List<CategoryData> get listOfCategories =>
-      _addDishInitializeData?.category.data ?? [];
+      (_addDishInitializeData?.category.data ?? [])
+          .where((category) => category.categoryStatus == "Active")
+          .toList();
+
+  List<CategoryData> get childCategories => listOfCategories
+      .expand((category) => category.childrens)
+      .map((category) => category)
+      .where((category) => category.categoryStatus == "Active")
+      .toList();
+
   Map<String, dynamic> get listOfMenus =>
       _addDishInitializeData?.productMenu.data ?? <String, dynamic>{};
 

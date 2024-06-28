@@ -7,6 +7,8 @@ import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/food_menu_s
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/food_details_side_sheet_widget.dart';
 import 'package:provider/provider.dart';
 
+import 'modifier/modifiers_screen.dart';
+
 class FlutterFoodpageMenuBuilder extends StatelessWidget {
   const FlutterFoodpageMenuBuilder({super.key});
 
@@ -16,6 +18,7 @@ class FlutterFoodpageMenuBuilder extends StatelessWidget {
       const DashboardScreen(),
       const FoodMenuScreen(),
       const CategoriesScreen(),
+      const ModifiersScreen(),
     ];
 
     return Builder(builder: (context) {

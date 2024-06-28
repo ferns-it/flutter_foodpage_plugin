@@ -457,6 +457,7 @@ class CategoryData {
   final String? shopID;
   final String? shopSpecificID;
   final String? status;
+  final String? categoryStatus;
   final String? parentID;
   final String? defaultFlag;
   final String? sortOrder;
@@ -468,6 +469,7 @@ class CategoryData {
     this.shopID,
     this.shopSpecificID,
     this.status,
+    this.categoryStatus,
     this.parentID,
     this.defaultFlag,
     this.sortOrder,
@@ -481,6 +483,7 @@ class CategoryData {
     String? shopID,
     String? shopSpecificID,
     String? status,
+    String? categoryStatus,
     String? parentID,
     String? defaultFlag,
     String? sortOrder,
@@ -493,6 +496,7 @@ class CategoryData {
       shopID: shopID ?? this.shopID,
       shopSpecificID: shopSpecificID ?? this.shopSpecificID,
       status: status ?? this.status,
+      categoryStatus: categoryStatus ?? this.categoryStatus,
       parentID: parentID ?? this.parentID,
       defaultFlag: defaultFlag ?? this.defaultFlag,
       sortOrder: sortOrder ?? this.sortOrder,
@@ -508,6 +512,7 @@ class CategoryData {
       'shopID': shopID,
       'shopSpecificID': shopSpecificID,
       'status': status,
+      'categoryStatus': categoryStatus,
       'parentID': parentID,
       'defaultFlag': defaultFlag,
       'sortOrder': sortOrder,
@@ -526,6 +531,9 @@ class CategoryData {
           ? map['shopSpecificID'] as String
           : null,
       status: map['status'] != null ? map['status'] as String : null,
+      categoryStatus: map['categoryStatus'] != null
+          ? map['categoryStatus'] as String
+          : null,
       parentID: map['parentID'] != null ? map['parentID'] as String : null,
       defaultFlag:
           map['defaultFlag'] != null ? map['defaultFlag'] as String : null,
@@ -545,7 +553,7 @@ class CategoryData {
 
   @override
   String toString() {
-    return 'CategoryData(cID: $cID, name: $name, description: $description, shopID: $shopID, shopSpecificID: $shopSpecificID, status: $status, parentID: $parentID, defaultFlag: $defaultFlag, sortOrder: $sortOrder, childrens: $childrens)';
+    return 'CategoryData(cID: $cID, name: $name, description: $description, shopID: $shopID, shopSpecificID: $shopSpecificID, status: $status, categoryStatus: $categoryStatus, parentID: $parentID, defaultFlag: $defaultFlag, sortOrder: $sortOrder, childrens: $childrens)';
   }
 
   @override
@@ -558,6 +566,7 @@ class CategoryData {
         other.shopID == shopID &&
         other.shopSpecificID == shopSpecificID &&
         other.status == status &&
+        other.categoryStatus == categoryStatus &&
         other.parentID == parentID &&
         other.defaultFlag == defaultFlag &&
         other.sortOrder == sortOrder &&
@@ -572,6 +581,7 @@ class CategoryData {
         shopID.hashCode ^
         shopSpecificID.hashCode ^
         status.hashCode ^
+        categoryStatus.hashCode ^
         parentID.hashCode ^
         defaultFlag.hashCode ^
         sortOrder.hashCode ^

@@ -1,6 +1,7 @@
 // ignore_for_file: unused_field
 
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
@@ -188,7 +189,18 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                       _expandNode(key, expanded),
                   onNodeTap: (key) {
                     final controller = context.read<DishCategoryController>();
-                    controller.onChangeSelectedCategoryId(key);
+                    final dishController = context.read<DishesController>();
+                    var category =
+                        dishController.listOfCategories.firstWhereOrNull((x) {
+                      return x.cID == key;
+                    });
+
+                    category ??=
+                        dishController.childCategories.firstWhereOrNull((x) {
+                      return x.cID == key;
+                    });
+
+                    controller.onPressCategory(category);
                     controller.updateTreeViewController(
                       treeViewController.copyWith(selectedKey: key),
                     );
@@ -289,68 +301,103 @@ class _BuildAddUpdateCategorySectionState
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text("Add Category", style: textTheme.titleMedium),
-                const Divider(height: 40.0),
-                Text(
-                  "Choose Type",
-                  style: textTheme.titleSmall!.copyWith(
-                    color: Colors.grey.shade700,
-                  ),
-                ),
                 Row(
                   children: <Widget>[
-                    Expanded(
-                      child: RadioListTile(
-                        value: CategoryType.parent,
-                        groupValue: controller.addCategoryType,
-                        onChanged: controller.onChangeCategoryType,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: const Text("Parent"),
-                      ),
+                    Text(
+                      !controller.editMode ? "Add Category" : "Update Category",
+                      style: textTheme.titleMedium,
                     ),
-                    Expanded(
-                      child: RadioListTile(
-                        value: CategoryType.child,
-                        groupValue: controller.addCategoryType,
-                        onChanged: controller.onChangeCategoryType,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: const Text("Child"),
-                      ),
-                    ),
-                  ],
-                ),
-                if (controller.addCategoryType == CategoryType.child) ...[
-                  verticalSpaceRegular,
-                  BuildDropdownBase(
-                    height: 50,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String?>(
-                        items: dishController.listOfCategories
-                            .map<DropdownMenuItem<String?>>((category) {
-                          return DropdownMenuItem<String?>(
-                            value: category.cID,
-                            child: Text(
-                              category.name ?? "",
-                              maxLines: 1,
-                              softWrap: false,
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: controller.onChangeSelectedCategoryId,
-                        value: controller.selectedCategoryId,
-                        isExpanded: true,
-                        isDense: true,
-                        hint: Text(
-                          "Select Category",
-                          style: textTheme.titleMedium!.copyWith(
-                            color: MenuBuilderColors.kGrey2,
+                    const Spacer(),
+                    Visibility(
+                      visible: controller.editMode,
+                      child: InkWell(
+                        onTap: () {
+                          controller.disableEnableCategory(
+                              onRequestRefresh: () async {
+                            await dishController
+                                .initializeAddDishRequiredData();
+                            initializeTableViewController();
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: MenuBuilderColors.kPrimaryColor
+                                .withOpacity(0.25),
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: MenuBuilderColors.kPrimaryColor,
                           ),
                         ),
                       ),
                     ),
+                  ],
+                ),
+                const Divider(height: 40.0),
+                if (!controller.editMode) ...[
+                  Text(
+                    "Choose Type",
+                    style: textTheme.titleSmall!.copyWith(
+                      color: Colors.grey.shade700,
+                    ),
                   ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: RadioListTile(
+                          value: CategoryType.parent,
+                          groupValue: controller.addCategoryType,
+                          onChanged: controller.onChangeCategoryType,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          title: const Text("Parent"),
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile(
+                          value: CategoryType.child,
+                          groupValue: controller.addCategoryType,
+                          onChanged: controller.onChangeCategoryType,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          title: const Text("Child"),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (controller.addCategoryType == CategoryType.child) ...[
+                    verticalSpaceRegular,
+                    BuildDropdownBase(
+                      height: 50,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String?>(
+                          items: dishController.listOfCategories
+                              .map<DropdownMenuItem<String?>>((category) {
+                            return DropdownMenuItem<String?>(
+                              value: category.cID,
+                              child: Text(
+                                category.name ?? "",
+                                maxLines: 1,
+                                softWrap: false,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: controller.onChangeSelectedCategoryId,
+                          value: controller.selectedCategoryId,
+                          isExpanded: true,
+                          isDense: true,
+                          hint: Text(
+                            "Select Category",
+                            style: textTheme.titleMedium!.copyWith(
+                              color: MenuBuilderColors.kGrey2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  verticalSpaceRegular,
                 ],
-                verticalSpaceRegular,
                 CustomRoundedTextField.topText(
                   hintText: "Enter Category",
                   topText: "Category Name",
@@ -372,8 +419,14 @@ class _BuildAddUpdateCategorySectionState
                 verticalSpaceRegular,
                 OutlinedButton(
                   onPressed: () {
+                    if (controller.editMode) {
+                      controller.updateCategory(onRequestRefresh: () async {
+                        await dishController.initializeAddDishRequiredData();
+                        initializeTableViewController();
+                      });
+                      return;
+                    }
                     controller.addNewCategory(onRequestRefresh: () async {
-                    
                       await dishController.initializeAddDishRequiredData();
                       initializeTableViewController();
                     });
@@ -388,7 +441,9 @@ class _BuildAddUpdateCategorySectionState
                       color: MenuBuilderColors.kBlue.withOpacity(0.3),
                     ),
                   ),
-                  child: const Text("Add Category"),
+                  child: Text(
+                    !controller.editMode ? "Add Category" : "Update Category",
+                  ),
                 ),
               ],
             ),

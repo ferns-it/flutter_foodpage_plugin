@@ -32,6 +32,8 @@ class DishCategoryController extends ChangeNotifier with BaseController {
   CategoryData? _selectedCategory;
   CategoryData? get selectedCategory => _selectedCategory;
 
+  bool get editMode => _selectedCategory != null;
+
   String? _selectedCategoryId;
   String? get selectedCategoryId => _selectedCategoryId;
 
@@ -129,6 +131,52 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     formKey.currentState?.reset();
     nameController.clear();
     descriptionController.clear();
+  }
+
+  void updateCategory({required VoidCallback onRequestRefresh}) async {
+    try {
+      if (formKey.currentState?.validate() == false) return;
+      if (selectedCategory?.cID == null) {
+        //?? ADD TOAST
+        return;
+      }
+
+      await DishesCategoryService.updateCategory(
+        name: nameController.text,
+        description: descriptionController.text,
+        cID: selectedCategory!.cID!,
+      );
+
+      onRequestRefresh();
+
+      formKey.currentState?.reset();
+      nameController.clear();
+      descriptionController.clear();
+      _selectedCategory = null;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  void disableEnableCategory({required VoidCallback onRequestRefresh}) async {
+    try {
+      if (selectedCategory?.cID == null) {
+        //?? ADD TOAST
+        return;
+      }
+      await DishesCategoryService.disableEnableCategory(
+        selectedCategory!.cID!,
+        selectedCategory?.categoryStatus == "Active" ? "Inactive" : "Active",
+      );
+
+      onRequestRefresh();
+      formKey.currentState?.reset();
+      nameController.clear();
+      descriptionController.clear();
+      _selectedCategory = null;
+    } finally {
+      notifyListeners();
+    }
   }
 
   @override

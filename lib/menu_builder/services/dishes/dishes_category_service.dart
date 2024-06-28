@@ -49,7 +49,7 @@ class DishesCategoryService {
     return CategorySuccessResponse.fromJson(response);
   }
 
-  static Future<APIResultType> updateExistingCategory({
+  static Future<APIResultType> updateCategory({
     required String name,
     required String description,
     required String cID,
@@ -69,6 +69,22 @@ class DishesCategoryService {
       return APIResultType.success;
     } on Exception catch (e) {
       log(e.toString(), name: "updateExistingCategory");
+      return APIResultType.failed;
+    }
+  }
+
+  static Future<APIResultType> disableEnableCategory(
+      String cID, String status) async {
+    try {
+      final response = await BaseClient.put(
+        api: ApiEndpoints.statusUpdateCategory,
+        params: cID,
+        data: jsonEncode({"status": status}),
+      );
+      if (response == null) return APIResultType.failed;
+      return APIResultType.success;
+    } on Exception catch (e) {
+      log(e.toString(), name: "disableEnableCategory");
       return APIResultType.failed;
     }
   }
