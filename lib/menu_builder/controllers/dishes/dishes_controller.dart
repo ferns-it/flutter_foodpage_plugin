@@ -30,7 +30,7 @@ class DishesController extends ChangeNotifier with BaseController {
       _addDishInitializeData?.availability.data?.availability?.options ?? [];
   List<MasterAddonsInitialiseSubData> get listOfMasterAddons =>
       _addDishInitializeData?.masterAddons.data ?? [];
-  List<CategoryInitialiseSubData> get listOfCategories =>
+  List<CategoryData> get listOfCategories =>
       _addDishInitializeData?.category.data ?? [];
   Map<String, dynamic> get listOfMenus =>
       _addDishInitializeData?.productMenu.data ?? <String, dynamic>{};
@@ -175,7 +175,7 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-  List<CategoryInitialiseSubData> selectedDishCategories = [];
+  List<CategoryData> selectedDishCategories = [];
 
   List<(String?, String?)> get choosedParentCategory =>
       selectedDishCategories.map((e) => (e.cID, e.name)).toList();
@@ -192,7 +192,7 @@ class DishesController extends ChangeNotifier with BaseController {
         });
       }).toList();
 
-  void whenSelectParentCategory(CategoryInitialiseSubData parentCategory) {
+  void whenSelectParentCategory(CategoryData parentCategory) {
     try {
       final contains = selectedDishCategories.any((category) {
         return category.cID == parentCategory.cID;
@@ -213,7 +213,7 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void whenSelectSubCategory(
     String? parentCId,
-    CategoryInitialiseSubChildrensData child,
+    CategoryData child,
   ) {
     try {
       final parentCategory = selectedDishCategories
@@ -230,7 +230,7 @@ class DishesController extends ChangeNotifier with BaseController {
     }
   }
 
-  bool checkParentIsSelected(CategoryInitialiseSubData parentCategory) {
+  bool checkParentIsSelected(CategoryData parentCategory) {
     if (selectedDishCategories.isEmpty) return false;
     return selectedDishCategories.any((category) {
       return category.cID == parentCategory.cID;
@@ -239,7 +239,7 @@ class DishesController extends ChangeNotifier with BaseController {
 
   bool checkChildIsSelected(
     String? parentCId,
-    CategoryInitialiseSubChildrensData child,
+    CategoryData child,
   ) {
     if (selectedDishCategories.isEmpty) return false;
     final parentCategory = selectedDishCategories.firstWhereOrNull((e) {

@@ -4,6 +4,8 @@ import 'package:flutter_foodpage_plugin/menu_builder/services/app_exception/app_
 mixin BaseController {
   Future<void> init();
 
+  void dispose() {}
+
   APIResponse<T> throwNotFoundException<T>() {
     return APIResponse.error(
       "The requested api data was not found.",

@@ -396,15 +396,15 @@ class AvailabilityData {
 
 class CategoryInitialiseData {
   final String? control;
-  final List<CategoryInitialiseSubData>? data;
+  final List<CategoryData> data;
   CategoryInitialiseData({
     this.control,
-    this.data,
+    this.data = const [],
   });
 
   CategoryInitialiseData copyWith({
     String? control,
-    List<CategoryInitialiseSubData>? data,
+    List<CategoryData>? data,
   }) {
     return CategoryInitialiseData(
       control: control ?? this.control,
@@ -415,21 +415,18 @@ class CategoryInitialiseData {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'control': control,
-      'data': data?.map((x) => x.toMap()).toList(),
+      'data': data.map((x) => x.toMap()).toList(),
     };
   }
 
   factory CategoryInitialiseData.fromMap(Map<String, dynamic> map) {
     return CategoryInitialiseData(
       control: map['control'] != null ? map['control'] as String : null,
-      data: map['data'] != null
-          ? List<CategoryInitialiseSubData>.from(
-              (map['data'] as List<dynamic>).map<CategoryInitialiseSubData?>(
-                (x) => CategoryInitialiseSubData.fromMap(
-                    x as Map<String, dynamic>),
-              ),
-            )
-          : null,
+      data: List<CategoryData>.from(
+        (map['data'] ?? []).map<CategoryData?>(
+          (x) => CategoryData.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
@@ -453,7 +450,7 @@ class CategoryInitialiseData {
   int get hashCode => control.hashCode ^ data.hashCode;
 }
 
-class CategoryInitialiseSubData {
+class CategoryData {
   final String? cID;
   final String? name;
   final String? description;
@@ -463,8 +460,8 @@ class CategoryInitialiseSubData {
   final String? parentID;
   final String? defaultFlag;
   final String? sortOrder;
-  final List<CategoryInitialiseSubChildrensData> childrens;
-  CategoryInitialiseSubData({
+  final List<CategoryData> childrens;
+  CategoryData({
     this.cID,
     this.name,
     this.description,
@@ -477,7 +474,7 @@ class CategoryInitialiseSubData {
     this.childrens = const [],
   });
 
-  CategoryInitialiseSubData copyWith({
+  CategoryData copyWith({
     String? cID,
     String? name,
     String? description,
@@ -487,9 +484,9 @@ class CategoryInitialiseSubData {
     String? parentID,
     String? defaultFlag,
     String? sortOrder,
-    List<CategoryInitialiseSubChildrensData>? childrens,
+    List<CategoryData>? childrens,
   }) {
-    return CategoryInitialiseSubData(
+    return CategoryData(
       cID: cID ?? this.cID,
       name: name ?? this.name,
       description: description ?? this.description,
@@ -518,8 +515,8 @@ class CategoryInitialiseSubData {
     };
   }
 
-  factory CategoryInitialiseSubData.fromMap(Map<String, dynamic> map) {
-    return CategoryInitialiseSubData(
+  factory CategoryData.fromMap(Map<String, dynamic> map) {
+    return CategoryData(
       cID: map['cID'] != null ? map['cID'] as String : null,
       name: map['name'] != null ? map['name'] as String : null,
       description:
@@ -533,10 +530,9 @@ class CategoryInitialiseSubData {
       defaultFlag:
           map['defaultFlag'] != null ? map['defaultFlag'] as String : null,
       sortOrder: map['sortOrder'] != null ? map['sortOrder'] as String : null,
-      childrens: List<CategoryInitialiseSubChildrensData>.from(
-        (map['childrens'] ?? []).map<CategoryInitialiseSubChildrensData>(
-          (x) => CategoryInitialiseSubChildrensData.fromMap(
-              x as Map<String, dynamic>),
+      childrens: List<CategoryData>.from(
+        (map['childrens'] ?? []).map<CategoryData>(
+          (x) => CategoryData.fromMap(x as Map<String, dynamic>),
         ),
       ),
     );
@@ -544,17 +540,16 @@ class CategoryInitialiseSubData {
 
   String toJson() => json.encode(toMap());
 
-  factory CategoryInitialiseSubData.fromJson(String source) =>
-      CategoryInitialiseSubData.fromMap(
-          json.decode(source) as Map<String, dynamic>);
+  factory CategoryData.fromJson(String source) =>
+      CategoryData.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'CategoryInitialiseSubData(cID: $cID, name: $name, description: $description, shopID: $shopID, shopSpecificID: $shopSpecificID, status: $status, parentID: $parentID, defaultFlag: $defaultFlag, sortOrder: $sortOrder, childrens: $childrens)';
+    return 'CategoryData(cID: $cID, name: $name, description: $description, shopID: $shopID, shopSpecificID: $shopSpecificID, status: $status, parentID: $parentID, defaultFlag: $defaultFlag, sortOrder: $sortOrder, childrens: $childrens)';
   }
 
   @override
-  bool operator ==(covariant CategoryInitialiseSubData other) {
+  bool operator ==(covariant CategoryData other) {
     if (identical(this, other)) return true;
 
     return other.cID == cID &&
@@ -581,124 +576,6 @@ class CategoryInitialiseSubData {
         defaultFlag.hashCode ^
         sortOrder.hashCode ^
         childrens.hashCode;
-  }
-}
-
-class CategoryInitialiseSubChildrensData {
-  final String? cID;
-  final String? name;
-  final String? description;
-  final String? shopID;
-  final String? shopSpecificID;
-  final String? status;
-  final String? parentID;
-  final String? defaultFlag;
-  final String? sortOrder;
-  CategoryInitialiseSubChildrensData({
-    this.cID,
-    this.name,
-    this.description,
-    this.shopID,
-    this.shopSpecificID,
-    this.status,
-    this.parentID,
-    this.defaultFlag,
-    this.sortOrder,
-  });
-
-  CategoryInitialiseSubChildrensData copyWith({
-    String? cID,
-    String? name,
-    String? description,
-    String? shopID,
-    String? shopSpecificID,
-    String? status,
-    String? parentID,
-    String? defaultFlag,
-    String? sortOrder,
-  }) {
-    return CategoryInitialiseSubChildrensData(
-      cID: cID ?? this.cID,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      shopID: shopID ?? this.shopID,
-      shopSpecificID: shopSpecificID ?? this.shopSpecificID,
-      status: status ?? this.status,
-      parentID: parentID ?? this.parentID,
-      defaultFlag: defaultFlag ?? this.defaultFlag,
-      sortOrder: sortOrder ?? this.sortOrder,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'cID': cID,
-      'name': name,
-      'description': description,
-      'shopID': shopID,
-      'shopSpecificID': shopSpecificID,
-      'status': status,
-      'parentID': parentID,
-      'defaultFlag': defaultFlag,
-      'sortOrder': sortOrder,
-    };
-  }
-
-  factory CategoryInitialiseSubChildrensData.fromMap(Map<String, dynamic> map) {
-    return CategoryInitialiseSubChildrensData(
-      cID: map['cID'] != null ? map['cID'] as String : null,
-      name: map['name'] != null ? map['name'] as String : null,
-      description:
-          map['description'] != null ? map['description'] as String : null,
-      shopID: map['shopID'] != null ? map['shopID'] as String : null,
-      shopSpecificID: map['shopSpecificID'] != null
-          ? map['shopSpecificID'] as String
-          : null,
-      status: map['status'] != null ? map['status'] as String : null,
-      parentID: map['parentID'] != null ? map['parentID'] as String : null,
-      defaultFlag:
-          map['defaultFlag'] != null ? map['defaultFlag'] as String : null,
-      sortOrder: map['sortOrder'] != null ? map['sortOrder'] as String : null,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory CategoryInitialiseSubChildrensData.fromJson(String source) =>
-      CategoryInitialiseSubChildrensData.fromMap(
-          json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'CategoryInitialiseSubChildrensData(cID: $cID, name: $name, description: $description, shopID: $shopID, shopSpecificID: $shopSpecificID, status: $status, parentID: $parentID, defaultFlag: $defaultFlag, sortOrder: $sortOrder)';
-  }
-
-  @override
-  bool operator ==(covariant CategoryInitialiseSubChildrensData other) {
-    if (identical(this, other)) return true;
-
-    return other.cID == cID &&
-        other.name == name &&
-        other.description == description &&
-        other.shopID == shopID &&
-        other.shopSpecificID == shopSpecificID &&
-        other.status == status &&
-        other.parentID == parentID &&
-        other.defaultFlag == defaultFlag &&
-        other.sortOrder == sortOrder;
-  }
-
-  @override
-  int get hashCode {
-    return cID.hashCode ^
-        name.hashCode ^
-        description.hashCode ^
-        shopID.hashCode ^
-        shopSpecificID.hashCode ^
-        status.hashCode ^
-        parentID.hashCode ^
-        defaultFlag.hashCode ^
-        sortOrder.hashCode;
   }
 }
 

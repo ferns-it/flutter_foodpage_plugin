@@ -6,9 +6,15 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 
 import '../../constants/enums.dart';
 import '../../models/common/api_response.dart';
+import '../../models/dishes/add_dish_initialise_data_model.dart';
 import '../../services/app_exception/app_exception.dart';
 
 class DishCategoryController extends ChangeNotifier with BaseController {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  late TextEditingController nameController;
+  late TextEditingController descriptionController;
+
   APIResponse<DishCategoryCollectionModel> _dishCategoryCollection =
       APIResponse.initial();
   APIResponse<DishCategoryCollectionModel> get dishCollection =>
@@ -23,13 +29,30 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
+  CategoryData? _selectedCategory;
+  CategoryData? get selectedCategory => _selectedCategory;
+
   String? _selectedCategoryId;
   String? get selectedCategoryId => _selectedCategoryId;
 
-  void onChangeSelectedCategory(String? selectedCategoryId) {
-    if (selectedCategoryId == null) return;
-    _selectedCategoryId = selectedCategoryId;
-    notifyListeners();
+  void onChangeSelectedCategoryId(String? selectedCategoryId) {
+    try {
+      if (selectedCategoryId == null) return;
+      _selectedCategoryId = selectedCategoryId;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  void onPressCategory(CategoryData? selectedCategory) {
+    try {
+      if (selectedCategory?.name == null) return;
+      _selectedCategory = selectedCategory;
+      nameController.text = selectedCategory!.name!;
+      descriptionController.text = selectedCategory.description!;
+    } finally {
+      notifyListeners();
+    }
   }
 
   String? _selectedParentCategoryId;
@@ -59,6 +82,8 @@ class DishCategoryController extends ChangeNotifier with BaseController {
 
   @override
   Future<void> init() async {
+    nameController = TextEditingController();
+    descriptionController = TextEditingController();
     await fetchCategories();
   }
 
@@ -85,24 +110,31 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     }
   }
 
-  void addNewCategory(String name, String desc,
-      {required VoidCallback onRequestRefresh}) async {
-    try {
-      if (name.isEmpty) return;
-      if (_addCategoryType == CategoryType.child &&
-          _selectedCategoryId == null) {
-        //?? ADD TOAST
-        return;
-      }
-      final parentId =
-          _addCategoryType == CategoryType.parent ? "0" : _selectedCategoryId!;
-      await DishesCategoryService.addNewCategory(
-        name: name,
-        description: desc,
-        parentId: parentId,
-      );
-    } finally {
-      onRequestRefresh();
+  void addNewCategory({required VoidCallback onRequestRefresh}) async {
+    if (formKey.currentState?.validate() == false) return;
+    if (_addCategoryType == CategoryType.child && _selectedCategoryId == null) {
+      //?? ADD TOAST
+      return;
     }
+    final parentId =
+        _addCategoryType == CategoryType.parent ? "0" : _selectedCategoryId!;
+    await DishesCategoryService.addNewCategory(
+      name: nameController.text,
+      description: descriptionController.text,
+      parentId: parentId,
+    );
+
+    onRequestRefresh();
+
+    formKey.currentState?.reset();
+    nameController.clear();
+    descriptionController.clear();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    super.dispose();
   }
 }

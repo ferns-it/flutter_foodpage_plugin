@@ -188,7 +188,7 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                       _expandNode(key, expanded),
                   onNodeTap: (key) {
                     final controller = context.read<DishCategoryController>();
-                    controller.onChangeSelectedCategory(key);
+                    controller.onChangeSelectedCategoryId(key);
                     controller.updateTreeViewController(
                       treeViewController.copyWith(selectedKey: key),
                     );
@@ -240,25 +240,6 @@ class _BuildAddUpdateCategorySection extends StatefulWidget {
 
 class _BuildAddUpdateCategorySectionState
     extends State<_BuildAddUpdateCategorySection> {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  late TextEditingController nameController;
-  late TextEditingController descriptionController;
-
-  @override
-  void initState() {
-    nameController = TextEditingController();
-    descriptionController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    descriptionController.dispose();
-    super.dispose();
-  }
-
   void initializeTableViewController() {
     final controller = context.read<DishesController>();
     final categoryController = context.read<DishCategoryController>();
@@ -302,7 +283,7 @@ class _BuildAddUpdateCategorySectionState
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Form(
-            key: formKey,
+            key: controller.formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,7 +336,7 @@ class _BuildAddUpdateCategorySectionState
                             ),
                           );
                         }).toList(),
-                        onChanged: controller.onChangeSelectedCategory,
+                        onChanged: controller.onChangeSelectedCategoryId,
                         value: controller.selectedCategoryId,
                         isExpanded: true,
                         isDense: true,
@@ -376,7 +357,7 @@ class _BuildAddUpdateCategorySectionState
                   borderRadius: BorderRadius.circular(8.0),
                   textInputAction: TextInputAction.done,
                   validator: MenuBuilderValidators.validateCategoryName,
-                  textEditingController: nameController,
+                  textEditingController: controller.nameController,
                 ),
                 verticalSpaceRegular,
                 CustomRoundedTextField.topText(
@@ -386,23 +367,16 @@ class _BuildAddUpdateCategorySectionState
                   maxLines: 2,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
-                  textEditingController: descriptionController,
+                  textEditingController: controller.descriptionController,
                 ),
                 verticalSpaceRegular,
                 OutlinedButton(
                   onPressed: () {
-                    if (formKey.currentState?.validate() == true) {
-                      final name = nameController.text;
-                      final desc = descriptionController.text;
-                      controller.addNewCategory(name, desc,
-                          onRequestRefresh: () async {
-                        formKey.currentState?.reset();
-                        nameController.clear();
-                        descriptionController.clear();
-                        await dishController.initializeAddDishRequiredData();
-                        initializeTableViewController();
-                      });
-                    }
+                    controller.addNewCategory(onRequestRefresh: () async {
+                    
+                      await dishController.initializeAddDishRequiredData();
+                      initializeTableViewController();
+                    });
                   },
                   style: OutlinedButton.styleFrom(
                     textStyle: textTheme.titleMedium,
