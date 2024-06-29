@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
-
+import 'package:collection/collection.dart';
+import '../../models/modifiers/add_dish_modifiers_model.dart';
 import '../../models/modifiers/dish_modifiers_collection.dart';
 import '../../services/app_exception/app_exception.dart';
 import '../../services/dishes/dish_modifiers_service.dart';
@@ -22,6 +23,12 @@ class DishModifiersController extends ChangeNotifier with BaseController {
     _selectedModifier = modifier;
     notifyListeners();
   }
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  late TextEditingController groupName;
+  late TextEditingController minimumController;
+  late TextEditingController maximumController;
 
   final modifierEntry = {
     "name": TextEditingController(),
@@ -44,6 +51,9 @@ class DishModifiersController extends ChangeNotifier with BaseController {
 
   @override
   Future<void> init() async {
+    groupName = TextEditingController();
+    minimumController = TextEditingController();
+    maximumController = TextEditingController();
     listAllModifiers();
   }
 
@@ -69,10 +79,41 @@ class DishModifiersController extends ChangeNotifier with BaseController {
     }
   }
 
-  Future<void> addModifier() async {
-    // final payload = AddDishModifiersModel(name: name, groupItems: GroupItems(name:
-    // , price: price, status: status, sort: sort),);
-    // await DishModifiersService.addModifier(payload);
+  Future<void> addModifier({required VoidCallback onSuccess}) async {
+    if (formKey.currentState?.validate() == true) {
+      final name = groupName.text;
+      final minimum = minimumController.text;
+      final maximum = maximumController.text;
+      final payload = AddDishModifiersModel(
+        name: name,
+        minimumRequired: minimum,
+        maximumRequired: maximum,
+        groupItems: modifierEntries.mapIndexed((index, data) {
+          final name = (data["name"] as TextEditingController).text;
+          final price = (data["price"] as TextEditingController).text;
+          return GroupItems(
+              name: name,
+              price: price,
+              status: "Active",
+              sort: (index + 1).toString());
+        }).toList(),
+      );
+      await DishModifiersService.addModifier(payload);
+      onSuccess();
+      clearFormEntries();
+      listAllModifiers();
+    }
+  }
+
+  void clearFormEntries() {
+    for (var entry in modifierEntries) {
+      (entry["name"] as TextEditingController).clear();
+      (entry["price"] as TextEditingController).clear();
+    }
+    groupName.clear();
+    minimumController.clear();
+    maximumController.clear();
+    modifierEntries = List.from([modifierEntry]);
   }
 
   Future<void> updateModifier() async {

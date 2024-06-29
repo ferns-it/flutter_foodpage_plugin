@@ -1,10 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 
 class AddDishModifiersModel {
   final String name;
   final String minimumRequired;
   final String maximumRequired;
-  final GroupItems groupItems;
+  final List<GroupItems> groupItems;
   AddDishModifiersModel({
     required this.name,
     this.minimumRequired = "0",
@@ -16,7 +19,7 @@ class AddDishModifiersModel {
     String? name,
     String? minimumRequired,
     String? maximumRequired,
-    GroupItems? groupItems,
+    List<GroupItems>? groupItems,
   }) {
     return AddDishModifiersModel(
       name: name ?? this.name,
@@ -31,7 +34,7 @@ class AddDishModifiersModel {
       'name': name,
       'minimumRequired': minimumRequired,
       'maximumRequired': maximumRequired,
-      'groupItems': groupItems.toMap(),
+      'groupItems': groupItems.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -40,7 +43,11 @@ class AddDishModifiersModel {
       name: map['name'] as String,
       minimumRequired: map['minimumRequired'] as String,
       maximumRequired: map['maximumRequired'] as String,
-      groupItems: GroupItems.fromMap(map['groupItems'] as Map<String, dynamic>),
+      groupItems: List<GroupItems>.from(
+        (map['groupItems'] ?? []).map<GroupItems>(
+          (x) => GroupItems.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
@@ -62,7 +69,7 @@ class AddDishModifiersModel {
     return other.name == name &&
         other.minimumRequired == minimumRequired &&
         other.maximumRequired == maximumRequired &&
-        other.groupItems == groupItems;
+        listEquals(other.groupItems, groupItems);
   }
 
   @override
