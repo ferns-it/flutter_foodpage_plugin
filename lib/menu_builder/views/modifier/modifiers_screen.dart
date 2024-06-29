@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_modifiers_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 import '../../core/constants/menu_builder_app_colors.dart';
+import '../../core/utils/helper_utils.dart';
 import '../../core/utils/ui_utils.dart';
+import '../../models/modifiers/dish_modifiers_collection.dart';
 
 class ModifiersScreen extends StatelessWidget {
   const ModifiersScreen({super.key});
@@ -27,7 +30,7 @@ class ModifiersScreen extends StatelessWidget {
             ),
           ),
           verticalSpaceMedium,
-          const _ModifiersListSection(),
+          const Expanded(child: _ModifiersListSection()),
         ],
       ),
     );
@@ -35,125 +38,188 @@ class ModifiersScreen extends StatelessWidget {
 }
 
 class _ModifiersListSection extends StatelessWidget {
-  const _ModifiersListSection({super.key});
+  const _ModifiersListSection();
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final controller = context.read<DishModifiersController>();
     return SizedBox(
       width: double.infinity,
       child: Column(
         children: [
-          Table(
-            children: [
-              TableRow(
-                decoration: BoxDecoration(
-                  color: MenuBuilderColors.kWhite,
-                  borderRadius: BorderRadius.circular(8.0),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                children: <Widget>[
-                  _buildTableHeaderCell("SN", firstElem: true),
-                  _buildTableHeaderCell("Name"),
-                  _buildTableHeaderCell("Items"),
-                  _buildTableHeaderCell("Min"),
-                  _buildTableHeaderCell("Max"),
-                  _buildTableHeaderCell("Actions", lastElem: true),
-                ],
-              ),
-            ],
-          ),
+          _buildHeaderTable(),
           verticalSpaceSmall,
-          controller.modifiersCollection.when(initial: () {
-            return const SizedBox.shrink();
-          }, loading: () {
-            return const Center(child: CircularProgressIndicator());
-          }, completed: (data) {
-            return Container(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              decoration: BoxDecoration(
-                color: MenuBuilderColors.kWhite,
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Table(
-                children: data.masterModifiers.mapIndexed((index, modifier) {
-                  return TableRow(
-                    children: <Widget>[
-                      _buildTableCell(index.toString(), firstElem: true),
-                      _buildTableCell(modifier.name),
-                      _buildTableCell("Items"),
-                      _buildTableCell(modifier.minimumRequired),
-                      _buildTableCell(modifier.maximumRequired),
-                      _buildTableCell("Actions", lastElem: true),
-                    ],
-                  );
-                }).toList(),
-              ),
-            );
-          }, error: (message, error) {
-            return Text(message ?? "");
-          }),
+          controller.modifiersCollection.when(
+            initial: () => const SizedBox.shrink(),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            completed: (data) => _buildCompletedTable(data),
+            error: (message, error) => Text(message ?? ""),
+          ),
         ],
       ),
-      // child: Card(
-      //   elevation: 0,
-      //   shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(8.0),
-      //       side: BorderSide(color: Colors.grey.shade300)),
-      //   child: Padding(
-      //     padding: const EdgeInsets.all(20.0),
-      //     child: Column(
-      //       crossAxisAlignment: CrossAxisAlignment.start,
-      //       children: [
-      //         Text("SL", style: textTheme.titleMedium),
-      //       ],
-      //     ),
-      //   ),
-      // ),
     );
   }
 
-  Widget _buildTableHeaderCell(
-    String label, {
-    bool firstElem = false,
-    bool lastElem = false,
-  }) {
-    return Builder(builder: (context) {
-      return Padding(
-        padding: firstElem
-            ? const EdgeInsets.symmetric(vertical: 8.0).copyWith(left: 20.0)
-            : lastElem
-                ? const EdgeInsets.symmetric(vertical: 8.0)
-                    .copyWith(right: 20.0)
-                : const EdgeInsets.all(8.0),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium,
+  Widget _buildHeaderTable() {
+    return Table(
+      columnWidths: const {
+        0: FlexColumnWidth(1),
+        1: FlexColumnWidth(2),
+        2: FlexColumnWidth(3),
+        3: FlexColumnWidth(1),
+        4: FlexColumnWidth(1),
+        5: FlexColumnWidth(1),
+      },
+      children: [
+        TableRow(
+          decoration: BoxDecoration(
+            color: MenuBuilderColors.kWhite,
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          children: [
+            _buildTableHeaderCell("SN", firstElem: true),
+            _buildTableHeaderCell("Name"),
+            _buildTableHeaderCell("Items"),
+            _buildTableHeaderCell("Min"),
+            _buildTableHeaderCell("Max"),
+            _buildTableHeaderCell("Actions", lastElem: true),
+          ],
         ),
-      );
-    });
+      ],
+    );
   }
 
-  Widget _buildTableCell(
-    String label, {
-    bool firstElem = false,
-    bool lastElem = false,
-  }) {
-    return Builder(builder: (context) {
-      return Padding(
-        padding: firstElem
-            ? const EdgeInsets.symmetric(vertical: 8.0).copyWith(left: 20.0)
-            : lastElem
-                ? const EdgeInsets.symmetric(vertical: 8.0)
-                    .copyWith(right: 20.0)
-                : const EdgeInsets.all(8.0),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium,
+  Widget _buildCompletedTable(DishModifiersCollection data) {
+    return Expanded(
+      child: ListView(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            margin: const EdgeInsets.symmetric(vertical: 10.0),
+            decoration: BoxDecoration(
+              color: MenuBuilderColors.kWhite,
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Table(
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(2),
+                2: FlexColumnWidth(3),
+                3: FlexColumnWidth(1),
+                4: FlexColumnWidth(1),
+                5: FlexColumnWidth(1),
+              },
+              border: TableBorder.symmetric(
+                inside: BorderSide(color: Colors.grey.shade300),
+              ),
+              children: data.masterModifiers.mapIndexed((index, modifier) {
+                return TableRow(
+                  children: <Widget>[
+                    _buildTableCell("${index + 1}", firstElem: true),
+                    _buildTableCell(capitalizeFirstLetter(modifier.name)),
+                    _buildItemTableCell(modifier.groupItems),
+                    _buildTableCell(modifier.minimumRequired),
+                    _buildTableCell(modifier.maximumRequired),
+                    _buildActionsButtons(),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableHeaderCell(String label,
+      {bool firstElem = false, bool lastElem = false}) {
+    return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Builder(builder: (context) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(
+              left: firstElem ? 20.0 : 8.0,
+              right: lastElem ? 20.0 : 8.0,
+            ),
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildItemTableCell(List<GroupItem> items) {
+    return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Builder(builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Wrap(
+            spacing: 8.0,
+            children: items.map((item) {
+              return Chip(
+                backgroundColor: Colors.grey.shade200,
+                side: BorderSide.none,
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                label: Text(
+                  capitalizeFirstLetter(item.name),
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: const Color.fromARGB(255, 20, 20, 20),
+                      ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildTableCell(String label,
+      {bool firstElem = false, bool lastElem = false}) {
+    return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Builder(builder: (context) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0).copyWith(
+              left: firstElem ? 20.0 : 8.0,
+              right: lastElem ? 20.0 : 8.0,
+            ),
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildActionsButtons() {
+    return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.all(8.0),
+          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: MenuBuilderColors.kBlue.withOpacity(0.25),
+          ),
+          child: const Icon(
+            Icons.edit,
+            color: MenuBuilderColors.kBlue,
+          ),
         ),
-      );
-    });
+      ),
+    );
   }
 }

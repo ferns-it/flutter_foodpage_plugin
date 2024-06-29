@@ -85,7 +85,7 @@ class DishModifierData {
       maximumRequired: map['maximumRequired'] as String,
       status: map['status'] as String,
       groupItems: List<GroupItem>.from(
-        (map['groupItems'] as List<int>).map<GroupItem>(
+        (map['groupItems'] ?? []).map<GroupItem>(
           (x) => GroupItem.fromMap(x as Map<String, dynamic>),
         ),
       ),

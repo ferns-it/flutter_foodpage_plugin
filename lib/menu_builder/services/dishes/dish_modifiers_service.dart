@@ -18,7 +18,7 @@ class DishModifiersService {
 
     if (addonsGroupJsonList == null) return null;
     final modifiersList =
-        (jsonDecode(addonsGroupJsonList)["addonsGrops"] as List).map((e) {
+        (jsonDecode(addonsGroupJsonList) as List).map((e) {
       return DishModifierData.fromMap(e);
     }).toList();
     return DishModifiersCollection(masterModifiers: modifiersList);
@@ -55,7 +55,9 @@ class DishModifiersService {
   }
 
   static Future<APIResultType> disableEnableModifiers(
-      String groupId, bool status) async {
+    String groupId,
+    bool status,
+  ) async {
     try {
       final response = await BaseClient.put(
         api: "${ApiEndpoints.statusUpdate}/$groupId",
