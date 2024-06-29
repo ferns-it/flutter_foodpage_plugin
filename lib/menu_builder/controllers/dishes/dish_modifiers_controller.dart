@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
 
@@ -19,6 +20,25 @@ class DishModifiersController extends ChangeNotifier with BaseController {
 
   void onChangeSelectedModifier(DishModifierData modifier) {
     _selectedModifier = modifier;
+    notifyListeners();
+  }
+
+  final modifierEntry = {
+    "name": TextEditingController(),
+    "price": TextEditingController()
+  };
+
+  List<Map<String, dynamic>> modifierEntries = [
+    {"name": TextEditingController(), "price": TextEditingController()}
+  ];
+
+  void addModifierEntry() {
+    modifierEntries.add(modifierEntry);
+    notifyListeners();
+  }
+
+  void removeModifierEntry(int index) {
+    modifierEntries.removeAt(index);
     notifyListeners();
   }
 

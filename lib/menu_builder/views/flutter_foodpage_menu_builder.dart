@@ -5,6 +5,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/views/common/root/base_root
 import 'package:flutter_foodpage_plugin/menu_builder/views/dashboard/dashboard_screen.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/food_menu_screen.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/food_details_side_sheet_widget.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/modifier/widgets/add_update_modifer_side_sheet.dart';
 import 'package:provider/provider.dart';
 
 import 'modifier/modifiers_screen.dart';
@@ -26,8 +27,11 @@ class FlutterFoodpageMenuBuilder extends StatelessWidget {
           context.watch<PageNavigationController>();
       final currentPageIndex = pageNavigationController.currentPageIndex;
       return BaseRootWidget(
-        endDrawer:
-            currentPageIndex == 1 ? const FoodDetailsSideSheetWidget() : null,
+        endDrawer: currentPageIndex == 1
+            ? const FoodDetailsSideSheetWidget()
+            : currentPageIndex == 3
+                ? const AddUpdateModiferSideSheet()
+                : null,
         child: Expanded(
           child: screens[
               pageNavigationController.currentPageIndex % screens.length],

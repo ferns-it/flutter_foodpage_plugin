@@ -1,9 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_modifiers_controller.dart';
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart';
+
 import '../../core/constants/menu_builder_app_colors.dart';
 import '../../core/utils/helper_utils.dart';
 import '../../core/utils/ui_utils.dart';
@@ -39,7 +39,9 @@ class ModifiersScreen extends StatelessWidget {
                 ],
               ),
               OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
                 icon: const Icon(FluentIcons.add_16_filled),
                 label: const Text("Add Modifier"),
                 style: OutlinedButton.styleFrom(
