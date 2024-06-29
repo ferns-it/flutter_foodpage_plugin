@@ -1,3 +1,4 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_modifiers_controller.dart';
@@ -21,13 +22,38 @@ class ModifiersScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text("Manage Modifiers", style: textTheme.titleLarge),
-          verticalSpaceTiny,
-          Text(
-            "Add and remove new modifiers",
-            style: textTheme.bodyMedium!.copyWith(
-              color: MenuBuilderColors.kGrey2,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("Manage Modifiers", style: textTheme.titleLarge),
+                  verticalSpaceTiny,
+                  Text(
+                    "Add and update master modifiers",
+                    style: textTheme.bodyMedium!.copyWith(
+                      color: MenuBuilderColors.kGrey2,
+                    ),
+                  ),
+                ],
+              ),
+              OutlinedButton.icon(
+                onPressed: () {},
+                icon: const Icon(FluentIcons.add_16_filled),
+                label: const Text("Add Modifier"),
+                style: OutlinedButton.styleFrom(
+                  textStyle: textTheme.titleMedium,
+                  foregroundColor: MenuBuilderColors.kOrange,
+                  backgroundColor: MenuBuilderColors.kOrange.withOpacity(0.1),
+                  elevation: 0,
+                  side: BorderSide(
+                    width: 0.8,
+                    color: MenuBuilderColors.kOrange.withOpacity(0.3),
+                  ),
+                ),
+              )
+            ],
           ),
           verticalSpaceMedium,
           const Expanded(child: _ModifiersListSection()),
@@ -48,7 +74,6 @@ class _ModifiersListSection extends StatelessWidget {
       child: Column(
         children: [
           _buildHeaderTable(),
-          verticalSpaceSmall,
           controller.modifiersCollection.when(
             initial: () => const SizedBox.shrink(),
             loading: () => const Center(child: CircularProgressIndicator()),
