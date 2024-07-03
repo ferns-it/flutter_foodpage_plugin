@@ -40,6 +40,7 @@ class ModifiersScreen extends StatelessWidget {
               ),
               OutlinedButton.icon(
                 onPressed: () {
+                  context.read<DishModifiersController>().clearFormEntries();
                   Scaffold.of(context).openEndDrawer();
                 },
                 icon: const Icon(FluentIcons.add_16_filled),
@@ -149,7 +150,7 @@ class _ModifiersListSection extends StatelessWidget {
                     _buildItemTableCell(modifier.groupItems),
                     _buildTableCell(modifier.minimumRequired),
                     _buildTableCell(modifier.maximumRequired),
-                    _buildActionsButtons(),
+                    _buildActionsButtons(index),
                   ],
                 );
               }).toList(),
@@ -230,23 +231,32 @@ class _ModifiersListSection extends StatelessWidget {
     );
   }
 
-  Widget _buildActionsButtons() {
-    return TableCell(
-      verticalAlignment: TableCellVerticalAlignment.middle,
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.all(8.0),
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: MenuBuilderColors.kBlue.withOpacity(0.25),
-          ),
-          child: const Icon(
-            Icons.edit,
-            color: MenuBuilderColors.kBlue,
+  Widget _buildActionsButtons(int index) {
+    return Builder(builder: (context) {
+      final controller = context.watch<DishModifiersController>();
+      return TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: InkWell(
+          onTap: () {
+            Scaffold.of(context).openEndDrawer();
+            controller.onPressEditButton(index);
+          },
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: MenuBuilderColors.kBlue.withOpacity(0.25),
+              ),
+              child: const Icon(
+                Icons.edit,
+                color: MenuBuilderColors.kBlue,
+              ),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

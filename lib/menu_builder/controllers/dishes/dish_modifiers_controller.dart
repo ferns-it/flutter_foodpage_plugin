@@ -19,6 +19,9 @@ class DishModifiersController extends ChangeNotifier with BaseController {
   int get modifiersCount =>
       _modifiersCollection.data?.masterModifiers.length ?? 0;
 
+  List<DishModifierData> get masterModifiers =>
+      modifiersCollection.data?.masterModifiers ?? [];
+
   DishModifierData? _selectedModifier;
   DishModifierData? get selectedModifier => _selectedModifier;
 
@@ -60,6 +63,32 @@ class DishModifiersController extends ChangeNotifier with BaseController {
     listAllModifiers();
   }
 
+  String? _editModifierId;
+  bool get editMode => _editModifierId != null;
+
+  void onPressEditButton(int index) {
+    try {
+      final modifier = masterModifiers.elementAt(index);
+      _editModifierId = modifier.id;
+      groupName.text = modifier.name;
+      minimumController.text = modifier.minimumRequired;
+      maximumController.text = modifier.maximumRequired;
+      final elements = modifier.groupItems.map(
+        (item) {
+          final price = double.parse(item.price) / 100;
+          return {
+            "modifierId": item.id,
+            "name": TextEditingController()..text = item.name,
+            "price": TextEditingController()..text = price.toStringAsFixed(2),
+          };
+        },
+      );
+      modifierEntries = List.from(elements);
+    } finally {
+      notifyListeners();
+    }
+  }
+
   Future<void> listAllModifiers() async {
     try {
       _modifiersCollection = APIResponse.loading();
@@ -80,7 +109,7 @@ class DishModifiersController extends ChangeNotifier with BaseController {
     }
   }
 
-  Future<void> addModifier({required VoidCallback onSuccess}) async {
+  Future<void> addOrUpdateModifier({required VoidCallback onSuccess}) async {
     if (formKey.currentState?.validate() == true) {
       final name = groupName.text;
       final minimum = minimumController.text;
@@ -99,28 +128,17 @@ class DishModifiersController extends ChangeNotifier with BaseController {
               sort: (index + 1).toString());
         }).toList(),
       );
-      await DishModifiersService.addModifier(payload);
+
+      if (editMode) {
+        await DishModifiersService.updateModifiers(_editModifierId!, payload);
+      } else {
+        await DishModifiersService.addModifier(payload);
+      }
+
       onSuccess();
       clearFormEntries();
       listAllModifiers();
     }
-  }
-
-  void clearFormEntries() {
-    for (var entry in modifierEntries) {
-      (entry["name"] as TextEditingController).clear();
-      (entry["price"] as TextEditingController).clear();
-    }
-    groupName.clear();
-    minimumController.clear();
-    maximumController.clear();
-    modifierEntries = List.from([modifierEntry]);
-  }
-
-  Future<void> updateModifier() async {
-    // final payload = AddDishModifiersModel(name: name, groupItems: GroupItems(name:
-    // , price: price, status: status, sort: sort),);
-    // await DishModifiersService.updateModifiers(payload);
   }
 
   Future<void> disableEnableModifier(bool status) async {
@@ -133,5 +151,16 @@ class DishModifiersController extends ChangeNotifier with BaseController {
       // TODO: ADD TOAST HERE
       return;
     }
+  }
+
+  void clearFormEntries() {
+    for (var entry in modifierEntries) {
+      (entry["name"] as TextEditingController).clear();
+      (entry["price"] as TextEditingController).clear();
+    }
+    groupName.clear();
+    minimumController.clear();
+    maximumController.clear();
+    modifierEntries = List.from([modifierEntry]);
   }
 }

@@ -45,6 +45,7 @@ class DishModifiersService {
       final response = await BaseClient.put(
         api: "${ApiEndpoints.updateModifier}/$groupId",
         data: payload.toJson(),
+        needAuth: true,
       );
       if (response == null) return APIResultType.failed;
       return APIResultType.success;

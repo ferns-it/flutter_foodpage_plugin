@@ -50,10 +50,14 @@ class AddUpdateModiferSideSheet extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Add Modifier", style: textTheme.titleLarge),
+                              Text(
+                                  controller.editMode
+                                      ? "Update Modifier"
+                                      : "Add Modifier",
+                                  style: textTheme.titleLarge),
                               InkWell(
-                                onTap: () =>
-                                    controller.addModifier(onSuccess: () {
+                                onTap: () => controller.addOrUpdateModifier(
+                                    onSuccess: () {
                                   Navigator.pop(context);
                                 }),
                                 child: Container(
