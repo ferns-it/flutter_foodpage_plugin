@@ -70,7 +70,6 @@ class DishModifiersController extends ChangeNotifier with BaseController {
           ? APIResponse.completed(response)
           : throwNotFoundException<DishModifiersCollection>();
       notifyListeners();
-
     } on AppExceptions catch (error) {
       _modifiersCollection = APIResponse.error(error.message, exception: error);
       notifyListeners();

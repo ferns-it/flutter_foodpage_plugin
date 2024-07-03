@@ -1,5 +1,7 @@
 // ignore_for_file: unused_field
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
@@ -199,6 +201,12 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                         dishController.childCategories.firstWhereOrNull((x) {
                       return x.cID == key;
                     });
+
+                    if (category == null) {
+                      log("Category not found in the list",
+                          name: "Category Selection");
+                      return;
+                    }
 
                     controller.onPressCategory(category);
                     controller.updateTreeViewController(
