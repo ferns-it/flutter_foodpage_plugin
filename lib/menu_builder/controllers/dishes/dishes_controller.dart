@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_initialise_data_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_request_model.dart';
@@ -19,6 +19,8 @@ class DishesController extends ChangeNotifier with BaseController {
   APIResponse<DishCollectionModel> _dishCollection = APIResponse.initial();
   APIResponse<DishCollectionModel> get dishCollection => _dishCollection;
 
+  int get totalDishes => dishCollection.data?.totalDishes ?? 0;
+
   APIResponse<DishViewDetailsModel> _viewDishDetails = APIResponse.initial();
   APIResponse<DishViewDetailsModel> get viewDishDetails => _viewDishDetails;
 
@@ -28,8 +30,10 @@ class DishesController extends ChangeNotifier with BaseController {
 
   List<String> get listOfAvailabilityDays =>
       _addDishInitializeData?.availability.data?.availability?.options ?? [];
+
   List<MasterAddonsInitialiseSubData> get listOfMasterAddons =>
       _addDishInitializeData?.masterAddons.data ?? [];
+
   List<CategoryData> get listOfCategories =>
       (_addDishInitializeData?.category.data ?? [])
           .where((category) => category.categoryStatus == "Active")

@@ -70,7 +70,7 @@ class _ModifiersListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.read<DishModifiersController>();
+    final controller = context.watch<DishModifiersController>();
     return SizedBox(
       width: double.infinity,
       child: Column(

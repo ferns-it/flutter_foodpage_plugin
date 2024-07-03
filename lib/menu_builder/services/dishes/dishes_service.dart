@@ -4,7 +4,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_data
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/base_client.dart';
 
-import '../../constants/api_endpoints.dart';
+import '../../core/constants/api_endpoints.dart';
 import '../../models/dishes/add_dish_initialise_data_model.dart';
 import '../../models/dishes/dish_collection_model.dart';
 

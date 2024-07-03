@@ -35,6 +35,10 @@ dependencies:
 
   # State Management
   provider: ^6.1.2
+
+
+  # Animation
+  lottie: ^3.1.2
   
 
 dev_dependencies:
@@ -69,6 +73,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/icons/
+    - assets/animations/
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages

@@ -4,7 +4,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/category_data
 import 'package:flutter_foodpage_plugin/menu_builder/services/dishes/dishes_category_service.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 
-import '../../constants/enums.dart';
+import '../../core/constants/enums.dart';
 import '../../models/common/api_response.dart';
 import '../../models/dishes/add_dish_initialise_data_model.dart';
 import '../../services/app_exception/app_exception.dart';
@@ -17,8 +17,10 @@ class DishCategoryController extends ChangeNotifier with BaseController {
 
   APIResponse<DishCategoryCollectionModel> _dishCategoryCollection =
       APIResponse.initial();
-  APIResponse<DishCategoryCollectionModel> get dishCollection =>
+  APIResponse<DishCategoryCollectionModel> get categoriesCollection =>
       _dishCategoryCollection;
+
+  int get totalCategories => categoriesCollection.data?.totalCategories ?? 0;
 
   CategoryType _addCategoryType = CategoryType.parent;
   CategoryType get addCategoryType => _addCategoryType;

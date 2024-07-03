@@ -1,6 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';

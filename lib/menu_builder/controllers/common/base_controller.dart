@@ -2,7 +2,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.
 import 'package:flutter_foodpage_plugin/menu_builder/services/app_exception/app_exception.dart';
 
 mixin BaseController {
-  Future<void> init();
+  Future<void> init() async {}
 
   void dispose() {}
 

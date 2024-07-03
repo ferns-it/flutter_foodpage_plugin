@@ -4,8 +4,8 @@ import 'dart:developer';
 import 'package:flutter_foodpage_plugin/menu_builder/models/modifiers/dish_modifiers_collection.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/base_client.dart';
 
-import '../../constants/api_endpoints.dart';
-import '../../constants/enums.dart';
+import '../../core/constants/api_endpoints.dart';
+import '../../core/constants/enums.dart';
 import '../../models/modifiers/add_dish_modifiers_model.dart';
 
 class DishModifiersService {
@@ -14,11 +14,11 @@ class DishModifiersService {
       api: ApiEndpoints.modifiersList,
       dataKey: "addonsGrops",
       dataKeyChecking: true,
+      needAuth: true,
     );
 
     if (addonsGroupJsonList == null) return null;
-    final modifiersList =
-        (jsonDecode(addonsGroupJsonList) as List).map((e) {
+    final modifiersList = (jsonDecode(addonsGroupJsonList) as List).map((e) {
       return DishModifierData.fromMap(e);
     }).toList();
     return DishModifiersCollection(masterModifiers: modifiersList);

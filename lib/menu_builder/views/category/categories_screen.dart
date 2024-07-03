@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';

@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/category_data_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/base_client.dart';
 
-import '../../constants/api_endpoints.dart';
+import '../../core/constants/api_endpoints.dart';
 import '../../models/dishes/category_success_response.dart';
 
 class DishesCategoryService {

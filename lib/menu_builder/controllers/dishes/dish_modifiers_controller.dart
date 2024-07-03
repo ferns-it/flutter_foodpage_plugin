@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/constants/enums.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
+
 import '../../models/modifiers/add_dish_modifiers_model.dart';
 import '../../models/modifiers/dish_modifiers_collection.dart';
 import '../../services/app_exception/app_exception.dart';
@@ -15,6 +15,9 @@ class DishModifiersController extends ChangeNotifier with BaseController {
 
   APIResponse<DishModifiersCollection> get modifiersCollection =>
       _modifiersCollection;
+
+  int get modifiersCount =>
+      _modifiersCollection.data?.masterModifiers.length ?? 0;
 
   DishModifierData? _selectedModifier;
   DishModifierData? get selectedModifier => _selectedModifier;
@@ -63,12 +66,11 @@ class DishModifiersController extends ChangeNotifier with BaseController {
       notifyListeners();
 
       final response = await DishModifiersService.getModifiersList();
-
       _modifiersCollection = response != null
           ? APIResponse.completed(response)
           : throwNotFoundException<DishModifiersCollection>();
-
       notifyListeners();
+
     } on AppExceptions catch (error) {
       _modifiersCollection = APIResponse.error(error.message, exception: error);
       notifyListeners();

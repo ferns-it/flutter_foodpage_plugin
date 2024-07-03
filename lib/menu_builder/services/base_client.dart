@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../constants/api_endpoints.dart';
+import '../core/constants/api_endpoints.dart';
+import '../core/constants/enums.dart';
 import 'app_exception/app_exception.dart';
+import 'shared_preference/auth_preference.dart';
 
 class BaseClient {
   static const int _timeLimit = 120;
@@ -39,31 +42,46 @@ class BaseClient {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    // final authModel = await AuthPreference().readAuthKeyData();
-    // if (authModel == null) {
-    //   final error = UnauthorizedAccessException();
-    //   return handler.reject(
-    //     DioException(
-    //       requestOptions: options,
-    //       message: error.message,
-    //       type: DioExceptionType.unknown,
-    //       error: error,
-    //     ),
-    //   );
-    // }
+    final mode = options.headers["mode"] as String?;
+    final needAuth = options.headers["needAuth"] as bool?;
 
-    // if (authModel.mode == DevelopmentMode.development) {
-    //   options.baseUrl = ApiEndpoints.developmentUrl;
-    // } else {
-    //   options.baseUrl = ApiEndpoints.productionUrl;
-    // }
+    // Set the base URL based on mode if provided
+    if (mode != null) {
+      final developmentMode = DevelopmentMode.fromName(mode);
+      options.baseUrl = developmentMode == DevelopmentMode.development
+          ? ApiEndpoints.developmentUrl
+          : ApiEndpoints.productionUrl;
+    }
 
-    options.baseUrl = ApiEndpoints.developmentUrl;
+    // If authentication is not needed, proceed with the request
+    if (needAuth == null || !needAuth) {
+      options.headers.remove("needAuth");
+      return handler.next(options);
+    }
 
-    options.headers.addAll({
-      "Authorization":
-          "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJzaG9wTmFtZSI6IkxlIEFyYWJpYSIsInNob3BVcmwiOiJsZS1hcmFiaWEiLCJuYW1lIjoiTGUgQXJhYmlhIiwiZW1haWwiOiJsZWFyYWJpYUBnbWFpbC5jb20iLCJtb2JpbGUiOiI5OTQ2Nzk0Njc3IiwidGFibGVSZXNlcnZhdGlvbiI6IkVuYWJsZWQiLCJzaG9wQ3VzdG9tVG9rZW4iOiI1NTIxYmFjZDk4NWY5OGJiY2IzMGM5ZTBmMWEyNDJhZSIsInRpbWV6b25lIjoiRXVyb3BlXC9Mb25kb24iLCJkZXZpY2VJZCI6IjEyMzQ1In0.gCH1vfbtXkp5ma8fWdrNo4vr5RMD4zEOUaCHteuP758"
-    });
+    // Retrieve the auth model
+    final authModel = await AuthPreference().readAuthKeyData();
+    if (authModel == null) {
+      final error = UnauthorizedAccessException();
+      return handler.reject(
+        DioException(
+          requestOptions: options,
+          message: error.message,
+          type: DioExceptionType.unknown,
+          error: error,
+        ),
+      );
+    }
+
+    // Set the base URL based on the auth model's mode
+    options.baseUrl = authModel.mode == DevelopmentMode.development
+        ? ApiEndpoints.developmentUrl
+        : ApiEndpoints.productionUrl;
+
+    // Add the authorization header
+    options.headers["Authorization"] = "Bearer ${authModel.token}";
+    options.headers.remove("needAuth");
+
     handler.next(options);
   }
 
@@ -134,6 +152,9 @@ class BaseClient {
     final type = dioError.type;
     final res = dioError.response;
     final data = res?.data;
+
+    log(data.toString());
+
     String? message;
     if (data is String) {
       try {
@@ -180,7 +201,7 @@ class BaseClient {
 
   //GET
   static Future<String?> get({
-    bool needAuth = false,
+    bool needAuth = true,
     bool dataKeyChecking = false,
     String? baseUrl,
     String? dataKey,
@@ -195,6 +216,7 @@ class BaseClient {
       'content-type': contentType,
       'dataKey': dataKey,
       'dataKeyChecking': dataKeyChecking,
+      'needAuth': needAuth,
     };
 
     if (additionalHeaders != null) {
@@ -212,8 +234,9 @@ class BaseClient {
 
   //POST
   static Future<String?> post({
-    bool needAuth = false,
+    bool needAuth = true,
     bool dataKeyChecking = false,
+    DevelopmentMode mode = DevelopmentMode.release,
     String? baseUrl,
     String? dataKey,
     required String api,
@@ -228,6 +251,8 @@ class BaseClient {
       'content-type': contentType,
       'dataKey': dataKey,
       'dataKeyChecking': dataKeyChecking,
+      'needAuth': needAuth,
+      'mode': mode.name,
     };
 
     if (additionalHeaders != null) {
@@ -260,6 +285,7 @@ class BaseClient {
     var headers = <String, dynamic>{
       'content-type': contentType,
       'dataKey': dataKey,
+      'needAuth': needAuth,
     };
 
     if (additionalHeaders != null) {
@@ -308,6 +334,7 @@ class BaseClient {
     var headers = <String, dynamic>{
       'content-type': contentType,
       'dataKey': dataKey,
+      'needAuth': needAuth,
     };
 
     if (additionalHeaders != null) {
