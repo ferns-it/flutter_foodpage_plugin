@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 String removeHtmlTags(String? value) {
   final data = parse(value);
@@ -69,4 +70,8 @@ TimeOfDay parseTimeOfDay(String timeString) {
   final minute = int.parse(parts[1]);
 
   return TimeOfDay(hour: hour, minute: minute);
+}
+
+void showToastMessage(String message) {
+  Fluttertoast.showToast(msg: message);
 }

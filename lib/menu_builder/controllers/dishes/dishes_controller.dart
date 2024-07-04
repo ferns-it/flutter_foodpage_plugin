@@ -453,13 +453,22 @@ class DishesController extends ChangeNotifier with BaseController {
 
   Future<ResponseResult> addOrUpdateDish() async {
     try {
-      if (addNewDishFormKey.currentState?.validate() == false ||
-          variationsFormEntries.isEmpty) {
+      if (addNewDishFormKey.currentState?.validate() == false) {
         return ResponseResult.failure;
       }
 
+      if (variationsFormEntriesEmpty) {
+        showToastMessage("Variations cannot be empty");
+        return ResponseResult.failure;
+      }
+
+      if (selectedDishCategories.isEmpty) {
+        showToastMessage("Categories are not selected.");
+        return ResponseResult.failure;
+      }
       // Check dish type is empty
       if (_dishType == null) {
+        showToastMessage("Dish Type (Veg or Non Veg) Field is not selected");
         return ResponseResult.failure;
       }
 
@@ -708,6 +717,9 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void resetFormEntries() {
     _dishType = null;
+    if (_addDishInitializeData?.dishtype.data.firstOrNull != null) {
+      _dishType = _addDishInitializeData?.dishtype.data.first;
+    }
     _onlineStatus = true;
     _dineInStatus = true;
     variationsFormEntries.clear();
