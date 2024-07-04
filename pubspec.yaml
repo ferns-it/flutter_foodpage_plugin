@@ -27,6 +27,7 @@ dependencies:
   intl: ^0.18.1
   html: ^0.15.1
   flutter_treeview: ^1.0.7+1
+  fluttertoast: ^8.2.6
   
   # Icons
   fluentui_system_icons: ^1.1.239
@@ -40,6 +41,7 @@ dependencies:
   # Animation
   lottie: ^3.1.2
   
+
 
 dev_dependencies:
   flutter_test:

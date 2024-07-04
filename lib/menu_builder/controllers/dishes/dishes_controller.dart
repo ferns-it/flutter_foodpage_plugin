@@ -458,6 +458,11 @@ class DishesController extends ChangeNotifier with BaseController {
         return ResponseResult.failure;
       }
 
+      // Check dish type is empty
+      if (_dishType == null) {
+        return ResponseResult.failure;
+      }
+
       // Check if variationsFormEntries has at least one entry
       final productType =
           variationsFormEntries.length == 1 ? "single" : "variation";
