@@ -5,6 +5,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_c
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builder_validators.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_availability_side_sheet.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_category_side_sheet.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_menu_side_sheet.dart';
@@ -75,14 +76,19 @@ class _AddFoodScreenState extends State<AddFoodScreen>
 
         return Scaffold(
           appBar: AppBar(
-            title: controller.editCategoryId != null
+            title: controller.editDishId != null
                 ? const Text("Edit Dish")
                 : const Text("Add Dish"),
             actions: <Widget>[
               OutlinedButton.icon(
-                onPressed: () => controller.addOrUpdateDish(),
+                onPressed: () => controller.addOrUpdateDish().then((result) {
+                  if (result == ResponseResult.success) {
+                    Navigator.pop(context);
+                    controller.resetFormEntries();
+                  }
+                }),
                 icon: const Icon(FluentIcons.save_24_filled),
-                label: controller.editCategoryId != null
+                label: controller.editDishId != null
                     ? const Text("Update Dish")
                     : const Text("Save Dish"),
                 style: OutlinedButton.styleFrom(
@@ -145,6 +151,8 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                   textInputAction: TextInputAction.next,
                                   textEditingController:
                                       controller.nameController,
+                                  validator:
+                                      MenuBuilderValidators.validateDishName,
                                 ),
                                 verticalSpaceRegular,
                                 CustomRoundedTextField.topText(

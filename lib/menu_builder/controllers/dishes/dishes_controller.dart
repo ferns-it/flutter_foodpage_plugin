@@ -287,7 +287,8 @@ class DishesController extends ChangeNotifier with BaseController {
     }
   }
 
-  List<(TimeOfDay?, TimeOfDay?)> dishAvailabilityEntries = [
+  List<(TimeOfDay?, TimeOfDay?)> dishAvailabilityEntries =
+      <(TimeOfDay?, TimeOfDay?)>[
     (null, null),
   ];
 
@@ -365,8 +366,13 @@ class DishesController extends ChangeNotifier with BaseController {
   late TextEditingController nameController;
   late TextEditingController descriptionController;
 
-  String? _editCategoryId;
-  String? get editCategoryId => _editCategoryId;
+  String? _editDishId;
+  String? get editDishId => _editDishId;
+
+  void resetEditDishID() {
+    _editDishId = null;
+    notifyListeners();
+  }
 
   @override
   Future<void> init() async {
@@ -445,29 +451,37 @@ class DishesController extends ChangeNotifier with BaseController {
     }
   }
 
-  Future<void> addOrUpdateDish() async {
+  Future<ResponseResult> addOrUpdateDish() async {
     try {
-      if (variationsFormEntries.isEmpty) return;
+      if (addNewDishFormKey.currentState?.validate() == false ||
+          variationsFormEntries.isEmpty) {
+        return ResponseResult.failure;
+      }
 
+      // Check if variationsFormEntries has at least one entry
       final productType =
           variationsFormEntries.length == 1 ? "single" : "variation";
+
+      // Check and initialize addonsMasterGroup
       final addonsMasterGroup = choosedMasterAddons
           .where((addon) => addon.id != null)
           .map((addon) => addon.id!)
           .toList();
+
+      // Initialize isOnlineReq and isDineinReq based on _onlineStatus and _dineInStatus
       final isOnlineReq = _onlineStatus ? 'Yes' : 'No';
       final isDineinReq = _dineInStatus ? 'Yes' : 'No';
 
+      // Extract values from variationsFormEntries and validate
       final singleEntry = variationsFormEntries.first;
       final priceController = singleEntry["price"] as TextEditingController;
       final priceReq = double.parse(priceController.text);
 
       final ingredientsController =
           singleEntry["ingredients"] as TextEditingController;
-      final allergens = (singleEntry["allergens"] as List)
-          .map((item) => item as String)
-          .toList();
+      final allergens = (singleEntry["allergens"] as List).cast<String>();
 
+      // Initialize and validate listOfParentCategoriesId and listOfSubCategoriesId
       final listOfParentCategoriesId = choosedParentCategory
           .where((e) => e.$1 != null)
           .map((e) => e.$1!)
@@ -476,17 +490,18 @@ class DishesController extends ChangeNotifier with BaseController {
           .where((e) => e.$3 != null)
           .map((e) => e.$3!)
           .toList();
+
+      // Combine categories into listOfCategories and ensure it's not empty
       final listOfCategories = [
         ...listOfParentCategoriesId,
         ...listOfSubCategoriesId
       ];
 
+      // Extract variations data and validate each entry
       final variations = variationsFormEntries.map((entry) {
         final nameController = entry["name"] as TextEditingController;
-        final allergens = (singleEntry["allergens"] as List)
-            .map((item) => item as String)
-            .toList();
         final price = entry["price"] as TextEditingController;
+        final allergens = (entry["allergens"] as List).cast<String>();
         return VariationDishData(
           pvID: null,
           name: nameController.text,
@@ -498,17 +513,22 @@ class DishesController extends ChangeNotifier with BaseController {
         );
       }).toList();
 
+      // Initialize allDayAvailable based on allDaysEnabled
       final allDayAvailable = allDaysEnabled ? "on" : null;
 
+      // Extract timing data and validate each entry
       final timing = dishAvailabilityEntries
           .where((entry) => entry.$1 != null && entry.$2 != null)
           .map((entry) {
         final formatStartTime = convertTimeOfDayTo24hr(entry.$1!);
         final formatEndTime = convertTimeOfDayTo24hr(entry.$2!);
-        final time = {"startTime": formatStartTime, "endTime": formatEndTime};
-        return time;
+        return {
+          "startTime": formatStartTime,
+          "endTime": formatEndTime,
+        };
       }).toList();
 
+      // Construct payload based on whether there's a single entry or variations
       final payload = variationsFormEntries.length == 1
           ? AddDishRequestModel(
               productType: productType,
@@ -518,7 +538,7 @@ class DishesController extends ChangeNotifier with BaseController {
               isUnlimitedStock: 1,
               online: isOnlineReq,
               dining: isDineinReq,
-              name: nameController.text,
+              name: nameController.text, // Ensure nameController is initialized
               description: descriptionController.text,
               ingredients: ingredientsController.text,
               allergns: allergens,
@@ -537,7 +557,7 @@ class DishesController extends ChangeNotifier with BaseController {
               variations: variations,
               online: isOnlineReq,
               dining: isDineinReq,
-              name: nameController.text,
+              name: nameController.text, // Ensure nameController is initialized
               description: descriptionController.text,
               category: listOfCategories,
               addonsMasterGroup: addonsMasterGroup,
@@ -547,15 +567,23 @@ class DishesController extends ChangeNotifier with BaseController {
               productMenuGroup: choosedMenus,
             );
 
-      if (editCategoryId != null) {
+      // Perform either update or addition based on editDishId
+      if (editDishId != null) {
         await DishesService.updateDish(
-          editCategoryId!,
+          editDishId!,
           payload,
         );
       } else {
         await DishesService.addNewDish(payload);
       }
+
+      // Return success if everything goes well
+      return ResponseResult.success;
+    } catch (e) {
+      // Return failure in case of any exception
+      return ResponseResult.failure;
     } finally {
+      // Always fetch dishes after attempting to add/update
       fetchDishes();
     }
   }
@@ -563,7 +591,7 @@ class DishesController extends ChangeNotifier with BaseController {
   void onPressEditButton() {
     if (selectedDish == null) return;
 
-    _editCategoryId = selectedDish?.pID;
+    _editDishId = selectedDish?.pID;
 
     // View Dish Details Completed Checking
     if (viewDishDetails.status != APIResponseStatus.completed) return;
@@ -671,5 +699,25 @@ class DishesController extends ChangeNotifier with BaseController {
     } finally {
       fetchDishes();
     }
+  }
+
+  void resetFormEntries() {
+    _dishType = null;
+    _onlineStatus = true;
+    _dineInStatus = true;
+    variationsFormEntries.clear();
+    variationsFormEntries.add(variationFormEntry);
+    choosedMasterAddons.clear();
+    selectedDishCategories.clear();
+    dishAvailabilityEntries.clear();
+    dishAvailabilityEntries = <(TimeOfDay?, TimeOfDay?)>[
+      (null, null),
+    ];
+    _allDaysEnabled = true;
+    availableDays.clear();
+    choosedMenus.clear();
+    nameController.clear();
+    descriptionController.clear();
+    addNewDishFormKey.currentState?.reset();
   }
 }

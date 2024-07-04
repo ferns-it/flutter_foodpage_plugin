@@ -10,6 +10,7 @@ class MenuBuilderValidators {
     return null;
   }
 
+ 
   // Validator for category name
   static String? validateCategoryName(String? value) {
     if (value == null || value.isEmpty) {

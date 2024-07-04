@@ -14,3 +14,8 @@ enum DevelopmentMode {
     return DevelopmentMode.values.firstWhere((e) => e.name == name);
   }
 }
+
+enum ResponseResult {
+  success,
+  failure;
+}
