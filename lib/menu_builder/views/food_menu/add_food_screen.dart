@@ -75,12 +75,16 @@ class _AddFoodScreenState extends State<AddFoodScreen>
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text("Add Dish"),
+            title: controller.editCategoryId != null
+                ? const Text("Edit Dish")
+                : const Text("Add Dish"),
             actions: <Widget>[
               OutlinedButton.icon(
-                onPressed: () => controller.addNewDish(),
+                onPressed: () => controller.addOrUpdateDish(),
                 icon: const Icon(FluentIcons.save_24_filled),
-                label: const Text("Save Dish"),
+                label: controller.editCategoryId != null
+                    ? const Text("Update Dish")
+                    : const Text("Save Dish"),
                 style: OutlinedButton.styleFrom(
                   textStyle: textTheme.titleMedium,
                   foregroundColor: MenuBuilderColors.kPurple,

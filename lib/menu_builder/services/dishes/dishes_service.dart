@@ -43,6 +43,20 @@ class DishesService {
     return enCodeData;
   }
 
+  static Future<Map<String, dynamic>?> updateDish(
+    String dishId,
+    AddDishData data,
+  ) async {
+    final response = await BaseClient.put(
+      api: "${ApiEndpoints.updateProduct}$dishId",
+      needAuth: true,
+      data: data.toJson(),
+    );
+    if (response == null) return null;
+    final enCodeData = jsonDecode(response);
+    return enCodeData;
+  }
+
   static Future<AddDishInitializeDataModel?>
       initializeAddDishRequiredData() async {
     final response = await BaseClient.get(
@@ -58,6 +72,7 @@ class DishesService {
       {required String productID}) async {
     final response = await BaseClient.delete(
       api: "${ApiEndpoints.deleteProduct}$productID",
+      needAuth: true,
     );
     if (response == null) return null;
     final encodedData = jsonDecode(response);

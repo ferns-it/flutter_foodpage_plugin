@@ -478,7 +478,8 @@ class _BuildAllergensWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 10.0),
                     child: FilterChip(
                       label: Text(allergen.name!),
-                      selected: allergens.contains(allergen),
+                      selected: allergen.id != null &&
+                          allergens.contains(allergen.id),
                       selectedColor: backgroundColor,
                       backgroundColor: backgroundColor,
                       labelStyle: textTheme.titleSmall!.copyWith(
@@ -486,7 +487,7 @@ class _BuildAllergensWidget extends StatelessWidget {
                       ),
                       checkmarkColor: Colors.grey.shade600,
                       onSelected: (_) => controller.onChangeAllergensSelection(
-                          index, allergen),
+                          index, allergen.id),
                     ),
                   );
                 }).toList(),

@@ -95,7 +95,7 @@ class DishesController extends ChangeNotifier with BaseController {
         "name": TextEditingController(),
         "price": TextEditingController(),
         "ingredients": TextEditingController(),
-        "allergens": <AllergensInitialiseSubData>[]
+        "allergens": <String>[]
       };
 
   List<Map<String, dynamic>> variationsFormEntries = [
@@ -103,7 +103,7 @@ class DishesController extends ChangeNotifier with BaseController {
       "name": TextEditingController(),
       "price": TextEditingController(),
       "ingredients": TextEditingController(),
-      "allergens": <AllergensInitialiseSubData>[]
+      "allergens": <String>[]
     }
   ];
 
@@ -114,7 +114,7 @@ class DishesController extends ChangeNotifier with BaseController {
     final entry = variationsFormEntries.first;
     final nameController = entry["name"] as TextEditingController;
     final price = entry["price"] as TextEditingController;
-    final allergens = entry["allergens"] ?? [];
+    final allergens = entry["allergens"] as List;
     if (nameController.text.isEmpty &&
         price.text.isEmpty &&
         allergens.isEmpty) {
@@ -138,14 +138,15 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void onChangeAllergensSelection(
     int index,
-    AllergensInitialiseSubData allergen,
+    String? allergenId,
   ) {
-    if (variationsFormEntries[index]["allergens"].contains(allergen)) {
-      variationsFormEntries[index]["allergens"].remove(allergen);
+    if (allergenId == null) return;
+    if (variationsFormEntries[index]["allergens"].contains(allergenId)) {
+      variationsFormEntries[index]["allergens"].remove(allergenId);
       notifyListeners();
       return;
     }
-    variationsFormEntries[index]["allergens"].add(allergen);
+    variationsFormEntries[index]["allergens"].add(allergenId);
     notifyListeners();
   }
 
@@ -364,6 +365,9 @@ class DishesController extends ChangeNotifier with BaseController {
   late TextEditingController nameController;
   late TextEditingController descriptionController;
 
+  String? _editCategoryId;
+  String? get editCategoryId => _editCategoryId;
+
   @override
   Future<void> init() async {
     fetchDishes();
@@ -432,8 +436,6 @@ class DishesController extends ChangeNotifier with BaseController {
           ? APIResponse.completed(response)
           : throwNotFoundException<DishViewDetailsModel>();
       notifyListeners();
-
-      inspect(_viewDishDetails);
     } on AppExceptions catch (error) {
       _viewDishDetails = APIResponse.error(error.message, exception: error);
       notifyListeners();
@@ -443,7 +445,7 @@ class DishesController extends ChangeNotifier with BaseController {
     }
   }
 
-  Future<void> addNewDish() async {
+  Future<void> addOrUpdateDish() async {
     try {
       if (variationsFormEntries.isEmpty) return;
 
@@ -462,10 +464,9 @@ class DishesController extends ChangeNotifier with BaseController {
 
       final ingredientsController =
           singleEntry["ingredients"] as TextEditingController;
-      final allergens =
-          singleEntry["allergens"] as List<AllergensInitialiseSubData>;
-      final allergensIds =
-          allergens.where((e) => e.id != null).map((e) => e.id!).toList();
+      final allergens = (singleEntry["allergens"] as List)
+          .map((item) => item as String)
+          .toList();
 
       final listOfParentCategoriesId = choosedParentCategory
           .where((e) => e.$1 != null)
@@ -482,13 +483,15 @@ class DishesController extends ChangeNotifier with BaseController {
 
       final variations = variationsFormEntries.map((entry) {
         final nameController = entry["name"] as TextEditingController;
-        final allergens = entry["allergens"];
+        final allergens = (singleEntry["allergens"] as List)
+            .map((item) => item as String)
+            .toList();
         final price = entry["price"] as TextEditingController;
         return VariationDishData(
           pvID: null,
           name: nameController.text,
           price: double.parse(price.text),
-          allergensMaster: allergens.map((e) => e.id).toList(),
+          allergensMaster: allergens,
           ingredients: ingredientsController.text,
           isUnlimitedStock: 1,
           quantity: 0,
@@ -518,7 +521,7 @@ class DishesController extends ChangeNotifier with BaseController {
               name: nameController.text,
               description: descriptionController.text,
               ingredients: ingredientsController.text,
-              allergns: allergensIds,
+              allergns: allergens,
               category: listOfCategories,
               allDayAvailable: allDayAvailable,
               availability: availableDays,
@@ -544,8 +547,14 @@ class DishesController extends ChangeNotifier with BaseController {
               productMenuGroup: choosedMenus,
             );
 
-      final response = await DishesService.addNewDish(payload);
-      inspect(response);
+      if (editCategoryId != null) {
+        await DishesService.updateDish(
+          editCategoryId!,
+          payload,
+        );
+      } else {
+        await DishesService.addNewDish(payload);
+      }
     } finally {
       fetchDishes();
     }
@@ -553,6 +562,8 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void onPressEditButton() {
     if (selectedDish == null) return;
+
+    _editCategoryId = selectedDish?.pID;
 
     // View Dish Details Completed Checking
     if (viewDishDetails.status != APIResponseStatus.completed) return;
@@ -573,6 +584,36 @@ class DishesController extends ChangeNotifier with BaseController {
     _dineInStatus = dineInStatus;
 
     // Category
+    List<CategoryData> selectedCategories = [];
+    selectedDish?.categories.forEach((selectedCategory) {
+      for (var category in listOfCategories) {
+        if (selectedCategory.cID == category.cID) {
+          selectedCategories.add(category);
+        }
+      }
+    });
+
+    List<CategoryData> updatedCategories = List.from(selectedCategories);
+
+    for (int index = 0; index < selectedCategories.length; index++) {
+      var selectedCategory = selectedCategories[index];
+      for (var category in listOfCategories) {
+        if (selectedCategory.cID == category.cID) {
+          final selectedChildrenIds =
+              selectedCategory.childrens.map((child) => child.cID).toList();
+          final updatedChildren = category.childrens
+              .where((child) => selectedChildrenIds.contains(child.cID))
+              .toList();
+
+          var updatedCategory = updatedCategories[index];
+          updatedCategory =
+              updatedCategory.copyWith(childrens: updatedChildren);
+          updatedCategories[index] = updatedCategory;
+        }
+      }
+    }
+
+    selectedDishCategories = List.from(updatedCategories);
 
     // Variation Form Entries
     final elements = dishData.variationData
@@ -583,7 +624,9 @@ class DishesController extends ChangeNotifier with BaseController {
               "ingredients": TextEditingController()
                 ..text = variation.ingredients,
               "isUnlimitedStock": variation.isUnlimitedStock,
-              "allergens": [],
+              "allergens": variation.selectedallergens.map((e) {
+                return e.id;
+              }).toList(),
             })
         .toList();
     variationsFormEntries = List.from(elements);

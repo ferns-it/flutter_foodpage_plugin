@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +123,7 @@ class _FoodDetailsSideSheetWidgetState
                   'Saturday'
                 ];
 
-                inspect(data);
+            
                 return Positioned.fill(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
