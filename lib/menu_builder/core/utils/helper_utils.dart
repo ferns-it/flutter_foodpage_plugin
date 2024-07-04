@@ -62,3 +62,11 @@ String convertTimeOfDayTo24hr(TimeOfDay timeOfDay) {
 
   return '$hour:$minute';
 }
+
+TimeOfDay parseTimeOfDay(String timeString) {
+  final parts = timeString.split(":");
+  final hour = int.parse(parts[0]);
+  final minute = int.parse(parts[1]);
+
+  return TimeOfDay(hour: hour, minute: minute);
+}

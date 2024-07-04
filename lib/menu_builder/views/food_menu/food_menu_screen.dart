@@ -57,6 +57,7 @@ class FoodMenuScreen extends StatelessWidget {
                 horizontalSpaceRegular,
                 OutlinedButton.icon(
                   onPressed: () {
+                    controller.initalizeAllFormControllers();
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         fullscreenDialog: true,

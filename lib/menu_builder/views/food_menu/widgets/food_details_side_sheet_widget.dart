@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../../controllers/dishes/dishes_controller.dart';
 import '../../../core/utils/helper_utils.dart';
 import '../../../services/app_exception/app_exception.dart';
+import '../add_food_screen.dart';
 
 class FoodDetailsSideSheetWidget extends StatefulWidget {
   const FoodDetailsSideSheetWidget({super.key});
@@ -43,9 +44,7 @@ class _FoodDetailsSideSheetWidgetState
     }
 
     return Theme(
-      data: Theme.of(context).copyWith(
-        dividerColor: Colors.transparent,
-      ),
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: SafeArea(
         child: Drawer(
           width: size.width * 0.4,
@@ -66,15 +65,27 @@ class _FoodDetailsSideSheetWidgetState
                       color: MenuBuilderColors.kGrey,
                     ),
                     const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: MenuBuilderColors.kBlue.withOpacity(0.25),
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        color: MenuBuilderColors.kBlue,
+                    InkWell(
+                      onTap: () {
+                        controller.initalizeAllFormControllers();
+                        controller.onPressEditButton();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            fullscreenDialog: true,
+                            builder: (context) => const AddFoodScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: MenuBuilderColors.kBlue.withOpacity(0.25),
+                        ),
+                        child: const Icon(
+                          Icons.edit,
+                          color: MenuBuilderColors.kBlue,
+                        ),
                       ),
                     ),
                     horizontalSpaceRegular,

@@ -114,10 +114,10 @@ class DishesController extends ChangeNotifier with BaseController {
     final entry = variationsFormEntries.first;
     final nameController = entry["name"] as TextEditingController;
     final price = entry["price"] as TextEditingController;
-    final ingredients = entry["allergens"] as List;
+    final allergens = entry["allergens"] ?? [];
     if (nameController.text.isEmpty &&
         price.text.isEmpty &&
-        ingredients.isEmpty) {
+        allergens.isEmpty) {
       return true;
     }
     return false;
@@ -127,10 +127,10 @@ class DishesController extends ChangeNotifier with BaseController {
     final entry = variationsFormEntries[index];
     final nameController = entry["name"] as TextEditingController;
     final price = entry["price"] as TextEditingController;
-    final ingredients = entry["allergens"] as List;
+    final allergens = entry["allergens"] as List;
     if (nameController.text.isEmpty &&
         price.text.isEmpty &&
-        ingredients.isEmpty) {
+        allergens.isEmpty) {
       return true;
     }
     return false;
@@ -362,13 +362,7 @@ class DishesController extends ChangeNotifier with BaseController {
 
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
   late TextEditingController nameController;
-  late TextEditingController variationNameController;
-  late TextEditingController variationPriceController;
   late TextEditingController descriptionController;
-  late TextEditingController ingrediantsController;
-  late TextEditingController allergensController;
-  late TextEditingController newCategoryNameController;
-  late TextEditingController newCategoryDescriptionController;
 
   @override
   Future<void> init() async {
@@ -382,25 +376,12 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void initalizeAllFormControllers() {
     nameController = TextEditingController();
-
-    variationNameController = TextEditingController();
-    variationPriceController = TextEditingController();
     descriptionController = TextEditingController();
-    ingrediantsController = TextEditingController();
-    allergensController = TextEditingController();
-    newCategoryNameController = TextEditingController();
-    newCategoryDescriptionController = TextEditingController();
   }
 
   void disposeAllFormControllers() {
     nameController.dispose();
-    variationNameController.dispose();
-    variationPriceController.dispose();
     descriptionController.dispose();
-    ingrediantsController.dispose();
-    allergensController.dispose();
-    newCategoryNameController.dispose();
-    newCategoryDescriptionController.dispose();
   }
 
   Future<void> fetchDishes() async {
@@ -568,6 +549,74 @@ class DishesController extends ChangeNotifier with BaseController {
     } finally {
       fetchDishes();
     }
+  }
+
+  void onPressEditButton() {
+    if (selectedDish == null) return;
+
+    // View Dish Details Completed Checking
+    if (viewDishDetails.status != APIResponseStatus.completed) return;
+    final dishData = viewDishDetails.data!;
+
+    // Dish Name & Description
+    nameController.text = dishData.basicData.name;
+    descriptionController.text = removeHtmlTags(dishData.basicData.description);
+
+    // Dish Type
+    final dishType = selectedDish?.type;
+    _dishType = dishType;
+
+    // Online & Dine In Status
+    final onlineStatus = selectedDish?.online == "Yes";
+    final dineInStatus = selectedDish?.dining == "Yes";
+    _onlineStatus = onlineStatus;
+    _dineInStatus = dineInStatus;
+
+    // Category
+
+    // Variation Form Entries
+    final elements = dishData.variationData
+        .map((variation) => {
+              "pvID": variation.pvID,
+              "name": TextEditingController()..text = variation.name,
+              "price": TextEditingController()..text = variation.price,
+              "ingredients": TextEditingController()
+                ..text = variation.ingredients,
+              "isUnlimitedStock": variation.isUnlimitedStock,
+              "allergens": [],
+            })
+        .toList();
+    variationsFormEntries = List.from(elements);
+
+    // Modifiers
+    final modifiers = dishData.selectedAddonGroups
+        .map(
+          (e) => MasterAddonsInitialiseSubData(
+            id: e["id"],
+            title: e["name"],
+          ),
+        )
+        .toList();
+    choosedMasterAddons = List.from(modifiers);
+
+    // Menus List
+    choosedMenus = List.from(dishData.selectedMenuList);
+    if (choosedMenus.isEmpty) {
+      activeDefaultSelectedInMenu();
+    }
+
+    // Availability
+    final allDaysEnabled = dishData.availability.isAllday;
+    final days = dishData.availability.days;
+    final timings = dishData.availability.timing;
+    _allDaysEnabled = allDaysEnabled;
+    availableDays = List.from(days);
+    final timingsElements = timings.map((e) {
+      return (parseTimeOfDay(e.startTime), parseTimeOfDay(e.endTime));
+    }).toList();
+    dishAvailabilityEntries = timingsElements;
+
+    notifyListeners();
   }
 
   Future<void> deleteDish() async {

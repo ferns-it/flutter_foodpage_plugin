@@ -24,12 +24,6 @@ class AddFoodScreen extends StatefulWidget {
 
 class _AddFoodScreenState extends State<AddFoodScreen>
     with SingleTickerProviderStateMixin {
-  @override
-  void initState() {
-    context.read<DishesController>().initalizeAllFormControllers();
-    super.initState();
-  }
-
   // @override
   // void dispose() {
   //   context.read<DishesController>().disposeAllFormControllers();
