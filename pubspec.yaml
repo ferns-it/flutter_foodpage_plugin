@@ -40,6 +40,9 @@ dependencies:
 
   # Animation
   lottie: ^3.1.2
+
+  # AI
+  flutter_gemini: ^2.0.4
   
 
 

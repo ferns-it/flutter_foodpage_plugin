@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
@@ -11,6 +12,8 @@ import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_menu_side_sheet.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_variation_modifiers_side_sheet.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/menu_builder_app_colors.dart';
@@ -47,6 +50,8 @@ class _AddFoodScreenState extends State<AddFoodScreen>
     }
   }
 
+  Offset? _tapDownPosition;
+
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
@@ -71,6 +76,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
         );
 
         final controller = context.watch<DishesController>();
+        final geminiController = context.read<GeminiController>();
 
         final addDishInitializeData = controller.addDishInitializeData;
 
@@ -164,6 +170,105 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                   textInputAction: TextInputAction.done,
                                   textEditingController:
                                       controller.descriptionController,
+                                  suffixIcon: InkWell(
+                                    customBorder: const CircleBorder(),
+                                    onTapDown: (TapDownDetails details) {
+                                      _tapDownPosition = details.globalPosition;
+                                    },
+                                    onLongPress: () async {
+                                      if (_tapDownPosition == null) {
+                                        return;
+                                      }
+
+                                      final RenderBox overlay =
+                                          Overlay.of(context)
+                                              .context
+                                              .findRenderObject() as RenderBox;
+
+                                      await showMenu(
+                                        context: context,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        items: [
+                                          PopupMenuItem(
+                                            value: 0,
+                                            child: const Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.spellcheck_outlined,
+                                                  size: 22,
+                                                ),
+                                                SizedBox(width: 14.0),
+                                                Text("Spelling & Grammar"),
+                                              ],
+                                            ),
+                                            onTap: () async {
+                                              final desc = controller
+                                                  .descriptionController.text;
+                                              if (desc.isEmpty) {
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Description cannot be empty!",
+                                                );
+                                                return;
+                                              }
+                                              final generatedContent =
+                                                  await geminiController
+                                                      .spellAndGrammarDishDescription(
+                                                desc,
+                                              );
+
+                                              if (generatedContent != null) {
+                                                controller.descriptionController
+                                                    .text = generatedContent;
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                        position: RelativeRect.fromLTRB(
+                                          _tapDownPosition!.dx,
+                                          _tapDownPosition!.dy,
+                                          overlay.size.width -
+                                              _tapDownPosition!.dx,
+                                          overlay.size.height -
+                                              _tapDownPosition!.dy,
+                                        ),
+                                      );
+                                    },
+                                    onTap: () async {
+                                      final name =
+                                          controller.nameController.text;
+                                      if (name.isEmpty) {
+                                        Fluttertoast.showToast(
+                                            msg: "Dish Name cannot be empty!");
+                                        return;
+                                      }
+                                      final generatedContent =
+                                          await geminiController
+                                              .generateDishDescription(name);
+                                      if (generatedContent != null) {
+                                        controller.descriptionController.text =
+                                            generatedContent;
+                                      }
+                                    },
+                                    child: context
+                                            .watch<GeminiController>()
+                                            .dishDescriptionGenerating
+                                        ? const SizedBox(
+                                            height: 5.0,
+                                            width: 5.0,
+                                            child: Row(
+                                              children: [
+                                                CircularProgressIndicator(),
+                                              ],
+                                            ),
+                                          )
+                                        : const Icon(
+                                            FluentIcons.sparkle_24_regular),
+                                  ),
                                 ),
                                 verticalSpaceMedium,
                                 CustomRadioCheckboxGroup(
@@ -493,7 +598,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                     Divider(color: Colors.grey.shade300),
                                     verticalSpaceSmall,
                                     Text(
-                                      "Childrens",
+                                      "Children",
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium!
@@ -744,6 +849,31 @@ class _AddFoodScreenState extends State<AddFoodScreen>
           ),
         );
       }),
+    );
+  }
+
+  void showCustomDialog({
+    required BuildContext context,
+    required String barrierLabel,
+    required Offset position,
+    required Widget child,
+  }) {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      barrierDismissible: true,
+      barrierLabel: barrierLabel,
+      pageBuilder: (_, __, ___) {
+        return Stack(
+          children: [
+            Positioned(
+              top: position.dy,
+              right: position.dx + 20,
+              child: child,
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/auth/auth_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_navigation_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/menu_builder_config.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/category/categories_screen.dart';
@@ -30,7 +31,11 @@ class _FlutterFoodpageMenuBuilderState
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AuthController>().loginMenuBuilder(widget.config);
+      context
+          .read<GeminiController>()
+          .initializeGemini(widget.config.geminiAPIKey);
     });
+
     super.initState();
   }
 

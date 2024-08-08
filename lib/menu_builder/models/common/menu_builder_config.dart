@@ -6,51 +6,23 @@ import '../../core/constants/enums.dart';
 class MenuBuilderConfig {
   final String authenticationKey;
   final DevelopmentMode mode;
+  final String geminiAPIKey;
+
   MenuBuilderConfig({
     required this.authenticationKey,
+    required this.geminiAPIKey,
     this.mode = DevelopmentMode.release,
   });
 
   MenuBuilderConfig copyWith({
     String? authenticationKey,
     DevelopmentMode? mode,
+    String? geminiAPIKey,
   }) {
     return MenuBuilderConfig(
       authenticationKey: authenticationKey ?? this.authenticationKey,
       mode: mode ?? this.mode,
+      geminiAPIKey: geminiAPIKey ?? this.geminiAPIKey,
     );
   }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'authenticatioKey': authenticationKey,
-      'mode': mode.name,
-    };
-  }
-
-  factory MenuBuilderConfig.fromMap(Map<String, dynamic> map) {
-    return MenuBuilderConfig(
-      authenticationKey: map['authenticatioKey'] as String,
-      mode: DevelopmentMode.fromName(map['mode'] as String),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory MenuBuilderConfig.fromJson(String source) =>
-      MenuBuilderConfig.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() =>
-      'AuthModel(authenticatioKey: $authenticationKey, mode: $mode)';
-
-  @override
-  bool operator ==(covariant MenuBuilderConfig other) {
-    if (identical(this, other)) return true;
-
-    return other.authenticationKey == authenticationKey && other.mode == mode;
-  }
-
-  @override
-  int get hashCode => authenticationKey.hashCode ^ mode.hashCode;
 }

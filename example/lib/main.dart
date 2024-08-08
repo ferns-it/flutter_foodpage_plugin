@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
           config: MenuBuilderConfig(
             authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae",
             mode: DevelopmentMode.development,
+            geminiAPIKey: "<key-here>",
           ),
         ),
       ),
