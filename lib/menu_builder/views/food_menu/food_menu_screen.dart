@@ -82,54 +82,83 @@ class FoodMenuScreen extends StatelessWidget {
               ],
             ),
             verticalSpaceMedium,
-            Container(
-              height: 60,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: MenuBuilderColors.kWhite,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10.0,
-                vertical: 8.0,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: SearchBarWidget(
-                      onSearchChanged: (String? query) {},
-                      searchTextController: TextEditingController(),
-                      borderRadius: 8.0,
-                    ),
-                  ),
-                  const Spacer(),
-                ],
-              ),
-            ),
-            verticalSpaceRegular,
             controller.dishCollection.when(initial: () {
               return const SizedBox();
             }, loading: () {
               return const Center(child: CircularProgressIndicator());
             }, completed: (collection) {
-              final dishes = controller.dishCollection.data!.dishes;
+              final categories = controller.categoriesCollection;
+
               return Expanded(
-                child: AlignedGridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 2,
-                  crossAxisSpacing: 2,
-                  itemCount: dishes.length,
-                  itemBuilder: (context, index) {
-                    final dish = dishes[index];
-                    return InkWell(
-                      onTap: () {
-                        controller.onSelectDish(index);
-                        Scaffold.of(context).openEndDrawer();
-                      },
-                      child: FoodDetailsTile(dish: dish),
-                    );
-                  },
+                child: DefaultTabController(
+                  length: categories.length,
+                  child: Column(
+                    children: [
+                      verticalSpaceRegular,
+                      Container(
+                        height: 60,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: MenuBuilderColors.kWhite,
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                          vertical: 8.0,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: SearchBarWidget(
+                                onSearchChanged: (String? query) {},
+                                searchTextController: TextEditingController(),
+                                borderRadius: 8.0,
+                              ),
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
+                      ),
+                      verticalSpaceRegular,
+                      TabBar(
+                        tabs: categories
+                            .map((category) =>
+                                Tab(text: category.name.toUpperCase()))
+                            .toList(),
+                        tabAlignment: categories.length <= 10
+                            ? TabAlignment.fill
+                            : TabAlignment.center,
+                        indicatorPadding: EdgeInsets.zero,
+                        isScrollable: categories.length > 10,
+                        padding: EdgeInsets.zero,
+                      ),
+                      verticalSpaceRegular,
+                      Expanded(
+                        child: TabBarView(
+                            children: categories.map((category) {
+                          final dishes =
+                              controller.filterDishesByCategory(category);
+                          return AlignedGridView.count(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 2,
+                            crossAxisSpacing: 2,
+                            itemCount: dishes.length,
+                            itemBuilder: (context, index) {
+                              final dish = dishes[index];
+                              return InkWell(
+                                onTap: () {
+                                  controller.onSelectDish(index);
+                                  Scaffold.of(context).openEndDrawer();
+                                },
+                                child: FoodDetailsTile(dish: dish),
+                              );
+                            },
+                          );
+                        }).toList()),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }, error: (message, error) {

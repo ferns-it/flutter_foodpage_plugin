@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: FlutterFoodpageMenuBuilder(
           config: MenuBuilderConfig(
-            authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae",
+            authenticationKey: "bb1fad8038d623bf7446cdf031d3deab",
             mode: DevelopmentMode.development,
             geminiAPIKey: "<key-here>",
           ),

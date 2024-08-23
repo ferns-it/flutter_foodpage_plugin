@@ -17,14 +17,22 @@ import '../common/base_controller.dart';
 
 class DishesController extends ChangeNotifier with BaseController {
   APIResponse<DishCollectionModel> _dishCollection = APIResponse.initial();
+
   APIResponse<DishCollectionModel> get dishCollection => _dishCollection;
+
+  List<Category> get categoriesCollection => (dishCollection.data?.dishes ?? [])
+      .expand((dish) => dish.categories)
+      .toSet()
+      .toList();
 
   int get totalDishes => dishCollection.data?.totalDishes ?? 0;
 
   APIResponse<DishViewDetailsModel> _viewDishDetails = APIResponse.initial();
+
   APIResponse<DishViewDetailsModel> get viewDishDetails => _viewDishDetails;
 
   AddDishInitializeDataModel? _addDishInitializeData;
+
   AddDishInitializeDataModel? get addDishInitializeData =>
       _addDishInitializeData;
 
@@ -55,10 +63,12 @@ class DishesController extends ChangeNotifier with BaseController {
   String? get defaultEntryKey => listOfMenus.entries.firstOrNull != null
       ? listOfMenus.entries.first.key
       : null;
+
   List<AllergensInitialiseSubData> get listOfAllergens =>
       _addDishInitializeData?.allergens.data ?? [];
 
   int _selectedDishIndex = -1;
+
   int get selectedDishIndex => _selectedDishIndex;
 
   DishDetails? get selectedDish =>
@@ -67,6 +77,7 @@ class DishesController extends ChangeNotifier with BaseController {
           : null;
 
   String? _dishType;
+
   String get dishType => _dishType ?? "";
 
   void onChangeDishType(String dishType) {
@@ -76,7 +87,9 @@ class DishesController extends ChangeNotifier with BaseController {
 
   bool _onlineStatus = true;
   bool _dineInStatus = true;
+
   bool get onlineStatus => _onlineStatus;
+
   bool get dineInStatus => _dineInStatus;
 
   void onChangeOnlineStatus(bool status) {
@@ -186,6 +199,7 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   AddDishSideSheetType _activeSideSheetType = AddDishSideSheetType.variation;
+
   AddDishSideSheetType get activeSideSheetType => _activeSideSheetType;
 
   void onChangeSideSheetType(AddDishSideSheetType type) {
@@ -313,6 +327,7 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   bool _allDaysEnabled = true;
+
   bool get allDaysEnabled => _allDaysEnabled;
 
   void onChangeAllDaysEnable(bool? value) {
@@ -367,6 +382,7 @@ class DishesController extends ChangeNotifier with BaseController {
   late TextEditingController descriptionController;
 
   String? _editDishId;
+
   String? get editDishId => _editDishId;
 
   void resetEditDishID() {
@@ -413,6 +429,12 @@ class DishesController extends ChangeNotifier with BaseController {
       _dishCollection = throwUnknownErrorException<DishCollectionModel>();
       notifyListeners();
     }
+  }
+
+  List<DishDetails> filterDishesByCategory(Category category) {
+    return (dishCollection.data?.dishes ?? [])
+        .where((dish) => dish.categories.contains(category))
+        .toList();
   }
 
   Future<void> initializeAddDishRequiredData() async {
@@ -552,7 +574,8 @@ class DishesController extends ChangeNotifier with BaseController {
               isUnlimitedStock: 1,
               online: isOnlineReq,
               dining: isDineinReq,
-              name: nameController.text, // Ensure nameController is initialized
+              name: nameController.text,
+              // Ensure nameController is initialized
               description: descriptionController.text,
               ingredients: ingredientsController.text,
               allergns: allergens,
@@ -571,7 +594,8 @@ class DishesController extends ChangeNotifier with BaseController {
               variations: variations,
               online: isOnlineReq,
               dining: isDineinReq,
-              name: nameController.text, // Ensure nameController is initialized
+              name: nameController.text,
+              // Ensure nameController is initialized
               description: descriptionController.text,
               category: listOfCategories,
               addonsMasterGroup: addonsMasterGroup,
