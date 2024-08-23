@@ -82,45 +82,31 @@ class FoodMenuScreen extends StatelessWidget {
               ],
             ),
             verticalSpaceMedium,
+            Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.4,
+                child: SearchBarWidget(
+                  onSearchChanged: (String? query) {
+
+                  },
+                  searchTextController: TextEditingController(),
+                  borderRadius: 8.0,
+                  fillColor: MenuBuilderColors.kWhite,
+                ),
+              ),
+            ),
+            verticalSpaceRegular,
             controller.dishCollection.when(initial: () {
               return const SizedBox();
             }, loading: () {
               return const Center(child: CircularProgressIndicator());
             }, completed: (collection) {
               final categories = controller.categoriesCollection;
-
               return Expanded(
                 child: DefaultTabController(
                   length: categories.length,
                   child: Column(
-                    children: [
-                      verticalSpaceRegular,
-                      Container(
-                        height: 60,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: MenuBuilderColors.kWhite,
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 8.0,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: SearchBarWidget(
-                                onSearchChanged: (String? query) {},
-                                searchTextController: TextEditingController(),
-                                borderRadius: 8.0,
-                              ),
-                            ),
-                            const Spacer(),
-                          ],
-                        ),
-                      ),
-                      verticalSpaceRegular,
+                    children: <Widget>[
                       TabBar(
                         tabs: categories
                             .map((category) =>
@@ -130,8 +116,10 @@ class FoodMenuScreen extends StatelessWidget {
                             ? TabAlignment.fill
                             : TabAlignment.center,
                         indicatorPadding: EdgeInsets.zero,
+                        indicatorSize: TabBarIndicatorSize.label,
                         isScrollable: categories.length > 10,
                         padding: EdgeInsets.zero,
+                        dividerColor: Colors.transparent,
                       ),
                       verticalSpaceRegular,
                       Expanded(
