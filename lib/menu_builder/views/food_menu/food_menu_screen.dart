@@ -39,22 +39,22 @@ class FoodMenuScreen extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(FluentIcons.settings_16_filled),
-                  label: const Text("Manage Menu"),
-                  style: OutlinedButton.styleFrom(
-                    textStyle: textTheme.titleMedium,
-                    foregroundColor: MenuBuilderColors.kPurple,
-                    backgroundColor: MenuBuilderColors.kPurple.withOpacity(0.1),
-                    elevation: 0,
-                    side: BorderSide(
-                      width: 0.8,
-                      color: MenuBuilderColors.kPurple.withOpacity(0.3),
-                    ),
-                  ),
-                ),
-                horizontalSpaceRegular,
+                // OutlinedButton.icon(
+                //   onPressed: () {},
+                //   icon: const Icon(FluentIcons.settings_16_filled),
+                //   label: const Text("Manage Menu"),
+                //   style: OutlinedButton.styleFrom(
+                //     textStyle: textTheme.titleMedium,
+                //     foregroundColor: MenuBuilderColors.kPurple,
+                //     backgroundColor: MenuBuilderColors.kPurple.withOpacity(0.1),
+                //     elevation: 0,
+                //     side: BorderSide(
+                //       width: 0.8,
+                //       color: MenuBuilderColors.kPurple.withOpacity(0.3),
+                //     ),
+                //   ),
+                // ),
+                // horizontalSpaceRegular,
                 OutlinedButton.icon(
                   onPressed: () {
                     controller.resetEditDishID();

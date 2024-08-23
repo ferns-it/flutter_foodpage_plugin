@@ -123,7 +123,6 @@ class _FoodDetailsSideSheetWidgetState
                   'Saturday'
                 ];
 
-            
                 return Positioned.fill(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -154,14 +153,22 @@ class _FoodDetailsSideSheetWidgetState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Text(controller.selectedDish!.name,
-                                  style: textTheme.titleMedium),
-                              horizontalSpaceSmall,
-                              const Icon(
-                                FontAwesomeIcons.drumstickBite,
-                                color: Color(0xFFA16868),
-                                size: 20,
+                              Text(
+                                controller.selectedDish!.name,
+                                style: textTheme.titleMedium,
                               ),
+                              horizontalSpaceSmall,
+                              controller.selectedDish!.type == "non veg"
+                                  ? const Icon(
+                                      FontAwesomeIcons.drumstickBite,
+                                      color: Color(0xFFA16868),
+                                      size: 20,
+                                    )
+                                  : const Icon(
+                                      FontAwesomeIcons.leaf,
+                                      color: Color(0xFF5ca904),
+                                      size: 20,
+                                    ),
                             ],
                           ),
                         ),
