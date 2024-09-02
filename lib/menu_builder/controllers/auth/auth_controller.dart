@@ -11,8 +11,13 @@ import '../../services/app_exception/app_exception.dart';
 
 class AuthController extends ChangeNotifier with BaseController {
   APIResponse<AuthTokenData> _authenticationDetails = APIResponse.initial();
+
   APIResponse<AuthTokenData> get authenticationDetails =>
       _authenticationDetails;
+
+  MenuBuilderConfig? _builderConfig;
+
+  MenuBuilderConfig? get builderConfig => _builderConfig;
 
   Future<void> loginMenuBuilder(MenuBuilderConfig config) async {
     try {
@@ -29,6 +34,8 @@ class AuthController extends ChangeNotifier with BaseController {
       _authenticationDetails = authResponse != null
           ? APIResponse.completed(authResponse)
           : throwNotFoundException<AuthTokenData>();
+
+      _builderConfig = config;
 
       notifyListeners();
     } on AppExceptions catch (error) {
