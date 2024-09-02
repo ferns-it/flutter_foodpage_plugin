@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_collection_model.dart';
 
@@ -34,24 +35,38 @@ class FoodDetailsTile extends StatelessWidget {
             ),
             horizontalSpaceSmall,
             Expanded(
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(dish.name, style: textTheme.titleMedium),
-                  verticalSpaceTiny,
-                  Row(
-                    children: <Widget>[
-                      Flexible(
-                        child: Text(
-                          removeHtmlTags(dish.description),
-                          style: textTheme.bodyMedium!.copyWith(
-                            color: Colors.grey.shade500,
-                          ),
-                          softWrap: true,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(dish.name, style: textTheme.titleMedium),
+                        verticalSpaceTiny,
+                        Row(
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                removeHtmlTags(dish.description),
+                                style: textTheme.bodyMedium!.copyWith(
+                                  color: Colors.grey.shade500,
+                                ),
+                                softWrap: true,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  )
+                      ],
+                    ),
+                  ),
+                  horizontalSpaceRegular,
+                  Text(
+                    dish.price,
+                    style: textTheme.titleMedium!.copyWith(
+                      color: MenuBuilderColors.kPrimaryColor,
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -31,7 +31,7 @@ class FoodMenuScreen extends StatelessWidget {
                     Text("Food Menu", style: textTheme.titleLarge),
                     verticalSpaceTiny,
                     Text(
-                      "Manage Your Restaurant Menu From Here",
+                      "Manage Your Restaurant Menu",
                       style: textTheme.bodyMedium!.copyWith(
                         color: MenuBuilderColors.kGrey2,
                       ),
@@ -86,9 +86,7 @@ class FoodMenuScreen extends StatelessWidget {
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.4,
                 child: SearchBarWidget(
-                  onSearchChanged: (String? query) {
-
-                  },
+                  onSearchChanged: (String? query) {},
                   searchTextController: TextEditingController(),
                   borderRadius: 8.0,
                   fillColor: MenuBuilderColors.kWhite,
@@ -100,7 +98,7 @@ class FoodMenuScreen extends StatelessWidget {
               return const SizedBox();
             }, loading: () {
               return const Center(child: CircularProgressIndicator());
-            }, completed: (collection) {
+            }, completed: (_) {
               final categories = controller.categoriesCollection;
               return Expanded(
                 child: DefaultTabController(
@@ -108,10 +106,9 @@ class FoodMenuScreen extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       TabBar(
-                        tabs: categories
-                            .map((category) =>
-                                Tab(text: category.name.toUpperCase()))
-                            .toList(),
+                        tabs: categories.map((category) {
+                          return Tab(text: category.name.toUpperCase());
+                        }).toList(),
                         tabAlignment: categories.length <= 10
                             ? TabAlignment.fill
                             : TabAlignment.center,

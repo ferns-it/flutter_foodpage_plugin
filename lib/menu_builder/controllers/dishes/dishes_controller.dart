@@ -20,6 +20,8 @@ class DishesController extends ChangeNotifier with BaseController {
 
   APIResponse<DishCollectionModel> get dishCollection => _dishCollection;
 
+  List<DishDetails> dishesList = [];
+
   List<Category> get categoriesCollection => (dishCollection.data?.dishes ?? [])
       .expand((dish) => dish.categories)
       .toSet()
@@ -75,6 +77,15 @@ class DishesController extends ChangeNotifier with BaseController {
       _selectedDishIndex != -1 && _dishCollection.data?.dishes != null
           ? _dishCollection.data?.dishes.elementAt(_selectedDishIndex)
           : null;
+
+  int _selectedCategoryIndex = -1;
+
+  int get selectedCategoryIndex => _selectedCategoryIndex;
+
+  void onChangeCategoryIndex(int index) {
+    _selectedCategoryIndex = index;
+    notifyListeners();
+  }
 
   String? _dishType;
 
@@ -421,6 +432,8 @@ class DishesController extends ChangeNotifier with BaseController {
           ? APIResponse.completed(response)
           : throwNotFoundException<DishCollectionModel>();
 
+      dishesList = List<DishDetails>.from(_dishCollection.data?.dishes ?? []);
+
       notifyListeners();
     } on AppExceptions catch (error) {
       _dishCollection = APIResponse.error(error.message, exception: error);
@@ -435,6 +448,20 @@ class DishesController extends ChangeNotifier with BaseController {
     return (dishCollection.data?.dishes ?? [])
         .where((dish) => dish.categories.contains(category))
         .toList();
+  }
+
+  void searchDishes(String? query) {
+    final dishesCollection = _dishCollection.data?.dishes ?? [];
+
+    if (query == null || query.isEmpty) {
+      dishesList = List<DishDetails>.from(dishesCollection);
+      notifyListeners();
+      return;
+    }
+    dishesList = dishesCollection
+        .where((dish) => query.toLowerCase().contains(dish.name))
+        .toList();
+    notifyListeners();
   }
 
   Future<void> initializeAddDishRequiredData() async {
