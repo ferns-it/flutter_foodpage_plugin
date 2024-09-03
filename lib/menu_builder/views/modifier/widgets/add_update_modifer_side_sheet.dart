@@ -7,8 +7,8 @@ import '../../../core/utils/ui_utils.dart';
 import '../../../core/validators/menu_builder_validators.dart';
 import '../../../widgets/custom_rounded_textfield.dart';
 
-class AddUpdateModiferSideSheet extends StatelessWidget {
-  const AddUpdateModiferSideSheet({super.key});
+class AddUpdateModifierSideSheet extends StatelessWidget {
+  const AddUpdateModifierSideSheet({super.key});
 
   @override
   Widget build(BuildContext context) {

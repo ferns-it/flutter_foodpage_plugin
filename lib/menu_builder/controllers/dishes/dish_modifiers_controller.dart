@@ -23,6 +23,7 @@ class DishModifiersController extends ChangeNotifier with BaseController {
       modifiersCollection.data?.masterModifiers ?? [];
 
   DishModifierData? _selectedModifier;
+
   DishModifierData? get selectedModifier => _selectedModifier;
 
   void onChangeSelectedModifier(DishModifierData modifier) {
@@ -64,6 +65,7 @@ class DishModifiersController extends ChangeNotifier with BaseController {
   }
 
   String? _editModifierId;
+
   bool get editMode => _editModifierId != null;
 
   void onPressEditButton(int index) {
@@ -158,9 +160,11 @@ class DishModifiersController extends ChangeNotifier with BaseController {
       (entry["name"] as TextEditingController).clear();
       (entry["price"] as TextEditingController).clear();
     }
+    _editModifierId = null;
     groupName.clear();
     minimumController.clear();
     maximumController.clear();
     modifierEntries = List.from([modifierEntry]);
+    notifyListeners();
   }
 }

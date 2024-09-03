@@ -65,7 +65,7 @@ class _FlutterFoodpageMenuBuilderState
           endDrawer: currentPageIndex == 1
               ? const FoodDetailsSideSheetWidget()
               : currentPageIndex == 3
-                  ? const AddUpdateModiferSideSheet()
+                  ? const AddUpdateModifierSideSheet()
                   : null,
           child: Expanded(
             child: screens[
