@@ -5,11 +5,13 @@ import 'package:flutter/foundation.dart';
 
 class DishCollectionModel {
   final List<DishDetails> dishes;
+
   DishCollectionModel({
     required this.dishes,
   });
 
   bool get isDishesEmpty => dishes.isEmpty;
+
   int get totalDishes => dishes.length;
 
   DishCollectionModel copyWith({
@@ -37,6 +39,7 @@ class DishDetails {
   final String price;
   final String priceValue;
   final List<Category> categories;
+
   DishDetails({
     required this.pID,
     required this.shopID,
@@ -136,8 +139,10 @@ class DishDetails {
   }
 
   bool get onlineEnabled => online == "Yes";
+
   bool get diningEnabled => dining == "Yes";
-  bool get active => activeStatus == "Yes";
+
+  bool get active => activeStatus == "Yes" || activeStatus == "1";
 
   String toJson() => json.encode(toMap());
 
@@ -193,6 +198,7 @@ class DishDetails {
 class Category {
   final String cID;
   final String name;
+
   Category({
     required this.cID,
     required this.name,
