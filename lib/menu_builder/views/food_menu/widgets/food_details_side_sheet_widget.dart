@@ -346,7 +346,29 @@ class _FoodDetailsSideSheetWidgetState
                           context,
                           icon: FluentIcons.apps_add_in_20_regular,
                           title: "Addons/Modifiers",
-                          children: const <Widget>[],
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Wrap(
+                                runSpacing: 5.0,
+                                spacing: 8.0,
+                                children: data.selectedAddonGroups.map((addon) {
+                                  return FilterChip(
+                                    label: Text(addon["name"],
+                                        style: textTheme.labelMedium),
+                                    onSelected: (_) {},
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    showCheckmark: false,
+                                    backgroundColor: MenuBuilderColors.kWhite,
+                                    side: const BorderSide(
+                                      color: MenuBuilderColors.kLightGrey,
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            )
+                          ],
                         ),
                         verticalSpaceRegular,
                         _buildExpansionTileContainer(

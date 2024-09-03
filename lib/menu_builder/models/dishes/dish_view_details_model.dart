@@ -10,9 +10,10 @@ class DishViewDetailsModel {
   final BasicData basicData;
   final List<VariationData> variationData;
   final List<SelectedCategorie> selectedCategories;
-  final List<dynamic> selectedAddonGroups;
+  final List<Map<String, dynamic>> selectedAddonGroups;
   final List<dynamic> selectedMenuList;
   final Availability availability;
+
   DishViewDetailsModel({
     required this.basicData,
     required this.variationData,
@@ -26,7 +27,7 @@ class DishViewDetailsModel {
     BasicData? basicData,
     List<VariationData>? variationData,
     List<SelectedCategorie>? selectedCategories,
-    List<String>? selectedAddonGroups,
+    List<Map<String, dynamic>>? selectedAddonGroups,
     List<String>? selectedMenuList,
     Availability? availability,
   }) {
@@ -73,8 +74,7 @@ class DishViewDetailsModel {
           (x) => SelectedCategorie.fromMap(x as Map<String, dynamic>),
         ),
       ),
-      selectedAddonGroups:
-          List<dynamic>.from((map['selectedAddonGroups'] ?? [])),
+      selectedAddonGroups: List.from((map['selectedAddonGroups'] ?? [])),
       selectedMenuList:
           List<dynamic>.from((map['selectedMenuList'] as List<dynamic>)),
       availability:
@@ -134,6 +134,7 @@ class BasicData {
   final String online;
   final String dining;
   final String activeStatus;
+
   BasicData({
     required this.pID,
     required this.productType,
@@ -269,6 +270,7 @@ class VariationData {
   final List<Allergen> allergens;
   final List<dynamic> selectedallergens;
   final List<dynamic> allergensMaster;
+
   VariationData({
     required this.pvID,
     required this.name,
@@ -390,6 +392,7 @@ class VariationData {
 class Allergen {
   final String id;
   final String name;
+
   Allergen({
     required this.id,
     required this.name,
@@ -441,6 +444,7 @@ class Allergen {
 class SelectedCategorie {
   final String cID;
   final String cName;
+
   SelectedCategorie({
     required this.cID,
     required this.cName,
@@ -493,6 +497,7 @@ class Availability {
   final bool isAllday;
   final List<dynamic> days;
   final List<Timing> timing;
+
   Availability({
     required this.isAllday,
     required this.days,
@@ -556,6 +561,7 @@ class Availability {
 class Timing {
   final String startTime;
   final String endTime;
+
   Timing({
     required this.startTime,
     required this.endTime,
