@@ -353,18 +353,8 @@ class _FoodDetailsSideSheetWidgetState
                                 runSpacing: 5.0,
                                 spacing: 8.0,
                                 children: data.selectedAddonGroups.map((addon) {
-                                  return FilterChip(
-                                    label: Text(addon["name"],
-                                        style: textTheme.labelMedium),
-                                    onSelected: (_) {},
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    showCheckmark: false,
-                                    backgroundColor: MenuBuilderColors.kWhite,
-                                    side: const BorderSide(
-                                      color: MenuBuilderColors.kLightGrey,
-                                    ),
-                                  );
+                                  return _buildFilterChip(
+                                      textTheme, addon["name"]);
                                 }).toList(),
                               ),
                             )
@@ -376,24 +366,24 @@ class _FoodDetailsSideSheetWidgetState
                           icon: FluentIcons.app_folder_20_regular,
                           title: "Menu Group",
                           children: data.selectedMenuList.isEmpty
-                              ? <Widget>[
+                              ? [
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: FilterChip(
-                                      label: Text("Default",
-                                          style: textTheme.labelMedium),
-                                      onSelected: (_) {},
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4.0),
-                                      showCheckmark: false,
-                                      backgroundColor: MenuBuilderColors.kWhite,
-                                      side: const BorderSide(
-                                        color: MenuBuilderColors.kLightGrey,
-                                      ),
+                                    child: _buildFilterChip(
+                                      textTheme,
+                                      "Default",
                                     ),
                                   )
                                 ]
-                              : [],
+                              : data.selectedMenuList
+                                  .map(
+                                    (menu) => Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: _buildFilterChip(
+                                          textTheme, menu["name"]),
+                                    ),
+                                  )
+                                  .toList(),
                         ),
                         verticalSpaceRegular,
                         _buildExpansionTileContainer(
@@ -635,6 +625,19 @@ class _FoodDetailsSideSheetWidgetState
           smallText: true,
         ),
       ],
+    );
+  }
+
+  Widget _buildFilterChip(TextTheme textTheme, String label) {
+    return FilterChip(
+      label: Text(label, style: textTheme.labelMedium),
+      onSelected: (_) {},
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      showCheckmark: false,
+      backgroundColor: MenuBuilderColors.kWhite,
+      side: const BorderSide(
+        color: MenuBuilderColors.kLightGrey,
+      ),
     );
   }
 }

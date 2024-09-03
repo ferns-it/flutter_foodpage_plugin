@@ -133,7 +133,7 @@ class FoodMenuScreen extends StatelessWidget {
                               final dish = dishes[index];
                               return InkWell(
                                 onTap: () {
-                                  controller.onSelectDish(index);
+                                  controller.onSelectDish(dish.pID);
                                   Scaffold.of(context).openEndDrawer();
                                 },
                                 child: FoodDetailsTile(dish: dish),

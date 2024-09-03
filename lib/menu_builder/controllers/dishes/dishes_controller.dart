@@ -79,14 +79,15 @@ class DishesController extends ChangeNotifier with BaseController {
   List<AllergensInitialiseSubData> get listOfAllergens =>
       _addDishInitializeData?.allergens.data ?? [];
 
-  int _selectedDishIndex = -1;
-
-  int get selectedDishIndex => _selectedDishIndex;
+  String? _selectedDishId;
 
   DishDetails? get selectedDish =>
-      _selectedDishIndex != -1 && _dishCollection.data?.dishes != null
-          ? _dishCollection.data?.dishes.elementAt(_selectedDishIndex)
+      _selectedDishId != null && _dishCollection.data?.dishes != null
+          ? _dishCollection.data?.dishes
+              .firstWhereOrNull((x) => x.pID == _selectedDishId)
           : null;
+
+  void onSelectDish(String? pId) => _selectedDishId = pId;
 
   bool get selectedDishDescIsEmpty =>
       selectedDish?.description.isEmpty ?? false;
@@ -473,8 +474,6 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-  void onSelectDish(int index) => _selectedDishIndex = index;
-
   Future<void> getDishDetails() async {
     try {
       if (selectedDish == null) {
@@ -739,7 +738,9 @@ class DishesController extends ChangeNotifier with BaseController {
     choosedMasterAddons = List.from(modifiers);
 
     // Menus List
-    choosedMenus = List.from(dishData.selectedMenuList);
+    choosedMenus = List<String>.from(dishData.selectedMenuList.map((menu) {
+      return menu["id"] as String;
+    }));
     if (choosedMenus.isEmpty) {
       activeDefaultSelectedInMenu();
     }

@@ -19,6 +19,7 @@ class FoodDetailsTile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
@@ -33,7 +34,7 @@ class FoodDetailsTile extends StatelessWidget {
                 },
               ),
             ),
-            horizontalSpaceSmall,
+            horizontalSpaceRegular,
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,6 +54,8 @@ class FoodDetailsTile extends StatelessWidget {
                                   color: Colors.grey.shade500,
                                 ),
                                 softWrap: true,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
