@@ -247,7 +247,7 @@ class _ModifiersListSection extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: MenuBuilderColors.kBlue.withOpacity(0.25),
+                color: MenuBuilderColors.kBlue.withOpacity(0.1),
               ),
               child: const Icon(
                 Icons.edit,

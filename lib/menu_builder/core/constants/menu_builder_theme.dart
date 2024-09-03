@@ -8,6 +8,7 @@ ThemeData menuBuilderTheme(BuildContext context) {
   final textTheme = Theme.of(context).textTheme;
   return ThemeData(
     useMaterial3: true,
+    scaffoldBackgroundColor: MenuBuilderColors.kWhite2,
     colorScheme: ColorScheme.fromSwatch(
       primarySwatch: getMaterialColor(MenuBuilderColors.kPrimaryColor),
       backgroundColor: MenuBuilderColors.kBackgroundColor,

@@ -15,7 +15,8 @@ class FoodDetailsTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Card(
-      elevation: 0,
+      elevation: 3,
+      shadowColor: Colors.grey.withOpacity(0.3),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(

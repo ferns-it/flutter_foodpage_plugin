@@ -85,11 +85,17 @@ class FoodMenuScreen extends StatelessWidget {
             Center(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.4,
-                child: SearchBarWidget(
-                  onSearchChanged: (String? query) {},
-                  searchTextController: TextEditingController(),
-                  borderRadius: 8.0,
-                  fillColor: MenuBuilderColors.kWhite,
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  elevation: 3,
+                  shadowColor: Colors.grey.withOpacity(0.3),
+                  child: SearchBarWidget(
+
+                    onSearchChanged: (String? query) {},
+                    searchTextController: TextEditingController(),
+                    borderRadius: 8.0,
+                    fillColor: MenuBuilderColors.kWhite,
+                  ),
                 ),
               ),
             ),

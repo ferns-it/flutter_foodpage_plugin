@@ -35,6 +35,7 @@ class _BaseRootWidgetState extends State<BaseRootWidget> {
       data: menuBuilderTheme(context),
       child: Scaffold(
         endDrawer: widget.endDrawer,
+
         endDrawerEnableOpenDragGesture: false,
         body: SafeArea(
           child: Row(
