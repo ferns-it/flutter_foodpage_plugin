@@ -4,6 +4,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_nav
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_modifiers_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -16,6 +17,7 @@ class MenuBuilderDependencyRegistrar {
     ChangeNotifierProvider(create: (_) => DishesController()),
     ChangeNotifierProvider(create: (_) => DishCategoryController()),
     ChangeNotifierProvider(create: (_) => DishModifiersController()),
+    ChangeNotifierProvider(create: (_) => ShopController()),
     ChangeNotifierProvider(create: (_) => GeminiController()),
   ];
 
@@ -26,6 +28,7 @@ class MenuBuilderDependencyRegistrar {
       context.read<DishCategoryController>().init();
     }).then((_) {
       // Lazy Loading
+      context.read<ShopController>().init();
       context.read<GeminiController>().init();
     });
   }

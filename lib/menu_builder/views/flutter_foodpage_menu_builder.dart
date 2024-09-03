@@ -79,15 +79,8 @@ class _FlutterFoodpageMenuBuilderState
   }
 }
 
-class _LoadingWidget extends StatefulWidget {
-  const _LoadingWidget();
-
-  @override
-  State<_LoadingWidget> createState() => _LoadingWidgetState();
-}
-
-class _LoadingWidgetState extends State<_LoadingWidget> {
-  bool lottieIsLoaded = false;
+class _LoadingWidget extends StatelessWidget {
+  const _LoadingWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -106,11 +99,6 @@ class _LoadingWidgetState extends State<_LoadingWidget> {
                     flex: 3,
                     child: LottieBuilder.asset(
                       "packages/flutter_foodpage_plugin/assets/animations/loading.json",
-                      onLoaded: (_) {
-                        setState(() {
-                          lottieIsLoaded = true;
-                        });
-                      },
                     ),
                   ),
                   Text(

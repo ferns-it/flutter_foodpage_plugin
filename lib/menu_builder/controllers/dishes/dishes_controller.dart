@@ -59,6 +59,16 @@ class DishesController extends ChangeNotifier with BaseController {
       .where((category) => category.categoryStatus == "Active")
       .toList();
 
+  @override
+  Future<void> init() async {
+    fetchDishes();
+    await initializeAddDishRequiredData();
+    activeDefaultSelectedInMenu();
+    if (_addDishInitializeData?.dishtype.data.firstOrNull != null) {
+      _dishType = _addDishInitializeData?.dishtype.data.first;
+    }
+  }
+
   Map<String, dynamic> get listOfMenus =>
       _addDishInitializeData?.productMenu.data ?? <String, dynamic>{};
 
@@ -77,6 +87,9 @@ class DishesController extends ChangeNotifier with BaseController {
       _selectedDishIndex != -1 && _dishCollection.data?.dishes != null
           ? _dishCollection.data?.dishes.elementAt(_selectedDishIndex)
           : null;
+
+  bool get selectedDishDescIsEmpty =>
+      selectedDish?.description.isEmpty ?? false;
 
   int _selectedCategoryIndex = -1;
 
@@ -399,16 +412,6 @@ class DishesController extends ChangeNotifier with BaseController {
   void resetEditDishID() {
     _editDishId = null;
     notifyListeners();
-  }
-
-  @override
-  Future<void> init() async {
-    fetchDishes();
-    await initializeAddDishRequiredData();
-    activeDefaultSelectedInMenu();
-    if (_addDishInitializeData?.dishtype.data.firstOrNull != null) {
-      _dishType = _addDishInitializeData?.dishtype.data.first;
-    }
   }
 
   void initalizeAllFormControllers() {

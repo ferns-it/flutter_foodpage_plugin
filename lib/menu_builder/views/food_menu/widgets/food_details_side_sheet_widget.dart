@@ -264,24 +264,27 @@ class _FoodDetailsSideSheetWidgetState
                           ),
                         ),
                         verticalSpaceSmall,
-                        _buildExpansionTileContainer(
-                          context,
-                          icon: Icons.notes,
-                          title: "Description",
-                          children: [
-                            const Divider(),
-                            verticalSpaceSmall,
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                removeHtmlTags(
-                                  controller.selectedDish!.description,
+                        Visibility(
+                          visible: !controller.selectedDishDescIsEmpty,
+                          child: _buildExpansionTileContainer(
+                            context,
+                            icon: Icons.notes,
+                            title: "Description",
+                            children: [
+                              const Divider(),
+                              verticalSpaceSmall,
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  removeHtmlTags(
+                                    controller.selectedDish!.description,
+                                  ),
+                                  style: textTheme.bodySmall,
+                                  textAlign: TextAlign.justify,
                                 ),
-                                style: textTheme.bodySmall,
-                                textAlign: TextAlign.justify,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         verticalSpaceRegular,
                         _buildExpansionTileContainer(
@@ -375,21 +378,29 @@ class _FoodDetailsSideSheetWidgetState
                           title: "Timing Info",
                           children: [
                             verticalSpaceTiny,
-                            Table(
-                                border: TableBorder.all(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                children: weekDays
-                                    .where((day) => data.availability.days
-                                        .contains(day.toLowerCase()))
-                                    .map((day) {
-                                  return _buildMultiDataTableRow(
-                                    context,
-                                    day,
-                                    data.formattedTiming,
-                                  );
-                                }).toList()),
+                            if (data.availability.days.contains("all_day"))
+                              const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text("Mon to Friday"),
+                                ],
+                              )
+                            else
+                              Table(
+                                  border: TableBorder.all(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(4.0),
+                                  ),
+                                  children: weekDays
+                                      .where((day) => data.availability.days
+                                          .contains(day.toLowerCase()))
+                                      .map((day) {
+                                    return _buildMultiDataTableRow(
+                                      context,
+                                      day,
+                                      data.formattedTiming,
+                                    );
+                                  }).toList()),
                             verticalSpaceSmall,
                           ],
                         ),

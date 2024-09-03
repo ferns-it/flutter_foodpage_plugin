@@ -12,15 +12,17 @@ import 'shared_preference/auth_preference.dart';
 
 class BaseClient {
   static const int _timeLimit = 120;
-  static ResponseType get responeType => ResponseType.json;
+
+  static ResponseType get responseType => ResponseType.json;
+
   static String get contentType => "application/json";
 
   static BaseOptions get _baseOptions => BaseOptions(
-      connectTimeout: const Duration(seconds: _timeLimit),
-      receiveTimeout: const Duration(seconds: _timeLimit),
-      contentType: contentType,
-      responseType: responeType,
-      headers: {"SOURCE": "OWNER", "Language": "en"});
+        connectTimeout: const Duration(seconds: _timeLimit),
+        receiveTimeout: const Duration(seconds: _timeLimit),
+        contentType: contentType,
+        responseType: responseType,
+      );
 
   static Dio get dio => Dio(_baseOptions)
     ..interceptors.add(
@@ -30,6 +32,7 @@ class BaseClient {
         onError: errorResponseHandler,
       ),
     );
+
   // ..interceptors.add(LogInterceptor(
   //   error: true,
   //   request: true,
