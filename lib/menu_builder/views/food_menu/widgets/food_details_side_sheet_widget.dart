@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
@@ -36,6 +37,7 @@ class _FoodDetailsSideSheetWidgetState
     final textTheme = Theme.of(context).textTheme;
 
     final controller = context.watch<DishesController>();
+    final shopController = context.watch<ShopController>();
 
     if (controller.selectedDish == null) {
       return const SizedBox();
@@ -377,15 +379,41 @@ class _FoodDetailsSideSheetWidgetState
                           icon: FluentIcons.clock_20_regular,
                           title: "Timing Info",
                           children: [
-                            verticalSpaceTiny,
-                            if (data.availability.days.contains("all_day"))
-                              const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text("Mon to Friday"),
-                                ],
+                            verticalSpaceVerySmall,
+                            if (data.availability.days.contains("all_day")) ...[
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  shopController.shopAvailableDaysStartEnd,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                              verticalSpaceSmall,
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                  horizontal: 10.0,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: MenuBuilderColors.kLightGrey,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: data.formattedTiming.map((timing) {
+                                    return Text(
+                                      timing,
+                                      style: textTheme.bodyMedium!.copyWith(
+                                        color: Colors.grey.shade500,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    );
+                                  }).toList(),
+                                ),
                               )
-                            else
+                            ] else
                               Table(
                                   border: TableBorder.all(
                                     color: Colors.grey.shade300,
@@ -433,6 +461,7 @@ class _FoodDetailsSideSheetWidgetState
       child: ExpansionTile(
         dense: true,
         leading: Icon(icon, size: 20),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
         childrenPadding: const EdgeInsets.symmetric(
           horizontal: 16.0,
           vertical: 4.0,
