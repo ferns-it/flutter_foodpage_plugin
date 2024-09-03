@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
           config: MenuBuilderConfig(
             authenticationKey: "bb1fad8038d623bf7446cdf031d3deab",
             mode: DevelopmentMode.development,
-            geminiAPIKey: "<key-here>",
+            geminiAPIKey: "AIzaSyCHY942WKRPYPucmyaANG9HOHSJGb77T9E",
             applicationName: "EPOS",
           ),
         ),

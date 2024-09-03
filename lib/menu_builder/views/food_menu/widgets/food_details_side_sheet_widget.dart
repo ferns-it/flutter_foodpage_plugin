@@ -63,8 +63,8 @@ class _FoodDetailsSideSheetWidgetState
                     IconButton(
                         onPressed: () => Scaffold.of(context).closeEndDrawer(),
                         icon: const Icon(
-                          FluentIcons.chevron_left_28_filled,
-                          color: MenuBuilderColors.kGrey,
+                          Icons.close,
+                          color: MenuBuilderColors.kBlack,
                         )),
                     const Spacer(),
                     InkWell(
