@@ -50,18 +50,20 @@ class _FoodDetailsSideSheetWidgetState
             borderRadius: BorderRadius.circular(4.0),
           ),
           child: Stack(
-            children: [
+            children: <Widget>[
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
-                  vertical: 10.0,
+                  vertical: 8.0,
                 ),
                 child: Row(
                   children: <Widget>[
-                    const Icon(
-                      FluentIcons.chevron_left_28_filled,
-                      color: MenuBuilderColors.kGrey,
-                    ),
+                    IconButton(
+                        onPressed: () => Scaffold.of(context).closeEndDrawer(),
+                        icon: const Icon(
+                          FluentIcons.chevron_left_28_filled,
+                          color: MenuBuilderColors.kGrey,
+                        )),
                     const Spacer(),
                     InkWell(
                       onTap: () {
