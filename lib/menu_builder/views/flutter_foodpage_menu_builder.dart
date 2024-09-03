@@ -3,6 +3,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/controllers/auth/auth_contr
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_navigation_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/menu_builder_config.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/category/categories_screen.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/common/root/base_root_widget.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/views/dashboard/dashboard_s
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/food_menu_screen.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/food_details_side_sheet_widget.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/modifier/widgets/add_update_modifer_side_sheet.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -54,6 +56,7 @@ class _FlutterFoodpageMenuBuilderState
       return const SizedBox.shrink();
     }, loading: () {
       return const Scaffold(
+        backgroundColor: MenuBuilderColors.kWhite2,
         body: Center(child: _LoadingWidget()),
       );
     }, completed: (_) {
@@ -84,43 +87,51 @@ class _LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 3,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 3,
+          child: Card(
+            color: Colors.white,
+            elevation: 4.0,
+            shadowColor: Colors.grey.shade300,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 16.0,
+              ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Flexible(
-                    flex: 3,
-                    child: LottieBuilder.asset(
-                      "packages/flutter_foodpage_plugin/assets/animations/loading.json",
-                    ),
+                  verticalSpaceRegular,
+                  Image.asset(
+                    "packages/flutter_foodpage_plugin/assets/images/food-page-logo.png",
+                    height: 45,
                   ),
+                  verticalSpaceRegular,
                   Text(
-                    "Menu Builder Loading...",
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        color: MenuBuilderColors.kBlack,
-                        fontWeight: FontWeight.bold),
+                    "Build and manage your menu effortlessly with Menu Builder!",
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      color: Colors.grey.shade700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 180,
+                    child: LottieBuilder.asset(
+                      "packages/flutter_foodpage_plugin/assets/animations/loading_animation.json",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ],
               ),
             ),
-            const Spacer(),
-            Text(
-              "Powered by Foodpage",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(color: MenuBuilderColors.kPrimaryColor),
-            )
-          ],
-        ),
-      ),
+          ),
+        )
+      ],
     );
   }
 }
