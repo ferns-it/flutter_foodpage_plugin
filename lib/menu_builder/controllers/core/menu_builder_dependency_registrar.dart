@@ -23,12 +23,12 @@ class MenuBuilderDependencyRegistrar {
 
   static Future<void> initializeAllProviders(BuildContext context) async {
     await Future.wait([]).then((value) {
+      context.read<ShopController>().init();
       context.read<DishModifiersController>().init();
       context.read<DishesController>().init();
       context.read<DishCategoryController>().init();
     }).then((_) {
       // Lazy Loading
-      context.read<ShopController>().init();
       context.read<GeminiController>().init();
     });
   }

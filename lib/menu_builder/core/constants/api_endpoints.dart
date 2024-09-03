@@ -19,4 +19,5 @@ class ApiEndpoints {
   static const statusUpdate = '/products/masteraddons/statusupdate';
   static const getToken = '/admin/gettoken';
   static const shopTiming = '/timing';
+  static const shopDetails = '/profile';
 }
