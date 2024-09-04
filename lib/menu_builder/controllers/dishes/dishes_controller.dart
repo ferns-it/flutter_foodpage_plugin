@@ -46,17 +46,13 @@ class DishesController extends ChangeNotifier with BaseController {
 
   List<CategoryData> get listOfCategories =>
       (_addDishInitializeData?.category.data ?? [])
-          .where((category) => category.categoryStatus == "Active")
-          .map((category) => category.copyWith(
-              childrens: category.childrens
-                  .where((child) => child.categoryStatus == "Active")
-                  .toList()))
+          .map((category) =>
+              category.copyWith(childrens: category.childrens.toList()))
           .toList();
 
   List<CategoryData> get childCategories => listOfCategories
       .expand((category) => category.childrens)
       .map((category) => category)
-      .where((category) => category.categoryStatus == "Active")
       .toList();
 
   @override

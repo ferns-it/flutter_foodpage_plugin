@@ -17,12 +17,14 @@ class DishCategoryController extends ChangeNotifier with BaseController {
 
   APIResponse<DishCategoryCollectionModel> _dishCategoryCollection =
       APIResponse.initial();
+
   APIResponse<DishCategoryCollectionModel> get categoriesCollection =>
       _dishCategoryCollection;
 
   int get totalCategories => categoriesCollection.data?.totalCategories ?? 0;
 
   CategoryType _addCategoryType = CategoryType.parent;
+
   CategoryType get addCategoryType => _addCategoryType;
 
   void onChangeCategoryType(CategoryType? type) {
@@ -32,11 +34,13 @@ class DishCategoryController extends ChangeNotifier with BaseController {
   }
 
   CategoryData? _selectedCategory;
+
   CategoryData? get selectedCategory => _selectedCategory;
 
   bool get editMode => _selectedCategory != null;
 
   String? _selectedCategoryId;
+
   String? get selectedCategoryId => _selectedCategoryId;
 
   void onChangeSelectedCategoryId(String? selectedCategoryId) {
@@ -60,6 +64,7 @@ class DishCategoryController extends ChangeNotifier with BaseController {
   }
 
   String? _selectedParentCategoryId;
+
   String? get selectedParentCategoryId => _selectedParentCategoryId;
 
   void onChangeSelectedParentCategory(String? selectedParentCategoryId) {
@@ -81,6 +86,11 @@ class DishCategoryController extends ChangeNotifier with BaseController {
   void resetSelectionInTreeView() {
     if (_treeViewController == null) return;
     _treeViewController = _treeViewController!.copyWith(selectedKey: null);
+    notifyListeners();
+  }
+
+  void resetSelectedCategory() {
+    _selectedCategory = null;
     notifyListeners();
   }
 

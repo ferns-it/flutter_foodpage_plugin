@@ -145,10 +145,9 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final categoryController = context.watch<DishCategoryController>();
-    final treeViewController = categoryController.treeViewController;
-    if (treeViewController == null) {
-      return const SizedBox.shrink();
-    }
+    final controller = context.watch<DishesController>();
+    final listOfCategories = controller.listOfCategories;
+
     return Card(
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -164,70 +163,92 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                 children: [
                   Text("All Categories", style: textTheme.titleMedium),
                   horizontalSpaceSmall,
-                  IconButton(
+                  TextButton(
                     onPressed: () async {
-                      final controller = context.read<DishesController>();
-                      // Reset
-                      initializeTableViewController();
-                      // Refresh
-                      controller.initializeAddDishRequiredData();
+                      final controller = context.read<DishCategoryController>();
+                      controller.resetSelectedCategory();
 
-                      // Update
-                      initializeTableViewController();
                     },
-                    color: MenuBuilderColors.kOrange,
-                    icon: const Icon(Icons.refresh),
+                    style: TextButton.styleFrom(
+                      foregroundColor: MenuBuilderColors.kPrimaryColor,
+                    ),
+                    child: const Text("DESELECT"),
                   )
                 ],
               ),
               const Divider(),
               Flexible(
-                child: TreeView(
-                  shrinkWrap: true,
-                  controller: treeViewController,
-                  allowParentSelect: true,
-                  supportParentDoubleTap: false,
-                  onExpansionChanged: (key, expanded) =>
-                      _expandNode(key, expanded),
-                  onNodeTap: (key) {
-                    final controller = context.read<DishCategoryController>();
-                    final dishController = context.read<DishesController>();
-                    var category =
-                        dishController.listOfCategories.firstWhereOrNull((x) {
-                      return x.cID == key;
-                    });
-
-                    category ??=
-                        dishController.childCategories.firstWhereOrNull((x) {
-                      return x.cID == key;
-                    });
-
-                    if (category == null) {
-                      log("Category not found in the list",
-                          name: "Category Selection");
-                      return;
-                    }
-
-                    controller.onPressCategory(category);
-                    controller.updateTreeViewController(
-                      treeViewController.copyWith(selectedKey: key),
-                    );
-                  },
-                  theme: TreeViewTheme(
-                    expanderTheme: const ExpanderThemeData(
-                      animated: true,
-                      modifier: ExpanderModifier.none,
-                      type: ExpanderType.chevron,
-                      size: 20,
-                    ),
-                    parentLabelStyle: textTheme.titleMedium!,
-                    labelStyle: textTheme.titleMedium!,
-                    colorScheme: Theme.of(context).colorScheme.copyWith(
-                        primary: MenuBuilderColors.kAccentOrange,
-                        onPrimary: MenuBuilderColors.kOrange),
-                  ),
-                ),
-              ),
+                child: ReorderableListView.builder(
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      final category = listOfCategories.elementAt(index);
+                      final selectedCId =
+                          categoryController.selectedCategory?.cID;
+                      return ListTile(
+                        key: ValueKey(category.cID),
+                        title: Text(category.name ?? "Unknown"),
+                        onTap: () =>
+                            categoryController.onPressCategory(category),
+                        selectedTileColor: MenuBuilderColors.kAccentOrange,
+                        selected:
+                            selectedCId != null && selectedCId == category.cID,
+                        visualDensity:
+                            const VisualDensity(horizontal: 0, vertical: -2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                      );
+                    },
+                    itemCount: listOfCategories.length,
+                    onReorder: (int oldIndex, int newIndex) {}),
+              )
+              // Flexible(
+              //   child: TreeView(
+              //     shrinkWrap: true,
+              //     controller: treeViewController,
+              //     allowParentSelect: true,
+              //     supportParentDoubleTap: false,
+              //     onExpansionChanged: (key, expanded) =>
+              //         _expandNode(key, expanded),
+              //     onNodeTap: (key) {
+              //       final controller = context.read<DishCategoryController>();
+              //       final dishController = context.read<DishesController>();
+              //       var category =
+              //           dishController.listOfCategories.firstWhereOrNull((x) {
+              //         return x.cID == key;
+              //       });
+              //
+              //       category ??=
+              //           dishController.childCategories.firstWhereOrNull((x) {
+              //         return x.cID == key;
+              //       });
+              //
+              //       if (category == null) {
+              //         log("Category not found in the list",
+              //             name: "Category Selection");
+              //         return;
+              //       }
+              //
+              //       controller.onPressCategory(category);
+              //       controller.updateTreeViewController(
+              //         treeViewController.copyWith(selectedKey: key),
+              //       );
+              //     },
+              //     theme: TreeViewTheme(
+              //       expanderTheme: const ExpanderThemeData(
+              //         animated: true,
+              //         modifier: ExpanderModifier.none,
+              //         type: ExpanderType.chevron,
+              //         size: 20,
+              //       ),
+              //       parentLabelStyle: textTheme.titleMedium!,
+              //       labelStyle: textTheme.titleMedium!,
+              //       colorScheme: Theme.of(context).colorScheme.copyWith(
+              //           primary: MenuBuilderColors.kAccentOrange,
+              //           onPrimary: MenuBuilderColors.kOrange),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ));
