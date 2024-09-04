@@ -167,7 +167,6 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                     onPressed: () async {
                       final controller = context.read<DishCategoryController>();
                       controller.resetSelectedCategory();
-
                     },
                     style: TextButton.styleFrom(
                       foregroundColor: MenuBuilderColors.kPrimaryColor,
@@ -200,7 +199,11 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                       );
                     },
                     itemCount: listOfCategories.length,
-                    onReorder: (int oldIndex, int newIndex) {}),
+                    onReorder: (int oldIndex, int newIndex) {
+                      return context
+                          .read<DishCategoryController>()
+                          .reOrderCategory(context, oldIndex, newIndex);
+                    }),
               )
               // Flexible(
               //   child: TreeView(

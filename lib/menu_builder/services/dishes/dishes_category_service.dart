@@ -88,4 +88,24 @@ class DishesCategoryService {
       return APIResultType.failed;
     }
   }
+
+  static Future<APIResultType> updateCategorySortOrder(
+      String cID, int newOrderIndex) async {
+    try {
+      final response = await BaseClient.post(
+        api: ApiEndpoints.updateCategorySortOrder,
+        needAuth: true,
+        data: jsonEncode({
+          "categorylist": [
+            {"categoryId": cID, "sortOrder": newOrderIndex}
+          ]
+        }),
+      );
+      if (response == null) return APIResultType.failed;
+      return APIResultType.success;
+    } on Exception catch (e) {
+      log(e.toString(), name: "updateCategorySortOrder");
+      return APIResultType.failed;
+    }
+  }
 }

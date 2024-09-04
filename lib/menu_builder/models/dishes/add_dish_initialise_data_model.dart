@@ -13,6 +13,7 @@ class AddDishInitializeDataModel {
   final TimingInitialiseData timing;
   final MasterAddonsInitialiseData masterAddons;
   final AllergensInitialiseData allergens;
+
   AddDishInitializeDataModel(
       {required this.type,
       required this.dishtype,
@@ -125,6 +126,7 @@ class AddDishInitializeDataModel {
 class TypeInitialiseData {
   final String? control;
   final List<String>? data;
+
   TypeInitialiseData({
     this.control,
     this.data,
@@ -179,6 +181,7 @@ class TypeInitialiseData {
 class DishtypeInitialiseData {
   final String? control;
   final List<String> data;
+
   DishtypeInitialiseData({
     this.control,
     this.data = const [],
@@ -231,6 +234,7 @@ class DishtypeInitialiseData {
 class AvailabilityInitialiseData {
   final String? control;
   final AvailabilityInitialiseSubData? data;
+
   AvailabilityInitialiseData({
     this.control,
     this.data,
@@ -287,6 +291,7 @@ class AvailabilityInitialiseData {
 class AvailabilityInitialiseSubData {
   final String? allDayAvailable;
   final AvailabilityData? availability;
+
   AvailabilityInitialiseSubData({
     this.allDayAvailable,
     this.availability,
@@ -346,6 +351,7 @@ class AvailabilityInitialiseSubData {
 class AvailabilityData {
   final String? control;
   final List<String> options;
+
   AvailabilityData({
     this.control,
     this.options = const [],
@@ -396,7 +402,8 @@ class AvailabilityData {
 
 class CategoryInitialiseData {
   final String? control;
-  final List<CategoryData> data;
+  List<CategoryData> data;
+
   CategoryInitialiseData({
     this.control,
     this.data = const [],
@@ -462,6 +469,7 @@ class CategoryData {
   final String? defaultFlag;
   final String? sortOrder;
   final List<CategoryData> childrens;
+
   CategoryData({
     this.cID,
     this.name,
@@ -592,6 +600,7 @@ class CategoryData {
 class StatusInitialiseData {
   final String? control;
   final List<String> data;
+
   StatusInitialiseData({
     this.control,
     required this.data,
@@ -643,6 +652,7 @@ class StatusInitialiseData {
 class TimingInitialiseData {
   final String? control;
   final List<TimingInitialiseSubData> data;
+
   TimingInitialiseData({
     this.control,
     required this.data,
@@ -698,6 +708,7 @@ class TimingInitialiseData {
 class TimingInitialiseSubData {
   final String? startTime;
   final String? endTime;
+
   TimingInitialiseSubData({
     this.startTime,
     this.endTime,
@@ -751,6 +762,7 @@ class TimingInitialiseSubData {
 class MasterAddonsInitialiseData {
   final String? control;
   final List<MasterAddonsInitialiseSubData> data;
+
   MasterAddonsInitialiseData({
     this.control,
     required this.data,
@@ -809,6 +821,7 @@ class MasterAddonsInitialiseData {
 class MasterAddonsInitialiseSubData {
   final String? id;
   final String? title;
+
   MasterAddonsInitialiseSubData({
     this.id,
     this.title,
@@ -861,6 +874,7 @@ class MasterAddonsInitialiseSubData {
 class ProductMenuInitialiseData {
   final String? control;
   final Map<String, dynamic>? data;
+
   ProductMenuInitialiseData({
     this.control,
     this.data,
@@ -916,6 +930,7 @@ class ProductMenuInitialiseData {
 class AllergensInitialiseData {
   final String? control;
   final List<AllergensInitialiseSubData> data;
+
   AllergensInitialiseData({
     this.control,
     this.data = const [],
@@ -974,6 +989,7 @@ class AllergensInitialiseSubData {
   final String? id;
   final String? name;
   final String? icon;
+
   AllergensInitialiseSubData({
     this.id,
     this.name,

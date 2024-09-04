@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/base_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/category_data_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/dishes/dishes_category_service.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/constants/enums.dart';
 import '../../models/common/api_response.dart';
@@ -189,6 +191,15 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     } finally {
       notifyListeners();
     }
+  }
+
+  void reOrderCategory(BuildContext context, int oldIndex, int newIndex) {
+    final dishController = context.read<DishesController>();
+    final listOfCategories = dishController.listOfCategories;
+    final category = listOfCategories.elementAtOrNull(oldIndex);
+    if (category?.cID == null) return;
+    DishesCategoryService.updateCategorySortOrder(category!.cID!, newIndex);
+    dishController.updateCategoryList(oldIndex, newIndex, category);
   }
 
   @override

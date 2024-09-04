@@ -444,6 +444,34 @@ class DishesController extends ChangeNotifier with BaseController {
     }
   }
 
+  void updateCategoryList(int oldIndex, int newIndex, CategoryData category) {
+    // Remove the category from the current list using its index
+    final newListOfCategories = List<CategoryData>.from(listOfCategories);
+
+    // Ensure valid indices to avoid out-of-bounds errors
+    if (oldIndex < 0 || oldIndex >= newListOfCategories.length) {
+      log('Invalid old index: $oldIndex');
+      return;
+    }
+
+    // Remove the category at the old index
+    newListOfCategories.removeAt(oldIndex);
+
+    // Adjust newIndex if necessary
+    if (newIndex > oldIndex) {
+      newIndex -= 1; // Adjust because of the removed element
+    }
+
+    // Insert the category at the new index
+    newListOfCategories.insert(newIndex, category);
+
+    log(newListOfCategories.toString());
+
+    // Update the category list
+    _addDishInitializeData?.category.data = List.from(newListOfCategories);
+    notifyListeners();
+  }
+
   List<DishDetails> filterDishesByCategory(Category category) {
     return (dishCollection.data?.dishes ?? [])
         .where((dish) => dish.categories.contains(category))

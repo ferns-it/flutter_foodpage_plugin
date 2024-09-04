@@ -13,6 +13,7 @@ class ApiEndpoints {
   static const addNewCategory = '/products/addnewcategory';
   static const updateCategory = '/products/updatecategory/';
   static const statusUpdateCategory = '/products/category/updatestatus/';
+  static const updateCategorySortOrder = '/products/updatecategorysortorder';
   static const modifiersList = '/products/masteraddons/list';
   static const addModifier = '/products/masteraddons/new';
   static const updateModifier = '/products/masteraddons/update';
