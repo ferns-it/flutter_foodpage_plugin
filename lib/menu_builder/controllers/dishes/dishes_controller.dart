@@ -123,6 +123,16 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
+  DishVariationType _dishVariationType = DishVariationType.single;
+
+  DishVariationType get dishVariationType => _dishVariationType;
+
+  void onChangeDishVariationType(DishVariationType? type) {
+    if (type == null) return;
+    _dishVariationType = type;
+    notifyListeners();
+  }
+
   final GlobalKey<FormState> variationFormKey = GlobalKey<FormState>();
 
   Map<String, dynamic> get variationFormEntry => {

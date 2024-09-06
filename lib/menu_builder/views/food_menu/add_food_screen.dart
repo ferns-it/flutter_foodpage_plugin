@@ -141,16 +141,86 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                 verticalSpaceSmall,
                                 const Divider(),
                                 verticalSpaceRegular,
-                                CustomRoundedTextField.topText(
-                                  hintText: "Enter dish name",
-                                  topText: "Dish name",
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  keyboardType: TextInputType.name,
-                                  textInputAction: TextInputAction.next,
-                                  textEditingController:
-                                      controller.nameController,
-                                  validator:
-                                      MenuBuilderValidators.validateDishName,
+                                Row(
+                                  children: <Widget>[
+                                    Flexible(
+                                      flex: 1,
+                                      child: CustomRoundedTextField.topText(
+                                        hintText: "Enter dish name",
+                                        topText: "Dish name",
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        keyboardType: TextInputType.name,
+                                        textInputAction: TextInputAction.next,
+                                        textEditingController:
+                                            controller.nameController,
+                                        validator: MenuBuilderValidators
+                                            .validateDishName,
+                                      ),
+                                    ),
+                                    horizontalSpaceRegular,
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            "Variation Type",
+                                            style:
+                                                textTheme.titleSmall!.copyWith(
+                                              color: Colors.grey.shade700,
+                                            ),
+                                          ),
+                                          verticalSpaceTiny,
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 5.0,
+                                              horizontal: 6.0,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              border: Border.all(
+                                                width: 1.5,
+                                                color: Colors.grey
+                                                    .withOpacity(0.4),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: DishVariationType.values
+                                                  .map(
+                                                    (value) => Flexible(
+                                                      child: RadioListTile(
+                                                        title: Text(
+                                                          capitalizeFirstLetter(
+                                                            value.name,
+                                                          ),
+                                                        ),
+                                                        value: value,
+                                                        groupValue: controller
+                                                            .dishVariationType,
+                                                        onChanged: controller
+                                                            .onChangeDishVariationType,
+                                                        visualDensity:
+                                                            const VisualDensity(
+                                                          horizontal:
+                                                              VisualDensity
+                                                                  .minimumDensity,
+                                                          vertical: VisualDensity
+                                                              .minimumDensity,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                  .toList(growable: false),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
                                 verticalSpaceRegular,
                                 CustomRoundedTextField.topText(
