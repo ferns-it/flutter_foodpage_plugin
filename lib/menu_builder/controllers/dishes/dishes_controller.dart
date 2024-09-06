@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_initialise_data_model.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_requ
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/dishes/dishes_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/utils/helper_utils.dart';
 import '../../models/dishes/add_dish_request_with_variation_model.dart';
@@ -418,7 +420,6 @@ class DishesController extends ChangeNotifier with BaseController {
     if (choosedMenus.contains(defaultEntry.key)) return;
     choosedMenus.insert(0, defaultEntry.key);
   }
-
 
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
   late TextEditingController nameController;
@@ -842,4 +843,5 @@ class DishesController extends ChangeNotifier with BaseController {
 
     activeDefaultSelectedInMenu();
   }
+
 }

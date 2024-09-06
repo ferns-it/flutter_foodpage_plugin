@@ -929,10 +929,10 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                         }),
                                       ],
                                     ),
-                                    verticalSpaceMedium,
+                                    verticalSpaceRegular,
                                     if (controller.allDaysEnabled)
                                       Column(
-                                        children: [
+                                        children: <Widget>[
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
@@ -941,6 +941,20 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodyMedium,
+                                            ),
+                                          ),
+                                          verticalSpaceSmall,
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Dish availability matches the shop's operating hours.",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(
+                                                    color: MenuBuilderColors
+                                                        .kPrimaryColor,
+                                                  ),
                                             ),
                                           ),
                                           verticalSpaceSmall,

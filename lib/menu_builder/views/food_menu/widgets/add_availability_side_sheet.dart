@@ -56,19 +56,27 @@ class AddAvailabilitySideSheet extends StatelessWidget {
               }).toList(),
             ),
           ],
-          verticalSpaceRegular,
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton.filledTonal(
-              style: IconButton.styleFrom(
-                backgroundColor: MenuBuilderColors.kBlue.withOpacity(
-                  0.1,
+          verticalSpaceSmall,
+          Row(
+            children: <Widget>[
+              Flexible(
+                child: Text(
+                  "Note: If the entries are empty, the dish availability will match the shop's operating hours by default.",
+                  style: textTheme.bodyMedium,
                 ),
-                foregroundColor: MenuBuilderColors.kBlue,
               ),
-              onPressed: () => controller.addAvailabilityEntries(),
-              icon: const Icon(Icons.add),
-            ),
+              horizontalSpaceMedium,
+              IconButton.filledTonal(
+                style: IconButton.styleFrom(
+                  backgroundColor: MenuBuilderColors.kBlue.withOpacity(
+                    0.1,
+                  ),
+                  foregroundColor: MenuBuilderColors.kBlue,
+                ),
+                onPressed: () => controller.addAvailabilityEntries(),
+                icon: const Icon(Icons.add),
+              ),
+            ],
           ),
           Expanded(
             child: ListView.separated(
