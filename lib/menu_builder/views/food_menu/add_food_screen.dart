@@ -324,9 +324,8 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                             foregroundColor:
                                                 MenuBuilderColors.kBlue,
                                             side: const BorderSide(
-                                              width: 1,
-                                              color: MenuBuilderColors.kBlue
-                                            ),
+                                                width: 1,
+                                                color: MenuBuilderColors.kBlue),
                                           ),
 
                                           //   foregroundColor:
@@ -1138,6 +1137,12 @@ class _BuildMasterModifiersWidget extends StatelessWidget {
                   labelStyle: textTheme.titleSmall!.copyWith(
                     color: Colors.grey.shade600,
                   ),
+                  color: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return backgroundColor;
+                    }
+                    return null;
+                  }),
                   checkmarkColor: Colors.grey.shade600,
                   onSelected: (_) => controller.onChooseMasterAddons(addon),
                 );
