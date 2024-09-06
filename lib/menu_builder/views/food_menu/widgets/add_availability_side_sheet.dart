@@ -61,10 +61,10 @@ class AddAvailabilitySideSheet extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: IconButton.filledTonal(
               style: IconButton.styleFrom(
-                backgroundColor: MenuBuilderColors.kPurple.withOpacity(
-                  0.3,
+                backgroundColor: MenuBuilderColors.kBlue.withOpacity(
+                  0.1,
                 ),
-                foregroundColor: MenuBuilderColors.kPurple,
+                foregroundColor: MenuBuilderColors.kBlue,
               ),
               onPressed: () => controller.addAvailabilityEntries(),
               icon: const Icon(Icons.add),

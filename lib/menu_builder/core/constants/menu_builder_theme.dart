@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/material_color_generator.dart';
 import 'menu_builder_app_colors.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 ThemeData menuBuilderTheme(BuildContext context) {
   final textTheme = Theme.of(context).textTheme;
@@ -26,6 +26,11 @@ ThemeData menuBuilderTheme(BuildContext context) {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
+        foregroundColor: MenuBuilderColors.kPrimaryColor,
+        side: const BorderSide(
+          width: 1,
+          color: MenuBuilderColors.kPrimaryColor,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),

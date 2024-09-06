@@ -1,12 +1,9 @@
 // ignore_for_file: unused_field
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builder_validators.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/widgets/custom_rounded_textfield.dart';
@@ -154,8 +151,12 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
             borderRadius: BorderRadius.circular(8.0),
             side: BorderSide(color: Colors.grey.shade300)),
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20.0,
+            vertical: 10.0,
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
@@ -175,6 +176,11 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                   )
                 ],
               ),
+              Text(
+                "Tip: Press and hold, then drag to reorder.",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              verticalSpaceSmall,
               const Divider(),
               Flexible(
                 child: ReorderableListView.builder(

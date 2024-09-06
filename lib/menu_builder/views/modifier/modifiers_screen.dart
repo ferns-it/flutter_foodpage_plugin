@@ -47,15 +47,8 @@ class ModifiersScreen extends StatelessWidget {
                 label: const Text("Add Modifier"),
                 style: OutlinedButton.styleFrom(
                   textStyle: textTheme.titleMedium,
-                  foregroundColor: MenuBuilderColors.kOrange,
-                  backgroundColor: MenuBuilderColors.kOrange.withOpacity(0.1),
-                  elevation: 0,
-                  side: BorderSide(
-                    width: 0.8,
-                    color: MenuBuilderColors.kOrange.withOpacity(0.3),
-                  ),
                 ),
-              )
+              ),
             ],
           ),
           verticalSpaceMedium,

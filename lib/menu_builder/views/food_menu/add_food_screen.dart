@@ -98,13 +98,6 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                     : const Text("Save Dish"),
                 style: OutlinedButton.styleFrom(
                   textStyle: textTheme.titleMedium,
-                  foregroundColor: MenuBuilderColors.kPurple,
-                  backgroundColor: MenuBuilderColors.kPurple.withOpacity(0.1),
-                  elevation: 0,
-                  side: BorderSide(
-                    width: 0.8,
-                    color: MenuBuilderColors.kPurple.withOpacity(0.3),
-                  ),
                 ),
               ),
               horizontalSpaceRegular,
@@ -330,16 +323,21 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                             textStyle: textTheme.titleMedium,
                                             foregroundColor:
                                                 MenuBuilderColors.kBlue,
-                                            backgroundColor: MenuBuilderColors
-                                                .kBlue
-                                                .withOpacity(0.1),
-                                            elevation: 0,
-                                            side: BorderSide(
-                                              width: 0.8,
+                                            side: const BorderSide(
+                                              width: 1,
                                               color: MenuBuilderColors.kBlue
-                                                  .withOpacity(0.3),
                                             ),
                                           ),
+
+                                          //   foregroundColor:
+                                          //       MenuBuilderColors.kBlue,
+                                          //   elevation: 0,
+                                          //   side: BorderSide(
+                                          //     width: 1,
+                                          //     color: MenuBuilderColors.kBlue
+                                          //         .withOpacity(0.3),
+                                          //   ),
+                                          // ),
                                         );
                                       }),
                                     ],

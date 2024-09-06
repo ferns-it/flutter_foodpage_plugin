@@ -65,7 +65,7 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: MenuBuilderColors.kBlue
-                                        .withOpacity(0.25),
+                                        .withOpacity(0.1),
                                   ),
                                   child: const Icon(
                                     Icons.done,
@@ -210,7 +210,7 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
                                               shape: BoxShape.circle,
                                               color: MenuBuilderColors
                                                   .kPrimaryColor
-                                                  .withOpacity(0.25),
+                                                  .withOpacity(0.1),
                                             ),
                                             child: const Icon(
                                               Icons.delete_forever,

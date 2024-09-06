@@ -42,6 +42,7 @@ class AddCategoriesSideSheet extends StatelessWidget {
                     parentCategory.name ?? "Unknown",
                     style: textTheme.titleSmall,
                   ),
+                  enabled: parentCategory.childrens.isNotEmpty,
                   leading: Checkbox(
                     value: controller.checkParentIsSelected(parentCategory),
                     onChanged: (_) {

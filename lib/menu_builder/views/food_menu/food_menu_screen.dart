@@ -66,19 +66,9 @@ class FoodMenuScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  icon: const Icon(FluentIcons.add_16_filled),
+                  icon: const Icon(FluentIcons.add_24_filled),
                   label: const Text("Add Product"),
-                  style: OutlinedButton.styleFrom(
-                    textStyle: textTheme.titleMedium,
-                    foregroundColor: MenuBuilderColors.kOrange,
-                    backgroundColor: MenuBuilderColors.kOrange.withOpacity(0.1),
-                    elevation: 0,
-                    side: BorderSide(
-                      width: 0.8,
-                      color: MenuBuilderColors.kOrange.withOpacity(0.3),
-                    ),
-                  ),
-                )
+                ),
               ],
             ),
             verticalSpaceMedium,
@@ -90,7 +80,6 @@ class FoodMenuScreen extends StatelessWidget {
                   elevation: 3,
                   shadowColor: Colors.grey.withOpacity(0.3),
                   child: SearchBarWidget(
-
                     onSearchChanged: (String? query) {},
                     searchTextController: TextEditingController(),
                     borderRadius: 8.0,

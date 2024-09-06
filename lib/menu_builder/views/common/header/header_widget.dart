@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
@@ -26,22 +26,12 @@ class HeaderWidget extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          horizontalSpaceMedium,
+          horizontalSpaceSmall,
           if (builderConfig != null) ...[
-            OutlinedButton.icon(
+            TextButton.icon(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(FluentIcons.arrow_left_20_filled),
+              icon: const Icon(Icons.arrow_back_ios_new_outlined),
               label: Text("Back To ${builderConfig.applicationName}"),
-              style: OutlinedButton.styleFrom(
-                textStyle: textTheme.titleMedium,
-                foregroundColor: MenuBuilderColors.kPurple,
-                backgroundColor: MenuBuilderColors.kPurple.withOpacity(0.1),
-                elevation: 0,
-                side: BorderSide(
-                  width: 0.8,
-                  color: MenuBuilderColors.kPurple.withOpacity(0.3),
-                ),
-              ),
             ),
           ],
           const Spacer(),

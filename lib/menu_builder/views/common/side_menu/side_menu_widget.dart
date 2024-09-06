@@ -16,7 +16,7 @@ class SideMenuWidget extends StatelessWidget {
     final pageNavigationController = context.watch<PageNavigationController>();
 
     return Container(
-      width: size.width * 0.2,
+      width: size.width * 0.17,
       padding: const EdgeInsets.symmetric(vertical: 30.0),
       decoration: BoxDecoration(
         color: MenuBuilderColors.kWhite,

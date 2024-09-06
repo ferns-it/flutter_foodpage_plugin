@@ -57,12 +57,7 @@ class _AddVariationModifiersSideSheetState
             style: OutlinedButton.styleFrom(
               textStyle: textTheme.titleMedium,
               foregroundColor: MenuBuilderColors.kBlue,
-              backgroundColor: MenuBuilderColors.kBlue.withOpacity(0.1),
-              elevation: 0,
-              side: BorderSide(
-                width: 0.8,
-                color: MenuBuilderColors.kBlue.withOpacity(0.3),
-              ),
+              side: const BorderSide(width: 1, color: MenuBuilderColors.kBlue),
             ),
           ),
           verticalSpaceSmall,
