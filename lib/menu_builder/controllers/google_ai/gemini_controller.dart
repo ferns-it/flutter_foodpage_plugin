@@ -7,6 +7,10 @@ class GeminiController extends ChangeNotifier with BaseController {
 
   bool get dishDescriptionGenerating => _dishDescriptionGenerating;
 
+  bool _dishIngredientsGenerating = false;
+
+  bool get dishIngredientsGenerating => _dishIngredientsGenerating;
+
   // Initialize gemini
   void initializeGemini(String apiKey) {
     Gemini.init(apiKey: apiKey);
@@ -38,6 +42,22 @@ class GeminiController extends ChangeNotifier with BaseController {
       return result?.output;
     } finally {
       _dishDescriptionGenerating = false;
+      notifyListeners();
+    }
+  }
+
+  // Generate dish ingredients
+  Future<String?> generateDishIngredients(String dishName) async {
+    try {
+      _dishIngredientsGenerating = true;
+      notifyListeners();
+      final gemini = Gemini.instance;
+      final result = await gemini.text(
+        "Write down the ingredients for $dishName, separating the items with commas in the sentence. The sentence should contain only the ingredient details.",
+      );
+      return result?.output;
+    } finally {
+      _dishIngredientsGenerating = false;
       notifyListeners();
     }
   }

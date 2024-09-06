@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';
@@ -17,6 +18,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/menu_builder_app_colors.dart';
 import '../../widgets/custom_rounded_textfield.dart';
+import 'widgets/build_allergens_widget.dart';
 
 class AddFoodScreen extends StatefulWidget {
   const AddFoodScreen({super.key});
@@ -76,7 +78,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
 
         final controller = context.watch<DishesController>();
         final geminiController = context.read<GeminiController>();
-
+        final shopController = context.watch<ShopController>();
         final addDishInitializeData = controller.addDishInitializeData;
 
         return Scaffold(
@@ -142,6 +144,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                 const Divider(),
                                 verticalSpaceRegular,
                                 Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Flexible(
                                       flex: 1,
@@ -232,105 +235,117 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                   textInputAction: TextInputAction.done,
                                   textEditingController:
                                       controller.descriptionController,
-                                  suffixIcon: InkWell(
-                                    customBorder: const CircleBorder(),
-                                    onTapDown: (TapDownDetails details) {
-                                      _tapDownPosition = details.globalPosition;
-                                    },
-                                    onLongPress: () async {
-                                      if (_tapDownPosition == null) {
-                                        return;
-                                      }
-
-                                      final RenderBox overlay =
-                                          Overlay.of(context)
-                                              .context
-                                              .findRenderObject() as RenderBox;
-
-                                      await showMenu(
-                                        context: context,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                        items: [
-                                          PopupMenuItem(
-                                            value: 0,
-                                            child: const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Icon(
-                                                  Icons.spellcheck_outlined,
-                                                  size: 22,
-                                                ),
-                                                SizedBox(width: 14.0),
-                                                Text("Spelling & Grammar"),
-                                              ],
+                                  suffixIcon: context
+                                          .watch<GeminiController>()
+                                          .dishDescriptionGenerating
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: SizedBox(
+                                            height: 26.0,
+                                            width: 26.0,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2.5,
                                             ),
-                                            onTap: () async {
-                                              final desc = controller
-                                                  .descriptionController.text;
-                                              if (desc.isEmpty) {
-                                                Fluttertoast.showToast(
-                                                  msg:
-                                                      "Description cannot be empty!",
-                                                );
-                                                return;
-                                              }
-                                              final generatedContent =
-                                                  await geminiController
-                                                      .spellAndGrammarDishDescription(
-                                                desc,
-                                              );
-
-                                              if (generatedContent != null) {
-                                                controller.descriptionController
-                                                    .text = generatedContent;
-                                              }
-                                            },
                                           ),
-                                        ],
-                                        position: RelativeRect.fromLTRB(
-                                          _tapDownPosition!.dx,
-                                          _tapDownPosition!.dy,
-                                          overlay.size.width -
-                                              _tapDownPosition!.dx,
-                                          overlay.size.height -
-                                              _tapDownPosition!.dy,
-                                        ),
-                                      );
-                                    },
-                                    onTap: () async {
-                                      final name =
-                                          controller.nameController.text;
-                                      if (name.isEmpty) {
-                                        Fluttertoast.showToast(
-                                            msg: "Dish Name cannot be empty!");
-                                        return;
-                                      }
-                                      final generatedContent =
-                                          await geminiController
-                                              .generateDishDescription(name);
-                                      if (generatedContent != null) {
-                                        controller.descriptionController.text =
-                                            generatedContent;
-                                      }
-                                    },
-                                    child: context
-                                            .watch<GeminiController>()
-                                            .dishDescriptionGenerating
-                                        ? const SizedBox(
-                                            height: 5.0,
-                                            width: 5.0,
-                                            child: Row(
-                                              children: [
-                                                CircularProgressIndicator(),
+                                        )
+                                      : InkWell(
+                                          customBorder: const CircleBorder(),
+                                          onTapDown: (TapDownDetails details) {
+                                            _tapDownPosition =
+                                                details.globalPosition;
+                                          },
+                                          onLongPress: () async {
+                                            if (_tapDownPosition == null) {
+                                              return;
+                                            }
+
+                                            final RenderBox overlay =
+                                                Overlay.of(context)
+                                                        .context
+                                                        .findRenderObject()
+                                                    as RenderBox;
+
+                                            await showMenu(
+                                              context: context,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              items: [
+                                                PopupMenuItem(
+                                                  value: 0,
+                                                  child: const Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons
+                                                            .spellcheck_outlined,
+                                                        size: 22,
+                                                      ),
+                                                      SizedBox(width: 14.0),
+                                                      Text(
+                                                          "Spelling & Grammar"),
+                                                    ],
+                                                  ),
+                                                  onTap: () async {
+                                                    final desc = controller
+                                                        .descriptionController
+                                                        .text;
+                                                    if (desc.isEmpty) {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "Description cannot be empty!",
+                                                      );
+                                                      return;
+                                                    }
+                                                    final generatedContent =
+                                                        await geminiController
+                                                            .spellAndGrammarDishDescription(
+                                                      desc,
+                                                    );
+
+                                                    if (generatedContent !=
+                                                        null) {
+                                                      controller
+                                                          .descriptionController
+                                                          .text = generatedContent;
+                                                    }
+                                                  },
+                                                ),
                                               ],
-                                            ),
-                                          )
-                                        : const Icon(
-                                            FluentIcons.sparkle_24_regular),
-                                  ),
+                                              position: RelativeRect.fromLTRB(
+                                                _tapDownPosition!.dx,
+                                                _tapDownPosition!.dy,
+                                                overlay.size.width -
+                                                    _tapDownPosition!.dx,
+                                                overlay.size.height -
+                                                    _tapDownPosition!.dy,
+                                              ),
+                                            );
+                                          },
+                                          onTap: () async {
+                                            final name =
+                                                controller.nameController.text;
+                                            if (name.isEmpty) {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      "Dish Name cannot be empty!");
+                                              return;
+                                            }
+                                            final generatedContent =
+                                                await geminiController
+                                                    .generateDishDescription(
+                                                        name);
+                                            if (generatedContent != null) {
+                                              controller.descriptionController
+                                                  .text = generatedContent;
+                                            }
+                                          },
+                                          child: const Icon(
+                                            FluentIcons.sparkle_24_regular,
+                                          ),
+                                        ),
                                 ),
                                 verticalSpaceMedium,
                                 CustomRadioCheckboxGroup(
@@ -361,137 +376,227 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                             ),
                           ),
                         ),
-                        Card(
-                          child: Padding(
-                            padding: defaultCardPadding,
-                            child: Center(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Variations",
-                                        style: textTheme.titleMedium,
-                                      ),
-                                      const Spacer(),
-                                      Builder(builder: (context) {
-                                        return OutlinedButton.icon(
-                                          onPressed: () {
-                                            controller.onChangeSideSheetType(
-                                              AddDishSideSheetType.variation,
-                                            );
-
-                                            Scaffold.of(context)
-                                                .openEndDrawer();
-                                          },
-                                          icon: const Icon(
-                                            FluentIcons.add_24_filled,
+                        controller.dishVariationType == DishVariationType.single
+                            ? LayoutBuilder(builder: (context, constraints) {
+                                return Card(
+                                  child: Padding(
+                                    padding: defaultCardPadding,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: constraints.maxWidth / 2,
+                                          child: CustomRoundedTextField.topText(
+                                            topText: "Dish price",
+                                            hintText: "Enter dish price",
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            keyboardType: TextInputType.number,
+                                            textInputAction:
+                                                TextInputAction.next,
+                                            validator: MenuBuilderValidators
+                                                .validatePrice,
+                                            textEditingController: controller
+                                                .singleVariationPriceController,
                                           ),
-                                          label: const Text("Add Variation"),
-                                          style: OutlinedButton.styleFrom(
-                                            textStyle: textTheme.titleMedium,
-                                            foregroundColor:
-                                                MenuBuilderColors.kBlue,
-                                            side: const BorderSide(
-                                                width: 1,
-                                                color: MenuBuilderColors.kBlue),
-                                          ),
-
-                                          //   foregroundColor:
-                                          //       MenuBuilderColors.kBlue,
-                                          //   elevation: 0,
-                                          //   side: BorderSide(
-                                          //     width: 1,
-                                          //     color: MenuBuilderColors.kBlue
-                                          //         .withOpacity(0.3),
-                                          //   ),
-                                          // ),
-                                        );
-                                      }),
-                                    ],
+                                        ),
+                                        verticalSpaceRegular,
+                                        CustomRoundedTextField.topText(
+                                          topText: "Ingredients",
+                                          hintText:
+                                              "Short note about dish ingredients..",
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          maxLines: 2,
+                                          keyboardType: TextInputType.text,
+                                          textInputAction: TextInputAction.done,
+                                          textEditingController: controller
+                                              .singleVariationIngredientsController,
+                                          suffixIcon: geminiController
+                                                  .dishIngredientsGenerating
+                                              ? const Padding(
+                                                  padding: EdgeInsets.all(10.0),
+                                                  child: SizedBox(
+                                                    height: 26.0,
+                                                    width: 26.0,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      strokeWidth: 2.5,
+                                                    ),
+                                                  ),
+                                                )
+                                              : IconButton(
+                                                  onPressed: () async {
+                                                    final name = controller
+                                                        .nameController.text;
+                                                    if (name.isEmpty) {
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              "Dish Name cannot be empty!");
+                                                      return;
+                                                    }
+                                                    final generatedContent =
+                                                        await geminiController
+                                                            .generateDishIngredients(
+                                                                name);
+                                                    if (generatedContent !=
+                                                        null) {
+                                                      controller
+                                                          .singleVariationIngredientsController
+                                                          .text = generatedContent;
+                                                    }
+                                                  },
+                                                  icon: const Icon(FluentIcons
+                                                      .sparkle_24_regular),
+                                                ),
+                                        ),
+                                        verticalSpaceRegular,
+                                        const BuildAllergensWidget()
+                                      ],
+                                    ),
                                   ),
-                                  const Divider(),
-                                  verticalSpaceRegular,
-                                  if (controller.variationsFormEntriesEmpty)
-                                    Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0,
+                                );
+                              })
+                            : Card(
+                                child: Padding(
+                                  padding: defaultCardPadding,
+                                  child: Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Variations",
+                                              style: textTheme.titleMedium,
+                                            ),
+                                            const Spacer(),
+                                            Builder(builder: (context) {
+                                              return OutlinedButton.icon(
+                                                onPressed: () {
+                                                  controller
+                                                      .onChangeSideSheetType(
+                                                    AddDishSideSheetType
+                                                        .variation,
+                                                  );
+
+                                                  Scaffold.of(context)
+                                                      .openEndDrawer();
+                                                },
+                                                icon: const Icon(
+                                                  FluentIcons.add_24_filled,
+                                                ),
+                                                label:
+                                                    const Text("Add Variation"),
+                                                style: OutlinedButton.styleFrom(
+                                                  textStyle:
+                                                      textTheme.titleMedium,
+                                                  foregroundColor:
+                                                      MenuBuilderColors.kBlue,
+                                                  side: const BorderSide(
+                                                    width: 1,
+                                                    color:
+                                                        MenuBuilderColors.kBlue,
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                          ],
                                         ),
-                                        child: Text(
-                                          "You have no variations yet. To add a variation, press the Add Variation (+) button.",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium!
-                                              .copyWith(
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.grey.shade600,
+                                        const Divider(),
+                                        verticalSpaceRegular,
+                                        if (controller
+                                            .variationsFormEntriesEmpty)
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                vertical: 10.0,
                                               ),
-                                        ),
-                                      ),
-                                    )
-                                  else
-                                    ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxHeight: mq.size.height * 0.3,
-                                      ),
-                                      child: AlignedGridView.count(
-                                        crossAxisCount: 2,
-                                        itemCount: controller
-                                            .variationsFormEntries.length,
-                                        mainAxisSpacing: 14.0,
-                                        crossAxisSpacing: 14.0,
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemBuilder: (context, index) {
-                                          final entry = controller
-                                              .variationsFormEntries[index];
-                                          final hasValues = controller
-                                              .checkVariationEntryIsEmpty(
-                                                  index);
-
-                                          if (hasValues) {
-                                            return const SizedBox.shrink();
-                                          }
-
-                                          final name = (entry["name"]
-                                                  as TextEditingController)
-                                              .text;
-                                          final price = (entry["price"]
-                                                  as TextEditingController)
-                                              .text;
-
-                                          return ListTile(
-                                            shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                color: Colors.grey.shade300,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0),
-                                            ),
-                                            title: Text(
-                                              name.isNotEmpty
-                                                  ? name
-                                                  : "Single Variation",
-                                            ),
-                                            subtitle: Text(
-                                              "£$price",
-                                              style:
-                                                  textTheme.bodyLarge!.copyWith(
-                                                color: Colors.grey.shade500,
+                                              child: Text(
+                                                "You have no variations yet. To add a variation, press the Add Variation (+) button.",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium!
+                                                    .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      color:
+                                                          Colors.grey.shade600,
+                                                    ),
                                               ),
                                             ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                ],
+                                          )
+                                        else
+                                          ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              maxHeight: mq.size.height * 0.3,
+                                            ),
+                                            child: AlignedGridView.count(
+                                              crossAxisCount: 2,
+                                              itemCount: controller
+                                                  .variationsFormEntries.length,
+                                              mainAxisSpacing: 14.0,
+                                              crossAxisSpacing: 14.0,
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemBuilder: (context, index) {
+                                                final entry = controller
+                                                        .variationsFormEntries[
+                                                    index];
+                                                final hasValues = controller
+                                                    .checkVariationEntryIsEmpty(
+                                                        index);
+
+                                                if (hasValues) {
+                                                  return const SizedBox
+                                                      .shrink();
+                                                }
+
+                                                final name = (entry["name"]
+                                                        as TextEditingController)
+                                                    .text;
+                                                final price = (entry["price"]
+                                                        as TextEditingController)
+                                                    .text;
+
+                                                if (name.isEmpty ||
+                                                    price.isEmpty) {
+                                                  return const SizedBox
+                                                      .shrink();
+                                                }
+
+                                                return ListTile(
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6.0),
+                                                  ),
+                                                  title: Text(name),
+                                                  subtitle: Text(
+                                                    "£$price",
+                                                    style: textTheme.bodyLarge!
+                                                        .copyWith(
+                                                      color:
+                                                          Colors.grey.shade500,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
                         const Card(
                           child: Padding(
                             padding: defaultCardPadding,
@@ -661,61 +766,67 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                       ),
                                     ),
                                     verticalSpaceSmall,
-                                    Divider(color: Colors.grey.shade300),
-                                    verticalSpaceSmall,
-                                    Text(
-                                      "Children",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                              color: Colors.grey.shade600),
-                                    ),
-                                    verticalSpaceSmall,
-                                    Divider(color: Colors.grey.shade300),
-                                    SizedBox(
-                                      height: 40.0,
-                                      child: ListView.separated(
-                                        scrollDirection: Axis.horizontal,
-                                        shrinkWrap: true,
-                                        itemCount: controller
-                                            .choosedSubCategories.length,
-                                        itemBuilder: (context, index) {
-                                          final element = controller
-                                              .choosedSubCategories[index];
-                                          return Chip(
-                                            onDeleted: () {
-                                              controller.removeChildCategory(
-                                                element.$1,
-                                                element.$3,
-                                              );
-                                            },
-                                            backgroundColor: MenuBuilderColors
-                                                .kOrange
-                                                .withOpacity(0.1),
-                                            side: BorderSide.none,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 6.0,
-                                            ),
-                                            label: Text(
-                                                "${capitalizeFirstLetter(element.$4 ?? "")} ( ${capitalizeFirstLetter(element.$2 ?? "")} )"),
-                                            labelStyle:
-                                                textTheme.bodyLarge!.copyWith(
-                                              color: MenuBuilderColors.kOrange,
-                                            ),
-                                            deleteIcon: const Icon(Icons.close,
-                                                size: 20),
-                                            deleteIconColor:
-                                                MenuBuilderColors.kOrange,
-                                            // selected: true,
-                                            // selectedColor: AppColors.backgroundColor,
-                                          );
-                                        },
-                                        separatorBuilder: (_, __) {
-                                          return horizontalSpaceSmall;
-                                        },
+                                    if (controller
+                                        .choosedSubCategories.isNotEmpty) ...[
+                                      Divider(color: Colors.grey.shade300),
+                                      verticalSpaceSmall,
+                                      Text(
+                                        "Children",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(
+                                                color: Colors.grey.shade600),
                                       ),
-                                    ),
+                                      verticalSpaceSmall,
+                                      Divider(color: Colors.grey.shade300),
+                                      SizedBox(
+                                        height: 40.0,
+                                        child: ListView.separated(
+                                          scrollDirection: Axis.horizontal,
+                                          shrinkWrap: true,
+                                          itemCount: controller
+                                              .choosedSubCategories.length,
+                                          itemBuilder: (context, index) {
+                                            final element = controller
+                                                .choosedSubCategories[index];
+                                            return Chip(
+                                              onDeleted: () {
+                                                controller.removeChildCategory(
+                                                  element.$1,
+                                                  element.$3,
+                                                );
+                                              },
+                                              backgroundColor: MenuBuilderColors
+                                                  .kOrange
+                                                  .withOpacity(0.1),
+                                              side: BorderSide.none,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 6.0,
+                                              ),
+                                              label: Text(
+                                                  "${capitalizeFirstLetter(element.$4 ?? "")} ( ${capitalizeFirstLetter(element.$2 ?? "")} )"),
+                                              labelStyle:
+                                                  textTheme.bodyLarge!.copyWith(
+                                                color:
+                                                    MenuBuilderColors.kOrange,
+                                              ),
+                                              deleteIcon: const Icon(
+                                                  Icons.close,
+                                                  size: 20),
+                                              deleteIconColor:
+                                                  MenuBuilderColors.kOrange,
+                                              // selected: true,
+                                              // selectedColor: AppColors.backgroundColor,
+                                            );
+                                          },
+                                          separatorBuilder: (_, __) {
+                                            return horizontalSpaceSmall;
+                                          },
+                                        ),
+                                      ),
+                                    ]
                                   ],
                                 ),
                               ),
@@ -820,46 +931,67 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                     ),
                                     verticalSpaceMedium,
                                     if (controller.allDaysEnabled)
-                                      ...controller.listOfAvailabilityDays
-                                          .map((day) {
-                                        return Column(
-                                          children: <Widget>[
-                                            _buildExpansionTileContainer(
-                                              context,
-                                              icon: FluentIcons
-                                                  .calendar_24_regular,
-                                              title: capitalizeFirstLetter(day),
-                                              children: controller
-                                                  .dishAvailabilityEntries
-                                                  .where((entry) =>
-                                                      entry.$1 != null &&
-                                                      entry.$2 != null)
-                                                  .map((entry) {
-                                                return Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical: 4.0,
+                                      Column(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              shopController
+                                                  .shopAvailableDaysStartEnd,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium,
+                                            ),
+                                          ),
+                                          verticalSpaceSmall,
+                                          Builder(builder: (context) {
+                                            final dishAvailabilityEntries =
+                                                controller
+                                                    .dishAvailabilityEntries
+                                                    .where((entry) =>
+                                                        entry.$1 != null &&
+                                                        entry.$2 != null);
+                                            return Visibility(
+                                              visible: dishAvailabilityEntries
+                                                  .isNotEmpty,
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  vertical: 8.0,
+                                                  horizontal: 10.0,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: MenuBuilderColors
+                                                        .kLightGrey,
                                                   ),
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Text(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children:
+                                                      dishAvailabilityEntries
+                                                          .map((entry) {
+                                                    return Text(
                                                       "${formatTimeOfDay(entry.$1!)} to ${formatTimeOfDay(entry.$2!)}",
                                                       style: textTheme
                                                           .bodyMedium!
                                                           .copyWith(
                                                         color: Colors
-                                                            .grey.shade600,
+                                                            .grey.shade500,
                                                       ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                            ),
-                                            verticalSpaceSmall,
-                                          ],
-                                        );
-                                      }).toList()
+                                                      textAlign: TextAlign.left,
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ),
+                                            );
+                                          })
+                                        ],
+                                      )
                                     else
                                       ...controller.availableDays.map((day) {
                                         return Column(

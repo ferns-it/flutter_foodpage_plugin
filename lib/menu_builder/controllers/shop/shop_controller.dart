@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/base_controller.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/models/common/api_response.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/shop/shop_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/shop/shop_service.dart';
 

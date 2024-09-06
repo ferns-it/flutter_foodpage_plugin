@@ -1,12 +1,15 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builder_validators.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/menu_builder_app_colors.dart';
 import '../../../core/utils/ui_utils.dart';
 import '../../../widgets/custom_rounded_textfield.dart';
+import 'build_allergens_widget.dart';
 
 class AddVariationModifiersSideSheet extends StatefulWidget {
   const AddVariationModifiersSideSheet({super.key, this.index = 0});
@@ -65,52 +68,16 @@ class _AddVariationModifiersSideSheetState
             child: Form(
               key: controller.variationFormKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color: MenuBuilderColors.kPrimaryColor,
-                        ),
-                        borderRadius: BorderRadius.circular(8.0)),
-                    margin: const EdgeInsets.all(8.0),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0,
-                      vertical: 12.0,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Icon(FluentIcons.info_24_regular),
-                        horizontalSpaceSmall,
-                        Flexible(
-                          child: Text(
-                            "For a single variation dish, it is not required to enter the dish name. For multiple variations, it is required to enter the dish name. For example, Full and Half for biryani.",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(color: Colors.grey.shade700),
-                            textAlign: TextAlign.justify,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  Expanded(
-                    child: ListView.separated(
-                      padding: EdgeInsets.zero,
-                      itemCount: controller.variationsFormEntries.length,
-                      itemBuilder: (context, index) {
-                        final entry = controller.variationsFormEntries[index];
-                        return FoodVariationItem(index: index, entry: entry);
-                      },
-                      separatorBuilder: (_, __) {
-                        return verticalSpaceSmall;
-                      },
-                    ),
-                  ),
-                ],
+              child: ListView.separated(
+                padding: EdgeInsets.zero,
+                itemCount: controller.variationsFormEntries.length,
+                itemBuilder: (context, index) {
+                  final entry = controller.variationsFormEntries[index];
+                  return FoodVariationItem(index: index, entry: entry);
+                },
+                separatorBuilder: (_, __) {
+                  return verticalSpaceSmall;
+                },
               ),
             ),
           ),
@@ -136,6 +103,7 @@ class FoodVariationItem extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     final controller = context.watch<DishesController>();
+    final geminiController = context.watch<GeminiController>();
 
     return Card(
       child: Padding(
@@ -153,7 +121,7 @@ class FoodVariationItem extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: MenuBuilderColors.kBlue.withOpacity(0.25),
+                      color: MenuBuilderColors.kBlue.withOpacity(0.1),
                     ),
                     child: const Icon(
                       FluentIcons.copy_24_regular,
@@ -162,11 +130,10 @@ class FoodVariationItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (index != 0) ...[
+                if (controller.variationsFormEntries.length > 1) ...[
                   horizontalSpaceRegular,
                   InkWell(
                     onTap: () {
-                      if (index == 0) return;
                       controller.removeVariationFormEntry(index);
                     },
                     child: Container(
@@ -174,7 +141,7 @@ class FoodVariationItem extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color:
-                            MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
+                            MenuBuilderColors.kPrimaryColor.withOpacity(0.1),
                       ),
                       child: const Icon(
                         Icons.delete_forever,
@@ -191,32 +158,18 @@ class FoodVariationItem extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                controller.variationsFormEntries.length != 1
-                    ? Expanded(
-                        child: CustomRoundedTextField.topText(
-                          topText: "Dish name",
-                          hintText: "Enter dish name",
-                          borderRadius: BorderRadius.circular(8.0),
-                          keyboardType: TextInputType.name,
-                          textInputAction: TextInputAction.next,
-                          validator: MenuBuilderValidators.validateDishName,
-                          textEditingController:
-                              entry["name"] as TextEditingController,
-                        ),
-                      )
-                    : Expanded(
-                        child: CustomRoundedTextField.topText(
-                          topText: "Dish name",
-                          hintText: "Enter dish name",
-                          textEditingController: TextEditingController()
-                            ..text = "Single Variation",
-                          borderRadius: BorderRadius.circular(8.0),
-                          keyboardType: TextInputType.name,
-                          textInputAction: TextInputAction.next,
-                          readOnly: true,
-                          fillColor: Colors.grey.shade100,
-                        ),
-                      ),
+                Expanded(
+                  child: CustomRoundedTextField.topText(
+                    topText: "Dish name",
+                    hintText: "Enter dish name",
+                    borderRadius: BorderRadius.circular(8.0),
+                    keyboardType: TextInputType.name,
+                    textInputAction: TextInputAction.next,
+                    validator: MenuBuilderValidators.validateDishName,
+                    textEditingController:
+                        entry["name"] as TextEditingController,
+                  ),
+                ),
                 horizontalSpaceRegular,
                 Expanded(
                   child: CustomRoundedTextField.topText(
@@ -242,9 +195,36 @@ class FoodVariationItem extends StatelessWidget {
               textInputAction: TextInputAction.done,
               textEditingController:
                   entry["ingredients"] as TextEditingController,
+              suffixIcon: geminiController.dishIngredientsGenerating
+                  ? const Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: SizedBox(
+                        height: 26.0,
+                        width: 26.0,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                        ),
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: () async {
+                        final name = entry["name"].text;
+                        if (name.isEmpty) {
+                          Fluttertoast.showToast(
+                              msg: "Dish Name cannot be empty!");
+                          return;
+                        }
+                        final generatedContent = await geminiController
+                            .generateDishIngredients(name);
+                        if (generatedContent != null) {
+                          entry["ingredients"].text = generatedContent;
+                        }
+                      },
+                      icon: const Icon(FluentIcons.sparkle_24_regular),
+                    ),
             ),
             verticalSpaceRegular,
-            _BuildAllergensWidget(index: index),
+            BuildAllergensWidget(index: index),
             verticalSpaceRegular,
           ],
         ),
@@ -413,84 +393,6 @@ class AddModifiersFormWidget extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _BuildAllergensWidget extends StatelessWidget {
-  const _BuildAllergensWidget({Key? key, required this.index})
-      : super(key: key);
-
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    final controller = context.watch<DishesController>();
-
-    final addDishInitializeData = controller.addDishInitializeData;
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 40,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 10.0,
-            ),
-            color: MenuBuilderColors.kWhite2,
-            child: Center(
-              child: Text(
-                "Allergens",
-                style: textTheme.titleMedium,
-              ),
-            ),
-          ),
-          verticalSpaceSmall,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: addDishInitializeData!.allergens.data
-                    .where((allergen) => allergen.name != null)
-                    .map((allergen) {
-                  final backgroundColor =
-                      MenuBuilderColors.kGrey.withOpacity(0.1);
-                  final entry = controller.variationsFormEntries[index];
-                  final allergens = entry["allergens"] as List;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: FilterChip(
-                      label: Text(allergen.name!),
-                      selected: allergen.id != null &&
-                          allergens.contains(allergen.id),
-                      selectedColor: backgroundColor,
-                      backgroundColor: backgroundColor,
-                      labelStyle: textTheme.titleSmall!.copyWith(
-                        color: Colors.grey.shade600,
-                      ),
-                      checkmarkColor: Colors.grey.shade600,
-                      onSelected: (_) => controller.onChangeAllergensSelection(
-                          index, allergen.id),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-          verticalSpaceRegular,
-        ],
       ),
     );
   }

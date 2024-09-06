@@ -8,6 +8,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_init
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_request_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/dishes/dishes_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../core/utils/helper_utils.dart';
 import '../../models/dishes/add_dish_request_with_variation_model.dart';
@@ -133,6 +134,10 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
+  final singleVariationPriceController = TextEditingController();
+  final singleVariationIngredientsController = TextEditingController();
+  List<String> singleSelectedAllergens = <String>[];
+
   final GlobalKey<FormState> variationFormKey = GlobalKey<FormState>();
 
   Map<String, dynamic> get variationFormEntry => {
@@ -185,12 +190,18 @@ class DishesController extends ChangeNotifier with BaseController {
     String? allergenId,
   ) {
     if (allergenId == null) return;
-    if (variationsFormEntries[index]["allergens"].contains(allergenId)) {
-      variationsFormEntries[index]["allergens"].remove(allergenId);
-      notifyListeners();
-      return;
+
+    final isSingleVariation = dishVariationType == DishVariationType.single;
+    final allergens = isSingleVariation
+        ? singleSelectedAllergens
+        : variationsFormEntries[index]["allergens"];
+
+    if (allergens.contains(allergenId)) {
+      allergens.remove(allergenId);
+    } else {
+      allergens.add(allergenId);
     }
-    variationsFormEntries[index]["allergens"].add(allergenId);
+
     notifyListeners();
   }
 
@@ -408,6 +419,7 @@ class DishesController extends ChangeNotifier with BaseController {
     choosedMenus.insert(0, defaultEntry.key);
   }
 
+
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
   late TextEditingController nameController;
   late TextEditingController descriptionController;
@@ -542,7 +554,9 @@ class DishesController extends ChangeNotifier with BaseController {
         return ResponseResult.failure;
       }
 
-      if (variationsFormEntriesEmpty) {
+      final isMultiVariation = dishVariationType == DishVariationType.multiple;
+
+      if (isMultiVariation && variationsFormEntriesEmpty) {
         showToastMessage("Variations cannot be empty");
         return ResponseResult.failure;
       }
@@ -558,8 +572,7 @@ class DishesController extends ChangeNotifier with BaseController {
       }
 
       // Check if variationsFormEntries has at least one entry
-      final productType =
-          variationsFormEntries.length == 1 ? "single" : "variation";
+      final productType = !isMultiVariation ? "single" : "variation";
 
       // Check and initialize addonsMasterGroup
       final addonsMasterGroup = choosedMasterAddons
@@ -572,13 +585,7 @@ class DishesController extends ChangeNotifier with BaseController {
       final isDineinReq = _dineInStatus ? 'Yes' : 'No';
 
       // Extract values from variationsFormEntries and validate
-      final singleEntry = variationsFormEntries.first;
-      final priceController = singleEntry["price"] as TextEditingController;
-      final priceReq = double.parse(priceController.text);
-
-      final ingredientsController =
-          singleEntry["ingredients"] as TextEditingController;
-      final allergens = (singleEntry["allergens"] as List).cast<String>();
+      final priceReq = double.parse(singleVariationPriceController.text);
 
       // Initialize and validate listOfParentCategoriesId and listOfSubCategoriesId
       final listOfParentCategoriesId = choosedParentCategory
@@ -597,20 +604,24 @@ class DishesController extends ChangeNotifier with BaseController {
       ];
 
       // Extract variations data and validate each entry
-      final variations = variationsFormEntries.map((entry) {
-        final nameController = entry["name"] as TextEditingController;
-        final price = entry["price"] as TextEditingController;
-        final allergens = (entry["allergens"] as List).cast<String>();
-        return VariationDishData(
-          pvID: null,
-          name: nameController.text,
-          price: double.parse(price.text),
-          allergensMaster: allergens,
-          ingredients: ingredientsController.text,
-          isUnlimitedStock: 1,
-          quantity: 0,
-        );
-      }).toList();
+      final variations = isMultiVariation
+          ? variationsFormEntries.map((entry) {
+              final nameController = entry["name"] as TextEditingController;
+              final price = entry["price"] as TextEditingController;
+              final allergens = (entry["allergens"] as List).cast<String>();
+              final ingredientsController =
+                  entry["ingredients"] as TextEditingController;
+              return VariationDishData(
+                pvID: null,
+                name: nameController.text,
+                price: double.parse(price.text),
+                allergensMaster: allergens,
+                ingredients: ingredientsController.text,
+                isUnlimitedStock: 1,
+                quantity: 0,
+              );
+            }).toList()
+          : const <VariationDishData>[];
 
       // Initialize allDayAvailable based on allDaysEnabled
       final allDayAvailable = allDaysEnabled ? "on" : null;
@@ -628,7 +639,7 @@ class DishesController extends ChangeNotifier with BaseController {
       }).toList();
 
       // Construct payload based on whether there's a single entry or variations
-      final payload = variationsFormEntries.length == 1
+      final payload = !isMultiVariation
           ? AddDishRequestModel(
               productType: productType,
               type: dishType,
@@ -638,10 +649,9 @@ class DishesController extends ChangeNotifier with BaseController {
               online: isOnlineReq,
               dining: isDineinReq,
               name: nameController.text,
-              // Ensure nameController is initialized
               description: descriptionController.text,
-              ingredients: ingredientsController.text,
-              allergns: allergens,
+              ingredients: singleVariationIngredientsController.text,
+              allergns: singleSelectedAllergens,
               category: listOfCategories,
               allDayAvailable: allDayAvailable,
               availability: availableDays,
@@ -681,6 +691,7 @@ class DishesController extends ChangeNotifier with BaseController {
       // Return success if everything goes well
       return ResponseResult.success;
     } catch (e) {
+      Fluttertoast.showToast(msg: "Failed to save dish!");
       // Return failure in case of any exception
       return ResponseResult.failure;
     } finally {
@@ -825,5 +836,10 @@ class DishesController extends ChangeNotifier with BaseController {
     nameController.clear();
     descriptionController.clear();
     addNewDishFormKey.currentState?.reset();
+    singleVariationPriceController.clear();
+    singleVariationIngredientsController.clear();
+    singleSelectedAllergens.clear();
+
+    activeDefaultSelectedInMenu();
   }
 }

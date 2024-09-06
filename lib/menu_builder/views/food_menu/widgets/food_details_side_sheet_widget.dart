@@ -82,7 +82,7 @@ class _FoodDetailsSideSheetWidgetState
                         padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: MenuBuilderColors.kBlue.withOpacity(0.25),
+                          color: MenuBuilderColors.kBlue.withOpacity(0.1),
                         ),
                         child: const Icon(
                           Icons.edit,
@@ -101,7 +101,7 @@ class _FoodDetailsSideSheetWidgetState
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color:
-                              MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
+                              MenuBuilderColors.kPrimaryColor.withOpacity(0.1),
                         ),
                         child: const Icon(
                           Icons.delete_forever,
