@@ -79,7 +79,7 @@ class _FoodDetailsSideSheetWidgetState
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: MenuBuilderColors.kBlue.withOpacity(0.1),
@@ -97,7 +97,7 @@ class _FoodDetailsSideSheetWidgetState
                         Navigator.pop(context);
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color:

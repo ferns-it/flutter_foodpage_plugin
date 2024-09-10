@@ -433,6 +433,7 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   void initalizeAllFormControllers() {
+    disposeAllFormControllers();
     nameController = TextEditingController();
     descriptionController = TextEditingController();
   }
@@ -486,8 +487,6 @@ class DishesController extends ChangeNotifier with BaseController {
     // Insert the category at the new index
     newListOfCategories.insert(newIndex, category);
 
-    log(newListOfCategories.toString());
-
     // Update the category list
     _addDishInitializeData?.category.data = List.from(newListOfCategories);
     notifyListeners();
@@ -533,7 +532,7 @@ class DishesController extends ChangeNotifier with BaseController {
       notifyListeners();
 
       final response = await DishesService.getDishDetails(dishId);
-      log(response.toString());
+
       _viewDishDetails = response != null
           ? APIResponse.completed(response)
           : throwNotFoundException<DishViewDetailsModel>();
@@ -754,21 +753,30 @@ class DishesController extends ChangeNotifier with BaseController {
 
     selectedDishCategories = List.from(updatedCategories);
 
-    // Variation Form Entries
-    final elements = dishData.variationData
-        .map((variation) => {
-              "pvID": variation.pvID,
-              "name": TextEditingController()..text = variation.name,
-              "price": TextEditingController()..text = variation.price,
-              "ingredients": TextEditingController()
-                ..text = variation.ingredients,
-              "isUnlimitedStock": variation.isUnlimitedStock,
-              "allergens": variation.selectedallergens.map((e) {
-                return e.id;
-              }).toList(),
-            })
-        .toList();
-    variationsFormEntries = List.from(elements);
+    final hasMultipleVariations = dishData.variationData.length > 1;
+
+    if (hasMultipleVariations) {
+      // Variation Form Entries
+      final elements = dishData.variationData
+          .map((variation) => {
+                "pvID": variation.pvID,
+                "name": TextEditingController()..text = variation.name,
+                "price": TextEditingController()..text = variation.price,
+                "ingredients": TextEditingController()
+                  ..text = variation.ingredients,
+                "isUnlimitedStock": variation.isUnlimitedStock,
+                "allergens": variation.selectedallergens.map((e) {
+                  return e.id;
+                }).toList(),
+              })
+          .toList();
+      variationsFormEntries = List.from(elements);
+    } else if (dishData.variationData.isNotEmpty) {
+      final variation = dishData.variationData.first;
+      singleVariationPriceController.text = variation.price;
+      singleSelectedAllergens = variation.allergens.map((e) => e.id).toList();
+      singleVariationIngredientsController.text = variation.ingredients;
+    }
 
     // Modifiers
     final modifiers = dishData.selectedAddonGroups
