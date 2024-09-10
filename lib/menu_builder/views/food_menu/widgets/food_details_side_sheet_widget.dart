@@ -596,7 +596,7 @@ class _FoodDetailsSideSheetWidgetState
         _buildInfoRow(
           context,
           FluentIcons.money_20_regular,
-          "£${data.price}",
+          "₹${data.price}",
           smallText: true,
         ),
         if (data.ingredients.isNotEmpty) ...[

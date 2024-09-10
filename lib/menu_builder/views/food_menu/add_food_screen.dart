@@ -581,7 +581,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                                   ),
                                                   title: Text(name),
                                                   subtitle: Text(
-                                                    "£$price",
+                                                    "₹$price",
                                                     style: textTheme.bodyLarge!
                                                         .copyWith(
                                                       color:
@@ -1272,7 +1272,7 @@ class FoodModifiersDetailsWidget extends StatelessWidget {
               ),
             ),
             trailing: Text(
-              "£10.00",
+              "₹10.00",
               style: textTheme.bodyMedium!.copyWith(
                 color: Colors.grey.shade600,
               ),
@@ -1288,7 +1288,7 @@ class FoodModifiersDetailsWidget extends StatelessWidget {
               ),
             ),
             trailing: Text(
-              "£10.00",
+              "₹10.00",
               style: textTheme.bodyMedium!.copyWith(
                 color: Colors.grey.shade600,
               ),
