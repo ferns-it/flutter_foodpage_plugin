@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_data.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/base_client.dart';
 
 import '../../core/constants/api_endpoints.dart';
+import '../../core/constants/enums.dart';
 import '../../models/dishes/add_dish_initialise_data_model.dart';
 import '../../models/dishes/dish_collection_model.dart';
 
@@ -77,5 +79,21 @@ class DishesService {
     if (response == null) return null;
     final encodedData = jsonDecode(response);
     return encodedData;
+  }
+
+  static Future<ResponseResult> updateDishStatus(
+      {required bool activeStatus, required String productID}) async {
+    try {
+      final response = await BaseClient.put(
+        api: "${ApiEndpoints.updateProductStatus}$productID",
+        needAuth: true,
+        data: json.encode({"status": activeStatus ? "0" : "1"}),
+      );
+      if (response == null) return ResponseResult.failure;
+      return ResponseResult.success;
+    } on Exception catch (e) {
+      log(e.toString(), name: "updateDishStatus");
+      return ResponseResult.failure;
+    }
   }
 }

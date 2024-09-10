@@ -254,7 +254,12 @@ class _FoodDetailsSideSheetWidgetState
                               selected: const {},
                               emptySelectionAllowed: true,
                               showSelectedIcon: false,
-                              onSelectionChanged: (value) {},
+                              onSelectionChanged: (value) {
+                                if (value.firstOrNull == "Active") {
+                                  controller.updateDishStatus();
+                                  return;
+                                }
+                              },
                               style: SegmentedButton.styleFrom(
                                 backgroundColor: MenuBuilderColors.kWhite2,
                                 foregroundColor: MenuBuilderColors.kBlack,
@@ -341,25 +346,28 @@ class _FoodDetailsSideSheetWidgetState
                             )
                           ],
                         ),
-                        verticalSpaceRegular,
-                        _buildExpansionTileContainer(
-                          context,
-                          icon: FluentIcons.apps_add_in_20_regular,
-                          title: "Addons/Modifiers",
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Wrap(
-                                runSpacing: 5.0,
-                                spacing: 8.0,
-                                children: data.selectedAddonGroups.map((addon) {
-                                  return _buildFilterChip(
-                                      textTheme, addon["name"]);
-                                }).toList(),
-                              ),
-                            )
-                          ],
-                        ),
+                        if (data.selectedAddonGroups.isNotEmpty) ...[
+                          verticalSpaceRegular,
+                          _buildExpansionTileContainer(
+                            context,
+                            icon: FluentIcons.apps_add_in_20_regular,
+                            title: "Addons/Modifiers",
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Wrap(
+                                  runSpacing: 5.0,
+                                  spacing: 8.0,
+                                  children:
+                                      data.selectedAddonGroups.map((addon) {
+                                    return _buildFilterChip(
+                                        textTheme, addon["name"]);
+                                  }).toList(),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
                         verticalSpaceRegular,
                         _buildExpansionTileContainer(
                           context,
