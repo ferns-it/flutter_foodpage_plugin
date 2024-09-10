@@ -14,9 +14,13 @@ class FoodDetailsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
+    const placeHolder =
+        'https://theme-assets.getbento.com/sensei/e439fc7.sensei/assets/images/catering-item-placeholder-704x520.png';
+
     return Card(
       elevation: 3,
       shadowColor: Colors.grey.withOpacity(0.3),
+      color: !dish.active ? Colors.grey.shade100 : null,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -29,7 +33,7 @@ class FoodDetailsTile extends StatelessWidget {
                 height: 60,
                 errorBuilder: (BuildContext context, _, __) {
                   return Image.network(
-                    'https://theme-assets.getbento.com/sensei/e439fc7.sensei/assets/images/catering-item-placeholder-704x520.png',
+                    placeHolder,
                     height: 60,
                   );
                 },
