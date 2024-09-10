@@ -10,7 +10,6 @@ class MenuBuilderValidators {
     return null;
   }
 
- 
   // Validator for category name
   static String? validateCategoryName(String? value) {
     if (value == null || value.isEmpty) {
@@ -58,19 +57,20 @@ class MenuBuilderValidators {
   }
 
   static String? validateModifierOptionName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Option name is required';
-    }
-    if (value.length < 3) {
+    // if (value == null || value.isEmpty) {
+    //   return 'Option name is required';
+    // }
+    if (value != null && value.isNotEmpty && value.length < 3) {
       return 'Option name must be at least 3 characters long';
     }
     return null;
   }
 
   static String? validateModifierPrice(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Price is required';
-    }
+    // if (value == null || value.isEmpty) {
+    //   return 'Price is required';
+    // }
+    if (value == null || value.isEmpty) return null;
     final price = double.tryParse(value);
     if (price == null) {
       return 'Price must be a valid number';

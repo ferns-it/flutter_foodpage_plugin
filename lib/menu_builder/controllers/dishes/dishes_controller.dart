@@ -23,11 +23,6 @@ class DishesController extends ChangeNotifier with BaseController {
 
   List<DishDetails> dishesList = [];
 
-  List<Category> get categoriesCollection => (dishCollection.data?.dishes ?? [])
-      .expand((dish) => dish.categories)
-      .toSet()
-      .toList();
-
   int get totalDishes => dishCollection.data?.totalDishes ?? 0;
 
   APIResponse<DishViewDetailsModel> _viewDishDetails = APIResponse.initial();
@@ -492,9 +487,9 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-  List<DishDetails> filterDishesByCategory(Category category) {
+  List<DishDetails> filterDishesByCategory(CategoryData category) {
     return (dishCollection.data?.dishes ?? [])
-        .where((dish) => dish.categories.contains(category))
+        .where((dish) => dish.categories.any((cat) => cat.cID == category.cID))
         .toList();
   }
 

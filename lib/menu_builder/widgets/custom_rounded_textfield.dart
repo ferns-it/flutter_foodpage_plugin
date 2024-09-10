@@ -29,6 +29,7 @@ class CustomRoundedTextField extends StatelessWidget {
     this.initialText,
     this.maxLines,
     this.readOnly = false,
+    this.autovalidateMode,
   })  : _topText = topText,
         super(key: key);
 
@@ -55,6 +56,7 @@ class CustomRoundedTextField extends StatelessWidget {
     this.initialText,
     this.maxLines,
     this.readOnly = false,
+    this.autovalidateMode,
   })  : _topText = null,
         super(key: key);
 
@@ -74,6 +76,7 @@ class CustomRoundedTextField extends StatelessWidget {
   final TextEditingController? textEditingController;
   final String? Function(String?)? validator;
   final int? maxLines;
+  final AutovalidateMode? autovalidateMode;
 
   final void Function(String?)? onFieldSubmitted;
 
@@ -87,6 +90,7 @@ class CustomRoundedTextField extends StatelessWidget {
         color: MenuBuilderColors.kLightGrey,
         width: 1.5,
       );
+
   BorderRadius get _borderRadius => BorderRadius.circular(24.0);
 
   @override
@@ -125,13 +129,14 @@ class CustomRoundedTextField extends StatelessWidget {
         keyboardType: keyboardType,
         controller: textEditingController,
         validator: validator,
-        onChanged: onChanged, // Pass onChanged parameter
-        inputFormatters: inputFormatters, // Pass inputFormatters parameter
+        onChanged: onChanged,
+        inputFormatters: inputFormatters,
         obscureText: obscureText,
         initialValue: initialText,
         readOnly: readOnly,
         onFieldSubmitted: onFieldSubmitted,
         maxLines: maxLines,
+        autovalidateMode: autovalidateMode,
         decoration: InputDecoration(
           focusedBorder: OutlineInputBorder(
             borderSide: _borderSide,

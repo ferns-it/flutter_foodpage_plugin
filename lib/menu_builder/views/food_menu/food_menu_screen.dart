@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
@@ -94,7 +95,10 @@ class FoodMenuScreen extends StatelessWidget {
             }, loading: () {
               return const Center(child: CircularProgressIndicator());
             }, completed: (_) {
-              final categories = controller.categoriesCollection;
+              final categories = controller.listOfCategories;
+              final categoryController =
+                  context.watch<DishCategoryController>();
+
               return Expanded(
                 child: DefaultTabController(
                   length: categories.length,
@@ -102,7 +106,8 @@ class FoodMenuScreen extends StatelessWidget {
                     children: <Widget>[
                       TabBar(
                         tabs: categories.map((category) {
-                          return Tab(text: category.name.toUpperCase());
+                          return Tab(
+                              text: (category.name ?? "Unknown").toUpperCase());
                         }).toList(),
                         tabAlignment: categories.length <= 10
                             ? TabAlignment.fill
@@ -119,21 +124,62 @@ class FoodMenuScreen extends StatelessWidget {
                             children: categories.map((category) {
                           final dishes =
                               controller.filterDishesByCategory(category);
-                          return AlignedGridView.count(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 2,
-                            crossAxisSpacing: 2,
-                            itemCount: dishes.length,
-                            itemBuilder: (context, index) {
-                              final dish = dishes[index];
-                              return InkWell(
-                                onTap: () {
-                                  controller.onSelectDish(dish.pID);
-                                  Scaffold.of(context).openEndDrawer();
-                                },
-                                child: FoodDetailsTile(dish: dish),
-                              );
-                            },
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              !categoryController.categoryStatusLoading
+                                  ? TextButton.icon(
+                                      label: const Text("Active"),
+                                      style: TextButton.styleFrom(
+                                        textStyle: textTheme.titleMedium,
+                                      ),
+                                      onPressed: () {
+                                        categoryController
+                                            .disableEnableCategory(
+                                                category: category,
+                                                onRequestRefresh: () async {
+                                                  await controller
+                                                      .initializeAddDishRequiredData();
+                                                });
+                                      },
+                                      icon: category.categoryStatus != "Active"
+                                          ? const Icon(
+                                              Icons.close,
+                                              color: MenuBuilderColors
+                                                  .kMaterialRed,
+                                            )
+                                          : const Icon(
+                                              Icons.check,
+                                              color: MenuBuilderColors
+                                                  .kSuccessGreen2,
+                                            ),
+                                    )
+                                  : const SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 3),
+                                    ),
+                              verticalSpaceSmall,
+                              Expanded(
+                                child: AlignedGridView.count(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 2,
+                                  crossAxisSpacing: 2,
+                                  itemCount: dishes.length,
+                                  itemBuilder: (context, index) {
+                                    final dish = dishes[index];
+                                    return InkWell(
+                                      onTap: () {
+                                        controller.onSelectDish(dish.pID);
+                                        Scaffold.of(context).openEndDrawer();
+                                      },
+                                      child: FoodDetailsTile(dish: dish),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           );
                         }).toList()),
                       ),

@@ -79,6 +79,7 @@ class DishesCategoryService {
       final response = await BaseClient.put(
         api: ApiEndpoints.statusUpdateCategory,
         params: cID,
+        needAuth: true,
         data: jsonEncode({"status": status}),
       );
       if (response == null) return APIResultType.failed;

@@ -5,6 +5,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_contr
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -259,6 +260,8 @@ class _FoodDetailsSideSheetWidgetState
                                   controller.updateDishStatus();
                                   return;
                                 }
+                                Fluttertoast.showToast(
+                                    msg: "This feature is under development");
                               },
                               style: SegmentedButton.styleFrom(
                                 backgroundColor: MenuBuilderColors.kWhite2,

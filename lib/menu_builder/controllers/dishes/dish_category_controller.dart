@@ -35,6 +35,10 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
+  bool _categoryStatusLoading = false;
+
+  bool get categoryStatusLoading => _categoryStatusLoading;
+
   CategoryData? _selectedCategory;
 
   CategoryData? get selectedCategory => _selectedCategory;
@@ -100,7 +104,7 @@ class DishCategoryController extends ChangeNotifier with BaseController {
   Future<void> init() async {
     nameController = TextEditingController();
     descriptionController = TextEditingController();
-    await fetchCategories();
+    // await fetchCategories();
   }
 
   Future<void> fetchCategories() async {
@@ -139,9 +143,11 @@ class DishCategoryController extends ChangeNotifier with BaseController {
       description: descriptionController.text,
       parentId: parentId,
     );
-
+    clearCategoryForm();
     onRequestRefresh();
+  }
 
+  void clearCategoryForm() {
     formKey.currentState?.reset();
     nameController.clear();
     descriptionController.clear();
@@ -172,23 +178,34 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     }
   }
 
-  void disableEnableCategory({required VoidCallback onRequestRefresh}) async {
+  void disableEnableCategory({
+    required VoidCallback onRequestRefresh,
+    CategoryData? category,
+  }) async {
+    _categoryStatusLoading = true;
+    notifyListeners();
+
     try {
-      if (selectedCategory?.cID == null) {
-        //?? ADD TOAST
+      final targetCategory = category ?? selectedCategory;
+
+      // If targetCategory is null or has a null cID, exit early
+      if (targetCategory?.cID == null) {
+        // Add your toast or error handling here
         return;
       }
+      // Toggle category status between "Active" and "Inactive"
+      final newStatus =
+          targetCategory!.categoryStatus == "Active" ? "Inactive" : "Active";
+
       await DishesCategoryService.disableEnableCategory(
-        selectedCategory!.cID!,
-        selectedCategory?.categoryStatus == "Active" ? "Inactive" : "Active",
+        targetCategory.cID!,
+        newStatus,
       );
 
       onRequestRefresh();
-      formKey.currentState?.reset();
-      nameController.clear();
-      descriptionController.clear();
-      _selectedCategory = null;
     } finally {
+      // Ensure loading state is reset after operation
+      _categoryStatusLoading = false;
       notifyListeners();
     }
   }
