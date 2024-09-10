@@ -1,12 +1,20 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_navigation_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:provider/provider.dart';
 
 class SideMenuWidget extends StatelessWidget {
   const SideMenuWidget({super.key});
+
+  void resetSelectedCategory(BuildContext context) {
+    final controller = context.read<DishCategoryController>();
+    if (!controller.editMode) return;
+    controller.resetSelectedCategory();
+    controller.clearCategoryForm();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +54,7 @@ class SideMenuWidget extends StatelessWidget {
               title: "Dashboard",
               selected: pageNavigationController.currentPageIndex == 0,
               onTap: () {
+                resetSelectedCategory(context);
                 readPageNavigationController.onChangePageIndex(0);
               },
             ),
@@ -58,6 +67,7 @@ class SideMenuWidget extends StatelessWidget {
               title: "Food Menu",
               selected: pageNavigationController.currentPageIndex == 1,
               onTap: () {
+                resetSelectedCategory(context);
                 readPageNavigationController.onChangePageIndex(1);
               },
             ),
@@ -82,6 +92,7 @@ class SideMenuWidget extends StatelessWidget {
               title: "Modifiers",
               selected: pageNavigationController.currentPageIndex == 3,
               onTap: () {
+                resetSelectedCategory(context);
                 readPageNavigationController.onChangePageIndex(3);
               },
             ),
