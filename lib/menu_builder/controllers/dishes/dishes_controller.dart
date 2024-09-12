@@ -51,6 +51,7 @@ class DishesController extends ChangeNotifier with BaseController {
       .map((category) => category)
       .toList();
 
+
   @override
   Future<void> init() async {
     fetchDishes();
@@ -427,7 +428,7 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-  void initalizeAllFormControllers() {
+  void initializeAllFormControllers() {
     disposeAllFormControllers();
     nameController = TextEditingController();
     descriptionController = TextEditingController();
@@ -510,6 +511,7 @@ class DishesController extends ChangeNotifier with BaseController {
   Future<void> initializeAddDishRequiredData() async {
     final requiredData = await DishesService.initializeAddDishRequiredData();
     _addDishInitializeData = requiredData;
+    // categoryCollection = listOfCategories;
     notifyListeners();
   }
 
@@ -818,6 +820,8 @@ class DishesController extends ChangeNotifier with BaseController {
       fetchDishes();
     }
   }
+
+
 
   Future<void> deleteDish() async {
     try {

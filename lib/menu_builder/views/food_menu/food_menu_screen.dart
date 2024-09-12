@@ -59,7 +59,7 @@ class FoodMenuScreen extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: () {
                     controller.resetEditDishID();
-                    controller.initalizeAllFormControllers();
+                    controller.initializeAllFormControllers();
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         fullscreenDialog: true,
@@ -107,9 +107,10 @@ class FoodMenuScreen extends StatelessWidget {
                       TabBar(
                         tabs: categories.map((category) {
                           return Tab(
-                              text: (category.name ?? "Unknown").toUpperCase());
+                            text: (category.name ?? "Unknown").toUpperCase(),
+                          );
                         }).toList(),
-                        tabAlignment: categories.length <= 10
+                        tabAlignment: categories.length <= 8
                             ? TabAlignment.fill
                             : TabAlignment.center,
                         indicatorPadding: EdgeInsets.zero,

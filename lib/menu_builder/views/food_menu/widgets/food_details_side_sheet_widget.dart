@@ -70,7 +70,7 @@ class _FoodDetailsSideSheetWidgetState
                     const Spacer(),
                     InkWell(
                       onTap: () {
-                        controller.initalizeAllFormControllers();
+                        controller.initializeAllFormControllers();
                         controller.onPressEditButton();
                         Navigator.of(context).push(
                           MaterialPageRoute(
