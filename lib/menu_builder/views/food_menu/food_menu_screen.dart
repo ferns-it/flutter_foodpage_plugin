@@ -11,8 +11,25 @@ import 'package:provider/provider.dart';
 import '../widgets/food_details_tile.dart';
 import '../widgets/search_bar_widget.dart';
 
-class FoodMenuScreen extends StatelessWidget {
+class FoodMenuScreen extends StatefulWidget {
   const FoodMenuScreen({super.key});
+
+  @override
+  State<FoodMenuScreen> createState() => _FoodMenuScreenState();
+}
+
+class _FoodMenuScreenState extends State<FoodMenuScreen> {
+  @override
+  void initState() {
+    context.read<DishesController>().initializeSearchController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    context.read<DishesController>().disposeSearchController();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +98,12 @@ class FoodMenuScreen extends StatelessWidget {
                   elevation: 3,
                   shadowColor: Colors.grey.withOpacity(0.3),
                   child: SearchBarWidget(
-                    onSearchChanged: (String? query) {},
-                    searchTextController: TextEditingController(),
+                    onSearchChanged: (String? query) {
+                      controller.searchDishes(query);
+                    },
+                    searchTextController: context
+                        .read<DishesController>()
+                        .searchTextEditingController,
                     borderRadius: 8.0,
                     fillColor: MenuBuilderColors.kWhite,
                   ),

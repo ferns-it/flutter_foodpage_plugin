@@ -51,6 +51,7 @@ class DishesController extends ChangeNotifier with BaseController {
       .map((category) => category)
       .toList();
 
+  late TextEditingController searchTextEditingController;
 
   @override
   Future<void> init() async {
@@ -60,6 +61,14 @@ class DishesController extends ChangeNotifier with BaseController {
     if (_addDishInitializeData?.dishtype.data.firstOrNull != null) {
       _dishType = _addDishInitializeData?.dishtype.data.first;
     }
+  }
+
+  void initializeSearchController() {
+    searchTextEditingController = TextEditingController();
+  }
+
+  void disposeSearchController() {
+    searchTextEditingController.dispose();
   }
 
   Map<String, dynamic> get listOfMenus =>
@@ -489,7 +498,7 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   List<DishDetails> filterDishesByCategory(CategoryData category) {
-    return (dishCollection.data?.dishes ?? [])
+    return dishesList
         .where((dish) => dish.categories.any((cat) => cat.cID == category.cID))
         .toList();
   }
@@ -503,8 +512,9 @@ class DishesController extends ChangeNotifier with BaseController {
       return;
     }
     dishesList = dishesCollection
-        .where((dish) => query.toLowerCase().contains(dish.name))
+        .where((dish) => dish.name.toLowerCase().contains(query))
         .toList();
+
     notifyListeners();
   }
 
@@ -820,8 +830,6 @@ class DishesController extends ChangeNotifier with BaseController {
       fetchDishes();
     }
   }
-
-
 
   Future<void> deleteDish() async {
     try {
