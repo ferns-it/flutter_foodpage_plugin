@@ -452,25 +452,29 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   Future<void> fetchDishes() async {
-    try {
-      _dishCollection = APIResponse.loading();
-      notifyListeners();
+    _dishCollection = APIResponse.loading();
+    notifyListeners();
 
+    try {
       final response = await DishesService.getDishesList();
 
-      _dishCollection = response != null
-          ? APIResponse.completed(response)
-          : throwNotFoundException<DishCollectionModel>();
+      response.fold(
+        (error) {
+          _dishCollection = throwAppException<DishCollectionModel>(error);
 
-      dishesList = List<DishDetails>.from(_dishCollection.data?.dishes ?? []);
-
-      notifyListeners();
+          notifyListeners();
+        },
+        (result) {
+          _dishCollection = APIResponse.completed(result);
+          dishesList = List<DishDetails>.from(result.dishes);
+          log(_dishCollection.toString());
+          notifyListeners();
+        },
+      );
     } on AppExceptions catch (error) {
       _dishCollection = APIResponse.error(error.message, exception: error);
-      notifyListeners();
-    } catch (e) {
+    } catch (_) {
       _dishCollection = throwUnknownErrorException<DishCollectionModel>();
-      notifyListeners();
     }
   }
 
@@ -523,36 +527,38 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   Future<void> initializeAddDishRequiredData() async {
-    final requiredData = await DishesService.initializeAddDishRequiredData();
-    _addDishInitializeData = requiredData;
-    // categoryCollection = listOfCategories;
+    final response = await DishesService.initializeAddDishRequiredData();
+    response.fold(
+      (error) => Fluttertoast.showToast(msg: error.message),
+      (requiredData) => _addDishInitializeData = requiredData,
+    );
     notifyListeners();
   }
 
   Future<void> getDishDetails() async {
-    try {
-      if (selectedDish == null) {
-        _viewDishDetails = throwNotFoundException<DishViewDetailsModel>();
-        notifyListeners();
-        return;
-      }
-
-      final dishId = selectedDish!.pID;
-
-      _viewDishDetails = APIResponse.loading();
+    if (selectedDish == null) {
+      _viewDishDetails = throwNotFoundException<DishViewDetailsModel>();
       notifyListeners();
+      return;
+    }
 
+    final dishId = selectedDish!.pID;
+    _viewDishDetails = APIResponse.loading();
+    notifyListeners();
+
+    try {
       final response = await DishesService.getDishDetails(dishId);
 
-      _viewDishDetails = response != null
-          ? APIResponse.completed(response)
-          : throwNotFoundException<DishViewDetailsModel>();
-      notifyListeners();
+      response.fold(
+        (error) =>
+            _viewDishDetails = throwAppException<DishViewDetailsModel>(error),
+        (result) => _viewDishDetails = APIResponse.completed(result),
+      );
     } on AppExceptions catch (error) {
       _viewDishDetails = APIResponse.error(error.message, exception: error);
-      notifyListeners();
-    } catch (e) {
+    } catch (_) {
       _viewDishDetails = throwUnknownErrorException<DishViewDetailsModel>();
+    } finally {
       notifyListeners();
     }
   }
@@ -694,16 +700,30 @@ class DishesController extends ChangeNotifier with BaseController {
 
       // Perform either update or addition based on editDishId
       if (editDishId != null) {
-        await DishesService.updateDish(
+        final response = await DishesService.updateDish(
           editDishId!,
           payload,
         );
+
+        return response.fold((error) {
+          Fluttertoast.showToast(msg: error.message);
+          return ResponseResult.failure;
+        }, (success) {
+          Fluttertoast.showToast(msg: "Dish updated successfully!");
+          return ResponseResult.success;
+        });
       } else {
-        await DishesService.addNewDish(payload);
+        final response = await DishesService.addNewDish(payload);
+        return response.fold((error) {
+          Fluttertoast.showToast(msg: error.message);
+          return ResponseResult.failure;
+        }, (success) {
+          Fluttertoast.showToast(msg: "Dish added successfully!");
+          return ResponseResult.success;
+        });
       }
 
       // Return success if everything goes well
-      return ResponseResult.success;
     } catch (e) {
       Fluttertoast.showToast(msg: "Failed to save dish!");
       // Return failure in case of any exception
@@ -832,24 +852,43 @@ class DishesController extends ChangeNotifier with BaseController {
   Future<void> updateDishStatus() async {
     try {
       if (selectedDish == null) return;
-      await DishesService.updateDishStatus(
+      final response = await DishesService.updateDishStatus(
         productID: viewDishDetails.data!.basicData.pID,
         activeStatus: selectedDish!.active,
       );
+      response.fold((error) {
+        Fluttertoast.showToast(msg: error.message);
+      }, (_) {
+        getDishDetails();
+        fetchDishes();
+      });
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Failed to update dish status!");
     } finally {
-      getDishDetails();
-      fetchDishes();
+      _loadingDishAction = false;
+      notifyListeners();
     }
   }
 
   Future<void> deleteDish() async {
     try {
+      if (_loadingDishAction == true) return;
+      _loadingDishAction = true;
+      notifyListeners();
       if (viewDishDetails.data?.basicData == null) return;
-      await DishesService.deleteProduct(
+      final response = await DishesService.deleteProduct(
         productID: viewDishDetails.data!.basicData.pID,
       );
+      response.fold((error) {
+        Fluttertoast.showToast(msg: error.message);
+      }, (_) {
+        fetchDishes();
+      });
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Failed to delete dish!");
     } finally {
-      fetchDishes();
+      _loadingDishAction = false;
+      notifyListeners();
     }
   }
 

@@ -27,4 +27,11 @@ mixin BaseController {
       exception: error,
     );
   }
+
+  APIResponse<T> throwAppException<T>(AppExceptions error) {
+    return APIResponse.error(
+      error.prefix,
+      exception: error,
+    );
+  }
 }
