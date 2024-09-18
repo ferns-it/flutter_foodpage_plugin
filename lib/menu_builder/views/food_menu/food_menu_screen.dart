@@ -19,17 +19,22 @@ class FoodMenuScreen extends StatefulWidget {
 }
 
 class _FoodMenuScreenState extends State<FoodMenuScreen> {
+  late DishesController dishesController;
+
   @override
   void initState() {
-    context.read<DishesController>().initializeSearchController();
     super.initState();
+    // Initialize dishesController in initState
+    dishesController = context.read<DishesController>();
+    dishesController.initializeSearchController();
   }
 
-  // @override
-  // void dispose() {
-  //   context.read<DishesController>().disposeSearchController();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    // Dispose dishesController before calling super.dispose
+    dishesController.disposeSearchController();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

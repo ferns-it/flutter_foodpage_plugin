@@ -348,7 +348,7 @@ class _BuildAddUpdateCategorySectionState
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    if (context.watch<DishCategoryController>().editMode) ...[
+                    if (controller.editMode) ...[
                       InkWell(
                         onTap: () {
                           controller.resetSelectedCategory();
@@ -501,17 +501,22 @@ class _BuildAddUpdateCategorySectionState
                 ),
                 verticalSpaceRegular,
                 OutlinedButton(
-                  onPressed: !controller.isLoading ? () {
-                    if (controller.editMode) {
-                      controller.updateCategory(onRequestRefresh: () async {
-                        await dishController.initializeAddDishRequiredData();
-                      });
-                      return;
-                    }
-                    controller.addNewCategory(onRequestRefresh: () async {
-                      await dishController.initializeAddDishRequiredData();
-                    });
-                  } : null,
+                  onPressed: !controller.isLoading
+                      ? () {
+                          if (controller.editMode) {
+                            controller.updateCategory(
+                                onRequestRefresh: () async {
+                              await dishController
+                                  .initializeAddDishRequiredData();
+                            });
+                            return;
+                          }
+                          controller.addNewCategory(onRequestRefresh: () async {
+                            await dishController
+                                .initializeAddDishRequiredData();
+                          });
+                        }
+                      : null,
                   style: OutlinedButton.styleFrom(
                     textStyle: textTheme.titleMedium,
                     foregroundColor: MenuBuilderColors.kBlue,
