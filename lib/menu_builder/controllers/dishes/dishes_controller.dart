@@ -53,6 +53,10 @@ class DishesController extends ChangeNotifier with BaseController {
 
   late TextEditingController searchTextEditingController;
 
+  bool _loadingDishAction = false;
+
+  bool get loadingDishAction => _loadingDishAction;
+
   @override
   Future<void> init() async {
     fetchDishes();
@@ -438,7 +442,6 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   void initializeAllFormControllers() {
-    disposeAllFormControllers();
     nameController = TextEditingController();
     descriptionController = TextEditingController();
   }
@@ -511,6 +514,7 @@ class DishesController extends ChangeNotifier with BaseController {
       notifyListeners();
       return;
     }
+
     dishesList = dishesCollection
         .where((dish) => dish.name.toLowerCase().contains(query))
         .toList();
@@ -558,6 +562,11 @@ class DishesController extends ChangeNotifier with BaseController {
       if (addNewDishFormKey.currentState?.validate() == false) {
         return ResponseResult.failure;
       }
+
+      if (_loadingDishAction) return ResponseResult.pending;
+
+      _loadingDishAction = true;
+      notifyListeners();
 
       final isMultiVariation = dishVariationType == DishVariationType.multiple;
 
@@ -700,6 +709,8 @@ class DishesController extends ChangeNotifier with BaseController {
       // Return failure in case of any exception
       return ResponseResult.failure;
     } finally {
+      _loadingDishAction = false;
+      notifyListeners();
       // Always fetch dishes after attempting to add/update
       fetchDishes();
     }

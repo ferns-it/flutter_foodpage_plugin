@@ -47,6 +47,10 @@ class DishModifiersController extends ChangeNotifier with BaseController {
   ];
 
   void addModifierEntry() {
+    final modifierEntry = {
+      "name": TextEditingController(),
+      "price": TextEditingController()
+    };
     modifierEntries.add(modifierEntry);
     notifyListeners();
   }
@@ -55,6 +59,10 @@ class DishModifiersController extends ChangeNotifier with BaseController {
     modifierEntries.removeAt(index);
     notifyListeners();
   }
+
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
 
   @override
   Future<void> init() async {
@@ -112,34 +120,42 @@ class DishModifiersController extends ChangeNotifier with BaseController {
   }
 
   Future<void> addOrUpdateModifier({required VoidCallback onSuccess}) async {
-    if (formKey.currentState?.validate() == true) {
-      final name = groupName.text;
-      final minimum = minimumController.text;
-      final maximum = maximumController.text;
-      final payload = AddDishModifiersModel(
-        name: name,
-        minimumRequired: minimum,
-        maximumRequired: maximum,
-        groupItems: modifierEntries.mapIndexed((index, data) {
-          final name = (data["name"] as TextEditingController).text;
-          final price = (data["price"] as TextEditingController).text;
-          return GroupItems(
-              name: name,
-              price: price,
-              status: "Active",
-              sort: (index + 1).toString());
-        }).toList(),
-      );
+    try {
+      _isLoading = true;
+      notifyListeners();
 
-      if (editMode) {
-        await DishModifiersService.updateModifiers(_editModifierId!, payload);
-      } else {
-        await DishModifiersService.addModifier(payload);
+      if (formKey.currentState?.validate() == true) {
+        final name = groupName.text;
+        final minimum = minimumController.text;
+        final maximum = maximumController.text;
+        final payload = AddDishModifiersModel(
+          name: name,
+          minimumRequired: minimum,
+          maximumRequired: maximum,
+          groupItems: modifierEntries.mapIndexed((index, data) {
+            final name = (data["name"] as TextEditingController).text;
+            final price = (data["price"] as TextEditingController).text;
+            return GroupItems(
+                name: name,
+                price: price,
+                status: "Active",
+                sort: (index + 1).toString());
+          }).toList(),
+        );
+
+        if (editMode) {
+          await DishModifiersService.updateModifiers(_editModifierId!, payload);
+        } else {
+          await DishModifiersService.addModifier(payload);
+        }
+
+        onSuccess();
+        clearFormEntries();
+        listAllModifiers();
       }
-
-      onSuccess();
-      clearFormEntries();
-      listAllModifiers();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

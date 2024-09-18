@@ -43,6 +43,10 @@ class _FlutterFoodpageMenuBuilderState
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final size = mq.size;
+    final bottom = mq.viewInsets.bottom;
+
     List<Widget> screens = [
       const DashboardScreen(),
       const FoodMenuScreen(),
@@ -65,11 +69,17 @@ class _FlutterFoodpageMenuBuilderState
             context.watch<PageNavigationController>();
         final currentPageIndex = pageNavigationController.currentPageIndex;
         return BaseRootWidget(
-          endDrawer: currentPageIndex == 1
-              ? const FoodDetailsSideSheetWidget()
-              : currentPageIndex == 3
-                  ? const AddUpdateModifierSideSheet()
-                  : null,
+          endDrawer: Align(
+            alignment: Alignment.topRight,
+            child: SizedBox(
+              height: size.height - bottom,
+              child: currentPageIndex == 1
+                  ? const FoodDetailsSideSheetWidget()
+                  : currentPageIndex == 3
+                      ? const AddUpdateModifierSideSheet()
+                      : null,
+            ),
+          ),
           child: Expanded(
             child: screens[
                 pageNavigationController.currentPageIndex % screens.length],

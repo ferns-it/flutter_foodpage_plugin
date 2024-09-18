@@ -92,12 +92,14 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                   : const Text("Add Dish"),
               actions: <Widget>[
                 OutlinedButton.icon(
-                  onPressed: () => controller.addOrUpdateDish().then((result) {
-                    if (result == ResponseResult.success) {
-                      Navigator.pop(context);
-                      controller.resetFormEntries();
-                    }
-                  }),
+                  onPressed: !controller.loadingDishAction
+                      ? () => controller.addOrUpdateDish().then((result) {
+                            if (result == ResponseResult.success) {
+                              Navigator.pop(context);
+                              controller.resetFormEntries();
+                            }
+                          })
+                      : null,
                   icon: const Icon(FluentIcons.save_24_filled),
                   label: controller.editDishId != null
                       ? const Text("Update Dish")
@@ -114,7 +116,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
               child: SizedBox(
                 height: size.height - bottom,
                 child: Drawer(
-                  width: size.width * 0.5, // size.width * 0.5
+                  width: size.width * 0.5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4.0),
                   ),

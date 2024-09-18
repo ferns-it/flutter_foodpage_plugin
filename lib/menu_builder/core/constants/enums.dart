@@ -6,7 +6,7 @@ enum CategoryType { parent, child }
 
 enum APIResultType { failed, success }
 
-enum DishVariationType {single, multiple}
+enum DishVariationType { single, multiple }
 
 enum DevelopmentMode {
   release,
@@ -19,5 +19,6 @@ enum DevelopmentMode {
 
 enum ResponseResult {
   success,
+  pending,
   failure;
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/global/global_variable.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/menu_builder_config.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/views/flutter_foodpage_menu_builder.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/core/dependency_register_widget.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/flutter_foodpage_menu_builder.dart';
 import 'package:get/get.dart';
 
 import 'order_online/utils/app_theme.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DependencyRegisterWidget(
       child: GetMaterialApp(
+        key: MenuBuilderGlobalVariable.navState,
         title: 'Flutter Demo',
         theme: appTheme(context),
         debugShowCheckedModeBanner: false,

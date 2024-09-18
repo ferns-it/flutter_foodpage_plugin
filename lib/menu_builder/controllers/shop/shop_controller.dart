@@ -7,8 +7,6 @@ import '../../core/utils/helper_utils.dart';
 import '../../models/shop/shop_timing_model.dart';
 
 class ShopController extends ChangeNotifier with BaseController {
-
-
   ShopDetailsModel? _shopDetails;
 
   ShopDetailsModel? get shopDetails => _shopDetails;
@@ -21,7 +19,7 @@ class ShopController extends ChangeNotifier with BaseController {
   List<String> get shopAvailableDays => shopTimingDetails?.keys.toList() ?? [];
 
   String get shopAvailableDaysStartEnd =>
-      "${convertFirstCharacterToUpperCase(shopAvailableDays.first)} to ${convertFirstCharacterToUpperCase(shopAvailableDays.last)}";
+      "${convertFirstCharacterToUpperCase(shopAvailableDays.firstOrNull ?? "00:00:00")} to ${convertFirstCharacterToUpperCase(shopAvailableDays.firstOrNull ?? "00:00:00")}";
 
   @override
   Future<void> init() async {

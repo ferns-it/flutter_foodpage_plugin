@@ -25,11 +25,11 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    context.read<DishesController>().disposeSearchController();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   context.read<DishesController>().disposeSearchController();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

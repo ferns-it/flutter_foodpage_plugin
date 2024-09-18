@@ -22,6 +22,7 @@ export 'package:flutter_foodpage_plugin/order_online/services/settings/settings_
 export 'package:flutter_foodpage_plugin/order_online/services/status/shop_status_service.dart';
 export 'package:flutter_foodpage_plugin/order_online/services/time/time-service.dart';
 export 'package:flutter_foodpage_plugin/table_reservation/foodpage_table_reservation.dart';
+
 //TABLE RESERVATION
 export 'package:flutter_foodpage_plugin/table_reservation/models/enquire/enquire_model.dart';
 export 'package:flutter_foodpage_plugin/table_reservation/models/new_request/new_request_collection_model.dart';
@@ -33,3 +34,6 @@ export 'package:flutter_foodpage_plugin/table_reservation/models/upcoming_reques
 export 'package:flutter_foodpage_plugin/table_reservation/constants/enums.dart';
 export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/reservation_socket_handler.dart';
 export 'package:flutter_foodpage_plugin/table_reservation/models/reservation/reservation_notifcation_model.dart';
+
+//Menu Builder
+export 'package:flutter_foodpage_plugin/menu_builder/core/global/global_variable.dart';
