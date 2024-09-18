@@ -155,7 +155,7 @@ class DishesService {
         data: json.encode({"status": activeStatus ? "0" : "1"}),
       );
       return response != null
-          ? Right(ResponseResult.success)
+          ? const Right(ResponseResult.success)
           : Left(InternalServerErrorException());
     } on DioException catch (e) {
       return Left(e.error is AppExceptions
