@@ -409,36 +409,14 @@ class _BuildAddUpdateCategorySectionState
                               child: CircularProgressIndicator(strokeWidth: 3),
                             ),
                     ]
-
-                    // Visibility(
-                    //   visible: controller.editMode,
-                    //   child: InkWell(
-                    //     onTap: () {
-                    //       controller.disableEnableCategory(
-                    //           onRequestRefresh: () async {
-                    //         await dishController
-                    //             .initializeAddDishRequiredData();
-                    //         // initializeTableViewController();
-                    //       });
-                    //       controller.formKey.currentState?.reset();
-                    //     },
-                    //     child: Container(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       decoration: BoxDecoration(
-                    //         shape: BoxShape.circle,
-                    //         color: MenuBuilderColors.kPrimaryColor
-                    //             .withOpacity(0.25),
-                    //       ),
-                    //       child: const Icon(
-                    //         Icons.close,
-                    //         color: MenuBuilderColors.kPrimaryColor,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
-                const Divider(height: 40.0),
+                if (controller.isLoading) ...[
+                  verticalSpaceRegular,
+                  const LinearProgressIndicator(minHeight: 3.0),
+                  verticalSpaceSmall,
+                ] else
+                  const Divider(height: 40.0),
                 if (!controller.editMode) ...[
                   Text(
                     "Choose Type",
@@ -523,19 +501,17 @@ class _BuildAddUpdateCategorySectionState
                 ),
                 verticalSpaceRegular,
                 OutlinedButton(
-                  onPressed: () {
+                  onPressed: !controller.isLoading ? () {
                     if (controller.editMode) {
                       controller.updateCategory(onRequestRefresh: () async {
                         await dishController.initializeAddDishRequiredData();
-                        // initializeTableViewController();
                       });
                       return;
                     }
                     controller.addNewCategory(onRequestRefresh: () async {
                       await dishController.initializeAddDishRequiredData();
-                      // initializeTableViewController();
                     });
-                  },
+                  } : null,
                   style: OutlinedButton.styleFrom(
                     textStyle: textTheme.titleMedium,
                     foregroundColor: MenuBuilderColors.kBlue,

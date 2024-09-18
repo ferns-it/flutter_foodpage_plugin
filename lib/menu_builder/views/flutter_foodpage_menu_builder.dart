@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/auth/auth_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_navigation_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
-import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/menu_builder_config.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/category/categories_screen.dart';
@@ -15,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import '../core/constants/menu_builder_app_colors.dart';
 import 'modifier/modifiers_screen.dart';
 
 class FlutterFoodpageMenuBuilder extends StatefulWidget {
@@ -56,39 +56,47 @@ class _FlutterFoodpageMenuBuilderState
 
     final controller = context.watch<AuthController>();
 
-    return controller.authenticationDetails.when(initial: () {
-      return const SizedBox.shrink();
-    }, loading: () {
-      return const Scaffold(
+    return Scaffold(
         backgroundColor: MenuBuilderColors.kWhite2,
-        body: Center(child: _LoadingWidget()),
-      );
-    }, completed: (_) {
-      return Builder(builder: (context) {
-        final pageNavigationController =
-            context.watch<PageNavigationController>();
-        final currentPageIndex = pageNavigationController.currentPageIndex;
-        return BaseRootWidget(
-          endDrawer: Align(
-            alignment: Alignment.topRight,
-            child: SizedBox(
-              height: size.height - bottom,
-              child: currentPageIndex == 1
-                  ? const FoodDetailsSideSheetWidget()
-                  : currentPageIndex == 3
-                      ? const AddUpdateModifierSideSheet()
-                      : null,
+        body: controller.authenticationDetails.when(initial: () {
+          return const SizedBox.shrink();
+        }, loading: () {
+          return const Center(
+            child: _LoadingWidget(),
+          );
+        }, completed: (_) {
+          return Builder(builder: (context) {
+            final pageNavigationController =
+                context.watch<PageNavigationController>();
+            final currentPageIndex = pageNavigationController.currentPageIndex;
+            return BaseRootWidget(
+              endDrawer: Align(
+                alignment: Alignment.topRight,
+                child: SizedBox(
+                  height: size.height - bottom,
+                  child: currentPageIndex == 1
+                      ? const FoodDetailsSideSheetWidget()
+                      : currentPageIndex == 3
+                          ? const AddUpdateModifierSideSheet()
+                          : null,
+                ),
+              ),
+              child: Expanded(
+                child: screens[
+                    pageNavigationController.currentPageIndex % screens.length],
+              ),
+            );
+          });
+        }, error: (message, error) {
+          return Center(
+              child: Text(
+            message ?? "",
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              color: Colors.grey.shade700,
             ),
-          ),
-          child: Expanded(
-            child: screens[
-                pageNavigationController.currentPageIndex % screens.length],
-          ),
-        );
-      });
-    }, error: (message, error) {
-      return Text(message ?? "");
-    });
+          ));
+        }));
   }
 }
 

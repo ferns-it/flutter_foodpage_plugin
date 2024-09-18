@@ -4,6 +4,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_c
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/category_data_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/dishes/dishes_category_service.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/enums.dart';
@@ -100,6 +101,10 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
   @override
   Future<void> init() async {
     nameController = TextEditingController();
@@ -131,20 +136,33 @@ class DishCategoryController extends ChangeNotifier with BaseController {
   }
 
   void addNewCategory({required VoidCallback onRequestRefresh}) async {
-    if (formKey.currentState?.validate() == false) return;
-    if (_addCategoryType == CategoryType.child && _selectedCategoryId == null) {
-      //?? ADD TOAST
-      return;
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      if (formKey.currentState?.validate() == false) return;
+      if (_addCategoryType == CategoryType.child &&
+          _selectedCategoryId == null) {
+        //?? ADD TOAST
+        return;
+      }
+      final parentId =
+          _addCategoryType == CategoryType.parent ? "0" : _selectedCategoryId!;
+      final response = await DishesCategoryService.addNewCategory(
+        name: nameController.text,
+        description: descriptionController.text,
+        parentId: parentId,
+      );
+      response.fold((error) {
+        Fluttertoast.showToast(msg: error.message);
+      }, (response) {
+        clearCategoryForm();
+        onRequestRefresh();
+      });
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    final parentId =
-        _addCategoryType == CategoryType.parent ? "0" : _selectedCategoryId!;
-    await DishesCategoryService.addNewCategory(
-      name: nameController.text,
-      description: descriptionController.text,
-      parentId: parentId,
-    );
-    clearCategoryForm();
-    onRequestRefresh();
   }
 
   void clearCategoryForm() {
@@ -155,25 +173,31 @@ class DishCategoryController extends ChangeNotifier with BaseController {
 
   void updateCategory({required VoidCallback onRequestRefresh}) async {
     try {
+      _isLoading = true;
+      notifyListeners();
       if (formKey.currentState?.validate() == false) return;
       if (selectedCategory?.cID == null) {
         //?? ADD TOAST
         return;
       }
 
-      await DishesCategoryService.updateCategory(
+      final response = await DishesCategoryService.updateCategory(
         name: nameController.text,
         description: descriptionController.text,
         cID: selectedCategory!.cID!,
       );
 
-      onRequestRefresh();
-
-      formKey.currentState?.reset();
-      nameController.clear();
-      descriptionController.clear();
-      _selectedCategory = null;
+      response.fold((error) {
+        Fluttertoast.showToast(msg: error.message);
+      }, (response) {
+        onRequestRefresh();
+        formKey.currentState?.reset();
+        nameController.clear();
+        descriptionController.clear();
+        _selectedCategory = null;
+      });
     } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
@@ -197,12 +221,16 @@ class DishCategoryController extends ChangeNotifier with BaseController {
       final newStatus =
           targetCategory!.categoryStatus == "Active" ? "Inactive" : "Active";
 
-      await DishesCategoryService.disableEnableCategory(
+      final response = await DishesCategoryService.disableEnableCategory(
         targetCategory.cID!,
         newStatus,
       );
 
-      onRequestRefresh();
+      response.fold((error) {
+        Fluttertoast.showToast(msg: error.message);
+      }, (response) {
+        onRequestRefresh();
+      });
     } finally {
       // Ensure loading state is reset after operation
       _categoryStatusLoading = false;
@@ -215,7 +243,14 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     final listOfCategories = dishController.listOfCategories;
     final category = listOfCategories.elementAtOrNull(oldIndex);
     if (category?.cID == null) return;
-    DishesCategoryService.updateCategorySortOrder(category!.cID!, newIndex);
+
+    DishesCategoryService.updateCategorySortOrder(category!.cID!, newIndex)
+        .then((result) {
+      return result.fold((error) {
+        Fluttertoast.showToast(msg: error.message);
+      }, (_) => null);
+    });
+
     dishController.updateCategoryList(oldIndex, newIndex, category);
   }
 

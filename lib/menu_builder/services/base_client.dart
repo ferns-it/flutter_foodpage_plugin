@@ -162,8 +162,9 @@ class BaseClient {
     if (data is String) {
       try {
         final jsonData = json.decode(data) as Map<String, dynamic>?;
-        message =
-            jsonData?['error']?['message'] ?? jsonData?['data']?['message'];
+        message = jsonData?['messages'] ??
+            jsonData?['error']?['message'] ??
+            jsonData?['data']?['message'];
       } catch (e) {
         debugPrint('Not JSON Decodable: $data');
       }
