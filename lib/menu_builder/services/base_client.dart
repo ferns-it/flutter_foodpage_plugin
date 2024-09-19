@@ -162,11 +162,24 @@ class BaseClient {
     if (data is String) {
       try {
         final jsonData = json.decode(data) as Map<String, dynamic>?;
-        message = jsonData?['messages'] ??
+        message = jsonData?['messages']?['error'] ??
+            jsonData?['messages'] ??
             jsonData?['error']?['message'] ??
             jsonData?['data']?['message'];
       } catch (e) {
         debugPrint('Not JSON Decodable: $data');
+        final error = GenericAppException(
+          prefix: "Failed!",
+          message:
+              "Received an invalid response from the server. Please try again later.",
+        );
+
+        return handler.reject(DioException(
+          requestOptions: dioError.requestOptions,
+          error: error,
+          type: type,
+          message: error.message,
+        ));
       }
     }
 
