@@ -34,6 +34,7 @@ class _DashboardPageState extends State<DashboardPage>
       authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae",
       shopId: '1',
       socketHandler: this,
+      onFcmTopicRegister: (topic) {},
     );
     getNewRequests();
   }
@@ -178,6 +179,7 @@ class _DashboardCard extends GetView<DashboardController> {
   }) : super(key: key);
   final String itemName, label;
   final int itemIndex;
+
   @override
   Widget build(BuildContext context) {
     final navigationList = [

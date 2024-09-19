@@ -11,8 +11,11 @@ import 'package:flutter_foodpage_plugin/table_reservation/services/reservation_s
 import 'package:flutter_foodpage_plugin/table_reservation/services/shared_preference/auth_preference.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/socket/socket_service.dart';
 
+import 'constants/strings.dart';
 import 'models/history/history_request_collection_model.dart';
 import 'services/shared_preference/reservation_notification_preference.dart';
+
+typedef FCMTopicRegisterCallback = void Function(String topic);
 
 class FoodpageTableReservation {
   static final _preference = AuthPreference();
@@ -23,11 +26,16 @@ class FoodpageTableReservation {
 
   FoodpageTableReservation._internal();
 
+  /// FCM Table Reservation Events Topic Name
+  static String getReservationEventsTopic(String shopId) =>
+      "$kFCMTableReservationTopic-$shopId";
+
   static Future<FoodpageTableReservation> create({
     required String authenticationKey,
     required String shopId,
     required ReservationSocketHandler socketHandler,
     DevelopmentMode developmentMode = DevelopmentMode.development,
+    required FCMTopicRegisterCallback onFcmTopicRegister,
   }) async {
     _socketHandler = socketHandler;
     // Call the private constructor
@@ -39,6 +47,9 @@ class FoodpageTableReservation {
     );
     // Do initialization that requires async
     await _preference.saveAuthKeyData(authModel);
+
+    // Register Firebase Messaging Topic Request Callback
+    onFcmTopicRegister(getReservationEventsTopic(shopId));
 
     _socketService = SocketService(
       ApiEndpoints.socketBaseUrl,
