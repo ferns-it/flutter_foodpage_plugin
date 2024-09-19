@@ -321,7 +321,7 @@ class AddModifiersFormWidget extends StatelessWidget {
                         flex: 2,
                         child: CustomRoundedTextField.topText(
                           topText: "Price",
-                          hintText: "₹0.00",
+                          hintText: "£0.00",
                           borderRadius: BorderRadius.circular(8.0),
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
@@ -364,7 +364,7 @@ class AddModifiersFormWidget extends StatelessWidget {
                         flex: 2,
                         child: CustomRoundedTextField.topText(
                           topText: "Price",
-                          hintText: "₹0.00",
+                          hintText: "£0.00",
                           borderRadius: BorderRadius.circular(8.0),
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
