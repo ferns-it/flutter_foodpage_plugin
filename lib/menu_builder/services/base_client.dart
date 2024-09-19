@@ -162,10 +162,15 @@ class BaseClient {
     if (data is String) {
       try {
         final jsonData = json.decode(data) as Map<String, dynamic>?;
-        message = jsonData?['messages']?['error'] ??
-            jsonData?['messages'] ??
-            jsonData?['error']?['message'] ??
-            jsonData?['data']?['message'];
+        if (jsonData != null) {
+          message = jsonData['messages'] is String
+              ? jsonData['messages']
+              : (jsonData['messages']?['error']) ??
+                  (jsonData['error']?['message']) ??
+                  (jsonData['data']?['message']) ??
+                  (jsonData['error']) ??
+                  "An unknown error occurred.";
+        }
       } catch (e) {
         debugPrint('Not JSON Decodable: $data');
         final error = GenericAppException(
