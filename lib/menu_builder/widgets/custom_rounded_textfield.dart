@@ -30,6 +30,7 @@ class CustomRoundedTextField extends StatelessWidget {
     this.maxLines,
     this.readOnly = false,
     this.autovalidateMode,
+    this.onTapField,
   })  : _topText = topText,
         super(key: key);
 
@@ -57,6 +58,7 @@ class CustomRoundedTextField extends StatelessWidget {
     this.maxLines,
     this.readOnly = false,
     this.autovalidateMode,
+    this.onTapField,
   })  : _topText = null,
         super(key: key);
 
@@ -77,14 +79,13 @@ class CustomRoundedTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final int? maxLines;
   final AutovalidateMode? autovalidateMode;
-
   final void Function(String?)? onFieldSubmitted;
 
   final bool obscureText;
   final Widget? suffixIcon;
-  final ValueChanged<String>? onChanged; // Added onChanged parameter
-  final List<TextInputFormatter>?
-      inputFormatters; // Added inputFormatters parameter
+  final ValueChanged<String>? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
+  final VoidCallback? onTapField;
 
   BorderSide get _borderSide => const BorderSide(
         color: MenuBuilderColors.kLightGrey,
@@ -125,6 +126,7 @@ class CustomRoundedTextField extends StatelessWidget {
     return Builder(builder: (context) {
       final textTheme = Theme.of(context).textTheme;
       return TextFormField(
+        onTap: onTapField,
         textInputAction: textInputAction,
         keyboardType: keyboardType,
         controller: textEditingController,

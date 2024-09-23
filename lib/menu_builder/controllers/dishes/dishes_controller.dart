@@ -34,6 +34,8 @@ class DishesController extends ChangeNotifier with BaseController {
   AddDishInitializeDataModel? get addDishInitializeData =>
       _addDishInitializeData;
 
+  int get totalCategories => addDishInitializeData?.category.data.length ?? 0;
+
   List<String> get listOfAvailabilityDays =>
       _addDishInitializeData?.availability.data?.availability?.options ?? [];
 

@@ -100,22 +100,21 @@ class AddAvailabilitySideSheet extends StatelessWidget {
                       child: CustomRoundedTextField.topText(
                         topText: "Start Time",
                         hintText: "Pick time",
+                        onTapField: () async {
+                          final pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+
+                          );
+                          if (pickedTime == null) return;
+                          controller.onStartTimeChange(index, pickedTime);
+                        },
                         textEditingController: startTimeController,
                         borderRadius: BorderRadius.circular(4.0),
                         readOnly: true,
-                        suffixIcon: InkWell(
-                          onTap: () async {
-                            final pickedTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                            );
-                            if (pickedTime == null) return;
-                            controller.onStartTimeChange(index, pickedTime);
-                          },
-                          child: const Icon(
-                            Icons.schedule,
-                            color: MenuBuilderColors.kOrange,
-                          ),
+                        suffixIcon: const Icon(
+                          Icons.schedule,
+                          color: MenuBuilderColors.kOrange,
                         ),
                       ),
                     ),
