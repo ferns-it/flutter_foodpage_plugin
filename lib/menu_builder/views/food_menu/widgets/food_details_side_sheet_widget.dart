@@ -68,62 +68,64 @@ class _FoodDetailsSideSheetWidgetState
                           color: MenuBuilderColors.kBlack,
                         )),
                     const Spacer(),
-                    InkWell(
-                      onTap: () {
-                        controller.initializeAllFormControllers();
-                        controller.onPressEditButton();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            fullscreenDialog: true,
-                            builder: (context) => const AddFoodScreen(),
+                    if (controller.dishDetailsLoaded) ...[
+                      InkWell(
+                        onTap: () {
+                          controller.initializeAllFormControllers();
+                          controller.onPressEditButton();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              fullscreenDialog: true,
+                              builder: (context) => const AddFoodScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: MenuBuilderColors.kBlue.withOpacity(0.1),
                           ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: MenuBuilderColors.kBlue.withOpacity(0.1),
-                        ),
-                        child: const Icon(
-                          Icons.edit,
-                          color: MenuBuilderColors.kBlue,
+                          child: const Icon(
+                            Icons.edit,
+                            color: MenuBuilderColors.kBlue,
+                          ),
                         ),
                       ),
-                    ),
-                    horizontalSpaceRegular,
-                    !controller.loadingDishAction
-                        ? InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: () {
-                              controller.deleteDish();
-                              Future.delayed(
-                                const Duration(seconds: 1),
-                                () {
-                                  Navigator.pop(context);
-                                },
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: MenuBuilderColors.kPrimaryColor
-                                    .withOpacity(0.1),
+                      horizontalSpaceRegular,
+                      !controller.loadingDishAction
+                          ? InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () {
+                                controller.deleteDish();
+                                Future.delayed(
+                                  const Duration(seconds: 1),
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: MenuBuilderColors.kPrimaryColor
+                                      .withOpacity(0.1),
+                                ),
+                                child: const Icon(
+                                  Icons.delete_forever,
+                                  color: MenuBuilderColors.kPrimaryColor,
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.delete_forever,
-                                color: MenuBuilderColors.kPrimaryColor,
+                            )
+                          : const SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3.0,
                               ),
                             ),
-                          )
-                        : const SizedBox(
-                          height: 30,
-                          width: 30,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3.0,
-                          ),
-                        ),
+                    ]
                   ],
                 ),
               ),

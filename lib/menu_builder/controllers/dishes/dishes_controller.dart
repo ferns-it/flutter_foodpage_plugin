@@ -29,6 +29,8 @@ class DishesController extends ChangeNotifier with BaseController {
 
   APIResponse<DishViewDetailsModel> get viewDishDetails => _viewDishDetails;
 
+  bool get dishDetailsLoaded => viewDishDetails.data != null;
+
   AddDishInitializeDataModel? _addDishInitializeData;
 
   AddDishInitializeDataModel? get addDishInitializeData =>
@@ -360,7 +362,7 @@ class DishesController extends ChangeNotifier with BaseController {
   ];
 
   void addAvailabilityEntries() {
-    dishAvailabilityEntries.add((null, null));
+    dishAvailabilityEntries = [...dishAvailabilityEntries, (null, null)];
     notifyListeners();
   }
 
@@ -607,7 +609,7 @@ class DishesController extends ChangeNotifier with BaseController {
       final isDineinReq = _dineInStatus ? 'Yes' : 'No';
 
       // Extract values from variationsFormEntries and validate
-      final priceReq = double.parse(singleVariationPriceController.text);
+      final priceReq = double.tryParse(singleVariationPriceController.text);
 
       // Initialize and validate listOfParentCategoriesId and listOfSubCategoriesId
       final listOfParentCategoriesId = choosedParentCategory
