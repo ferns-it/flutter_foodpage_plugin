@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
         home: FlutterFoodpageMenuBuilder(
           config: MenuBuilderConfig(
-            authenticationKey: "bb1fad8038d623bf7446cdf031d3deab",
+            authenticationKey: "949221b4ca632538eff4a088de002fc1",
             mode: DevelopmentMode.development,
             geminiAPIKey: "<gemini-api-key>",
             applicationName: "EPOS",

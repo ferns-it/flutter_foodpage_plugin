@@ -807,12 +807,11 @@ class DishesController extends ChangeNotifier with BaseController {
                 "ingredients": TextEditingController()
                   ..text = variation.ingredients,
                 "isUnlimitedStock": variation.isUnlimitedStock,
-                "allergens": variation.selectedallergens.map((e) {
-                  return e.id;
-                }).toList(),
+                "allergens": variation.selectedallergens,
               })
           .toList();
       variationsFormEntries = List.from(elements);
+      onChangeDishVariationType(DishVariationType.multiple);
     } else if (dishData.variationData.isNotEmpty) {
       final variation = dishData.variationData.first;
       singleVariationPriceController.text = variation.price;
@@ -903,6 +902,7 @@ class DishesController extends ChangeNotifier with BaseController {
     }
     _onlineStatus = true;
     _dineInStatus = true;
+    onChangeDishVariationType(DishVariationType.single);
     variationsFormEntries.clear();
     variationsFormEntries.add(variationFormEntry);
     choosedMasterAddons.clear();
