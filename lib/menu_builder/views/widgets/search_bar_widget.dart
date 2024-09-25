@@ -31,6 +31,11 @@ class SearchBarWidget extends StatelessWidget {
         errorBorder: _inputBorder,
         enabledBorder: _inputBorder,
         contentPadding: EdgeInsets.zero,
+        suffixIcon: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              searchTextController.clear();
+            }),
       ),
       onChanged: onSearchChanged,
       controller: searchTextController,

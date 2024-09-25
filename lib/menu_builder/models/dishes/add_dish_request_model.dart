@@ -106,7 +106,7 @@ class AddDishRequestModel with AddDishData {
       'price': price,
       'isUnlimitedStock': isUnlimitedStock,
       'quantity': quantity,
-      'allergns': allergns,
+      'allergensMaster': allergns,
       'ingredients': ingredients,
       'allDayAvailable': allDayAvailable,
       'availability': availability,
@@ -136,7 +136,7 @@ class AddDishRequestModel with AddDishData {
           ? map['isUnlimitedStock'] as int
           : null,
       quantity: map['quantity'] != null ? map['quantity'] as int : null,
-      allergns: List<String>.from((map['allergns'] as List<String>)),
+      allergns: List<String>.from((map['allergensMaster'] as List<String>)),
       ingredients:
           map['ingredients'] != null ? map['ingredients'] as String : null,
       allDayAvailable: map['allDayAvailable'] != null

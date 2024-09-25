@@ -61,6 +61,8 @@ class DishesController extends ChangeNotifier with BaseController {
 
   bool get loadingDishAction => _loadingDishAction;
 
+  CategoryData get allCategory => CategoryData(name: "All", cID: "0");
+
   @override
   Future<void> init() async {
     fetchDishes();
@@ -73,9 +75,14 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void initializeSearchController() {
     searchTextEditingController = TextEditingController();
+    searchTextEditingController.addListener(() {
+      final query = searchTextEditingController.text;
+      searchDishes(query);
+    });
   }
 
   void disposeSearchController() {
+    searchDishes(null);
     searchTextEditingController.dispose();
   }
 
@@ -509,6 +516,10 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   List<DishDetails> filterDishesByCategory(CategoryData category) {
+    if (category == allCategory) {
+      return dishesList;
+    }
+
     return dishesList
         .where((dish) => dish.categories.any((cat) => cat.cID == category.cID))
         .toList();
@@ -692,7 +703,6 @@ class DishesController extends ChangeNotifier with BaseController {
               online: isOnlineReq,
               dining: isDineinReq,
               name: nameController.text,
-              // Ensure nameController is initialized
               description: descriptionController.text,
               category: listOfCategories,
               addonsMasterGroup: addonsMasterGroup,

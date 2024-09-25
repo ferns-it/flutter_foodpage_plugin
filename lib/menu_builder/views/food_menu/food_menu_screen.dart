@@ -103,9 +103,7 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
                   elevation: 3,
                   shadowColor: Colors.grey.withOpacity(0.3),
                   child: SearchBarWidget(
-                    onSearchChanged: (String? query) {
-                      controller.searchDishes(query);
-                    },
+                    onSearchChanged: (String? query) {},
                     searchTextController: context
                         .read<DishesController>()
                         .searchTextEditingController,
@@ -121,7 +119,12 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
             }, loading: () {
               return const Center(child: CircularProgressIndicator());
             }, completed: (_) {
-              final categories = controller.listOfCategories;
+              var categoriesCollection = controller.listOfCategories;
+              var categories = [
+                controller.allCategory,
+                ...categoriesCollection
+              ];
+
               final categoryController =
                   context.watch<DishCategoryController>();
 
@@ -154,39 +157,41 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              !categoryController.categoryStatusLoading
-                                  ? TextButton.icon(
-                                      label: const Text("Active"),
-                                      style: TextButton.styleFrom(
-                                        textStyle: textTheme.titleMedium,
+                              if (category != controller.allCategory)
+                                !categoryController.categoryStatusLoading
+                                    ? TextButton.icon(
+                                        label: const Text("Active"),
+                                        style: TextButton.styleFrom(
+                                          textStyle: textTheme.titleMedium,
+                                        ),
+                                        onPressed: () {
+                                          categoryController
+                                              .disableEnableCategory(
+                                                  category: category,
+                                                  onRequestRefresh: () async {
+                                                    await controller
+                                                        .initializeAddDishRequiredData();
+                                                  });
+                                        },
+                                        icon:
+                                            category.categoryStatus != "Active"
+                                                ? const Icon(
+                                                    Icons.close,
+                                                    color: MenuBuilderColors
+                                                        .kMaterialRed,
+                                                  )
+                                                : const Icon(
+                                                    Icons.check,
+                                                    color: MenuBuilderColors
+                                                        .kSuccessGreen2,
+                                                  ),
+                                      )
+                                    : const SizedBox(
+                                        height: 30,
+                                        width: 30,
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 3),
                                       ),
-                                      onPressed: () {
-                                        categoryController
-                                            .disableEnableCategory(
-                                                category: category,
-                                                onRequestRefresh: () async {
-                                                  await controller
-                                                      .initializeAddDishRequiredData();
-                                                });
-                                      },
-                                      icon: category.categoryStatus != "Active"
-                                          ? const Icon(
-                                              Icons.close,
-                                              color: MenuBuilderColors
-                                                  .kMaterialRed,
-                                            )
-                                          : const Icon(
-                                              Icons.check,
-                                              color: MenuBuilderColors
-                                                  .kSuccessGreen2,
-                                            ),
-                                    )
-                                  : const SizedBox(
-                                      height: 30,
-                                      width: 30,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 3),
-                                    ),
                               verticalSpaceSmall,
                               Expanded(
                                 child: AlignedGridView.count(
@@ -205,7 +210,7 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
                                     );
                                   },
                                 ),
-                              ),
+                              )
                             ],
                           );
                         }).toList()),
