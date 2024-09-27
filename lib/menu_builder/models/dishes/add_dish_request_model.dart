@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 
 import 'add_dish_data.dart';
 
@@ -25,6 +25,8 @@ class AddDishRequestModel with AddDishData {
   final List<String> availability;
   final List<Map<String, dynamic>> timing;
   final List<String> addonsMasterGroup;
+  final String? itemCode;
+
   AddDishRequestModel({
     this.productType,
     this.type,
@@ -45,6 +47,7 @@ class AddDishRequestModel with AddDishData {
     this.availability = const [],
     this.timing = const [],
     this.addonsMasterGroup = const [],
+    this.itemCode,
   });
 
   AddDishRequestModel copyWith({
@@ -67,6 +70,7 @@ class AddDishRequestModel with AddDishData {
     List<String>? availability,
     List<Map<String, dynamic>>? timing,
     List<String>? addonsMasterGroup,
+    String? itemCode,
   }) {
     return AddDishRequestModel(
       productType: productType ?? this.productType,
@@ -88,9 +92,11 @@ class AddDishRequestModel with AddDishData {
       availability: availability ?? this.availability,
       timing: timing ?? this.timing,
       addonsMasterGroup: addonsMasterGroup ?? this.addonsMasterGroup,
+      itemCode: itemCode ?? this.itemCode,
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'productType': productType,
@@ -112,6 +118,7 @@ class AddDishRequestModel with AddDishData {
       'availability': availability,
       'timing': timing,
       'addonsMasterGroup': addonsMasterGroup,
+      'itemCode': itemCode,
     };
   }
 
@@ -150,6 +157,7 @@ class AddDishRequestModel with AddDishData {
       ),
       addonsMasterGroup:
           List<String>.from((map['addonsMasterGroup'] as List<String>)),
+      itemCode: map['itemCode'],
     );
   }
 
@@ -161,12 +169,13 @@ class AddDishRequestModel with AddDishData {
 
   @override
   String toString() {
-    return 'AddSingleDishRequest(productType: $productType, type: $type, online: $online, dining: $dining, name: $name, description: $description, photo: $photo, category: $category, activeStatus: $activeStatus, productMenuGroup: $productMenuGroup, price: $price, isUnlimitedStock: $isUnlimitedStock, quantity: $quantity, allergns: $allergns, ingredients: $ingredients, allDayAvailable: $allDayAvailable, availability: $availability, timing: $timing, addonsMasterGroup: $addonsMasterGroup)';
+    return 'AddDishRequestModel(productType: $productType, type: $type, online: $online, dining: $dining, name: $name, description: $description, photo: $photo, category: $category, activeStatus: $activeStatus, productMenuGroup: $productMenuGroup, price: $price, isUnlimitedStock: $isUnlimitedStock, quantity: $quantity, allergns: $allergns, ingredients: $ingredients, allDayAvailable: $allDayAvailable, availability: $availability, timing: $timing, addonsMasterGroup: $addonsMasterGroup, itemCode: $itemCode)';
   }
 
   @override
   bool operator ==(covariant AddDishRequestModel other) {
     if (identical(this, other)) return true;
+    final listEquals = const DeepCollectionEquality().equals;
 
     return other.productType == productType &&
         other.type == type &&
@@ -186,7 +195,8 @@ class AddDishRequestModel with AddDishData {
         other.allDayAvailable == allDayAvailable &&
         listEquals(other.availability, availability) &&
         listEquals(other.timing, timing) &&
-        listEquals(other.addonsMasterGroup, addonsMasterGroup);
+        listEquals(other.addonsMasterGroup, addonsMasterGroup) &&
+        other.itemCode == itemCode;
   }
 
   @override
@@ -209,6 +219,7 @@ class AddDishRequestModel with AddDishData {
         allDayAvailable.hashCode ^
         availability.hashCode ^
         timing.hashCode ^
-        addonsMasterGroup.hashCode;
+        addonsMasterGroup.hashCode ^
+        itemCode.hashCode;
   }
 }
