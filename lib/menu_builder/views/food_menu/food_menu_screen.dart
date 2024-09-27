@@ -159,10 +159,15 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
                             children: <Widget>[
                               if (category != controller.allCategory)
                                 !categoryController.categoryStatusLoading
-                                    ? TextButton.icon(
+                                    ? OutlinedButton.icon(
                                         label: const Text("Active"),
-                                        style: TextButton.styleFrom(
+                                        style: OutlinedButton.styleFrom(
                                           textStyle: textTheme.titleMedium,
+                                          backgroundColor: Colors.white,
+                                          side: BorderSide(
+                                            width: 1,
+                                            color: Colors.grey.shade300,
+                                          ),
                                         ),
                                         onPressed: () {
                                           categoryController

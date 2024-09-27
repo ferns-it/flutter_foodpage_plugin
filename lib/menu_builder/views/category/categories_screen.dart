@@ -365,10 +365,14 @@ class _BuildAddUpdateCategorySectionState
                     if (controller.selectedCategory != null) ...[
                       const Spacer(),
                       !controller.categoryStatusLoading
-                          ? TextButton.icon(
+                          ? OutlinedButton.icon(
                               label: const Text("Active"),
-                              style: TextButton.styleFrom(
+                              style: OutlinedButton.styleFrom(
                                 textStyle: textTheme.titleMedium,
+                                side: BorderSide(
+                                  width: 1,
+                                  color: Colors.grey.shade300,
+                                ),
                               ),
                               onPressed: () {
                                 controller.disableEnableCategory(
