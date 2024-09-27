@@ -442,6 +442,7 @@ class DishesController extends ChangeNotifier with BaseController {
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
   late TextEditingController nameController;
   late TextEditingController descriptionController;
+  late TextEditingController itemCodeController;
 
   String? _editDishId;
 
@@ -455,11 +456,13 @@ class DishesController extends ChangeNotifier with BaseController {
   void initializeAllFormControllers() {
     nameController = TextEditingController();
     descriptionController = TextEditingController();
+    itemCodeController = TextEditingController();
   }
 
   void disposeAllFormControllers() {
     nameController.dispose();
     descriptionController.dispose();
+    itemCodeController.dispose();
   }
 
   Future<void> fetchDishes() async {
@@ -694,6 +697,7 @@ class DishesController extends ChangeNotifier with BaseController {
               quantity: 0,
               addonsMasterGroup: addonsMasterGroup,
               productMenuGroup: choosedMenus,
+              itemCode: itemCodeController.text,
             )
           : AddDishRequestWithVariationModel(
               productType: productType,
@@ -710,6 +714,7 @@ class DishesController extends ChangeNotifier with BaseController {
               availability: availableDays,
               timing: timing,
               productMenuGroup: choosedMenus,
+              itemCode: itemCodeController.text,
             );
 
       // Perform either update or addition based on editDishId
@@ -762,6 +767,7 @@ class DishesController extends ChangeNotifier with BaseController {
     // Dish Name & Description
     nameController.text = dishData.basicData.name;
     descriptionController.text = removeHtmlTags(dishData.basicData.description);
+    itemCodeController.text = dishData.basicData.itemCode;
 
     // Dish Type
     final dishType = selectedDish?.type;
@@ -930,6 +936,7 @@ class DishesController extends ChangeNotifier with BaseController {
     singleVariationPriceController.clear();
     singleVariationIngredientsController.clear();
     singleSelectedAllergens.clear();
+    itemCodeController.clear();
 
     activeDefaultSelectedInMenu();
   }

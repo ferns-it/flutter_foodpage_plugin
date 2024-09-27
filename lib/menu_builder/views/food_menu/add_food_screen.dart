@@ -235,129 +235,165 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                     ],
                                   ),
                                   verticalSpaceRegular,
-                                  CustomRoundedTextField.topText(
-                                    hintText: "Short note about dish..",
-                                    topText: "Description",
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    maxLines: 2,
-                                    keyboardType: TextInputType.text,
-                                    textInputAction: TextInputAction.done,
-                                    textEditingController:
-                                        controller.descriptionController,
-                                    suffixIcon: context
-                                            .watch<GeminiController>()
-                                            .dishDescriptionGenerating
-                                        ? const Padding(
-                                            padding: EdgeInsets.all(10.0),
-                                            child: SizedBox(
-                                              height: 26.0,
-                                              width: 26.0,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2.5,
-                                              ),
-                                            ),
-                                          )
-                                        : InkWell(
-                                            customBorder: const CircleBorder(),
-                                            onTapDown:
-                                                (TapDownDetails details) {
-                                              _tapDownPosition =
-                                                  details.globalPosition;
-                                            },
-                                            onLongPress: () async {
-                                              if (_tapDownPosition == null) {
-                                                return;
-                                              }
-
-                                              final RenderBox overlay =
-                                                  Overlay.of(context)
-                                                          .context
-                                                          .findRenderObject()
-                                                      as RenderBox;
-
-                                              await showMenu(
-                                                context: context,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                ),
-                                                items: [
-                                                  PopupMenuItem(
-                                                    value: 0,
-                                                    child: const Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: <Widget>[
-                                                        Icon(
-                                                          Icons
-                                                              .spellcheck_outlined,
-                                                          size: 22,
-                                                        ),
-                                                        SizedBox(width: 14.0),
-                                                        Text(
-                                                            "Spelling & Grammar"),
-                                                      ],
+                                  Row(
+                                    children: <Widget>[
+                                      Flexible(
+                                        flex: 2,
+                                        child: CustomRoundedTextField.topText(
+                                          hintText: "Short note about dish..",
+                                          topText: "Description",
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          maxLines: 2,
+                                          keyboardType: TextInputType.text,
+                                          textInputAction: TextInputAction.next,
+                                          textEditingController:
+                                              controller.descriptionController,
+                                          suffixIcon: context
+                                                  .watch<GeminiController>()
+                                                  .dishDescriptionGenerating
+                                              ? const Padding(
+                                                  padding: EdgeInsets.all(10.0),
+                                                  child: SizedBox(
+                                                    height: 26.0,
+                                                    width: 26.0,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      strokeWidth: 2.5,
                                                     ),
-                                                    onTap: () async {
-                                                      final desc = controller
-                                                          .descriptionController
-                                                          .text;
-                                                      if (desc.isEmpty) {
-                                                        Fluttertoast.showToast(
-                                                          msg:
-                                                              "Description cannot be empty!",
-                                                        );
-                                                        return;
-                                                      }
-                                                      final generatedContent =
-                                                          await geminiController
-                                                              .spellAndGrammarDishDescription(
-                                                        desc,
-                                                      );
-
-                                                      if (generatedContent !=
-                                                          null) {
-                                                        controller
-                                                                .descriptionController
-                                                                .text =
-                                                            generatedContent;
-                                                      }
-                                                    },
                                                   ),
-                                                ],
-                                                position: RelativeRect.fromLTRB(
-                                                  _tapDownPosition!.dx,
-                                                  _tapDownPosition!.dy,
-                                                  overlay.size.width -
-                                                      _tapDownPosition!.dx,
-                                                  overlay.size.height -
-                                                      _tapDownPosition!.dy,
+                                                )
+                                              : InkWell(
+                                                  customBorder:
+                                                      const CircleBorder(),
+                                                  onTapDown:
+                                                      (TapDownDetails details) {
+                                                    _tapDownPosition =
+                                                        details.globalPosition;
+                                                  },
+                                                  onLongPress: () async {
+                                                    if (_tapDownPosition ==
+                                                        null) {
+                                                      return;
+                                                    }
+
+                                                    final RenderBox overlay =
+                                                        Overlay.of(context)
+                                                                .context
+                                                                .findRenderObject()
+                                                            as RenderBox;
+
+                                                    await showMenu(
+                                                      context: context,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                      ),
+                                                      items: [
+                                                        PopupMenuItem(
+                                                          value: 0,
+                                                          child: const Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: <Widget>[
+                                                              Icon(
+                                                                Icons
+                                                                    .spellcheck_outlined,
+                                                                size: 22,
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 14.0),
+                                                              Text(
+                                                                  "Spelling & Grammar"),
+                                                            ],
+                                                          ),
+                                                          onTap: () async {
+                                                            final desc = controller
+                                                                .descriptionController
+                                                                .text;
+                                                            if (desc.isEmpty) {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg:
+                                                                    "Description cannot be empty!",
+                                                              );
+                                                              return;
+                                                            }
+                                                            final generatedContent =
+                                                                await geminiController
+                                                                    .spellAndGrammarDishDescription(
+                                                              desc,
+                                                            );
+
+                                                            if (generatedContent !=
+                                                                null) {
+                                                              controller
+                                                                      .descriptionController
+                                                                      .text =
+                                                                  generatedContent;
+                                                            }
+                                                          },
+                                                        ),
+                                                      ],
+                                                      position:
+                                                          RelativeRect.fromLTRB(
+                                                        _tapDownPosition!.dx,
+                                                        _tapDownPosition!.dy,
+                                                        overlay.size.width -
+                                                            _tapDownPosition!
+                                                                .dx,
+                                                        overlay.size.height -
+                                                            _tapDownPosition!
+                                                                .dy,
+                                                      ),
+                                                    );
+                                                  },
+                                                  onTap: () async {
+                                                    final name = controller
+                                                        .nameController.text;
+                                                    if (name.isEmpty) {
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              "Dish Name cannot be empty!");
+                                                      return;
+                                                    }
+                                                    final generatedContent =
+                                                        await geminiController
+                                                            .generateDishDescription(
+                                                                name);
+                                                    if (generatedContent !=
+                                                        null) {
+                                                      controller
+                                                          .descriptionController
+                                                          .text = generatedContent;
+                                                    }
+                                                  },
+                                                  child: const Icon(
+                                                    FluentIcons
+                                                        .sparkle_24_regular,
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                            onTap: () async {
-                                              final name = controller
-                                                  .nameController.text;
-                                              if (name.isEmpty) {
-                                                Fluttertoast.showToast(
-                                                    msg:
-                                                        "Dish Name cannot be empty!");
-                                                return;
-                                              }
-                                              final generatedContent =
-                                                  await geminiController
-                                                      .generateDishDescription(
-                                                          name);
-                                              if (generatedContent != null) {
-                                                controller.descriptionController
-                                                    .text = generatedContent;
-                                              }
-                                            },
-                                            child: const Icon(
-                                              FluentIcons.sparkle_24_regular,
-                                            ),
+                                        ),
+                                      ),
+                                      horizontalSpaceMedium,
+                                      Flexible(
+                                        child: CustomRoundedTextField.topText(
+                                          hintText:
+                                              "Enter Item Code (eg: 1, 2, 3...)",
+                                          topText: "Item Code",
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
                                           ),
+                                          keyboardType: TextInputType.text,
+                                          textInputAction: TextInputAction.done,
+                                          textEditingController:
+                                              controller.itemCodeController,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                   verticalSpaceMedium,
                                   CustomRadioCheckboxGroup(
