@@ -17,6 +17,7 @@ class NewReservationModel {
   final AmountStatusRequest? amountStatus;
   final PaymentMethod? paymentMethod;
   final String? transactionID;
+  final String? baseUrl;
   final String source;
   NewReservationModel({
     required this.userID,
@@ -32,6 +33,7 @@ class NewReservationModel {
     required this.amountStatus,
     required this.paymentMethod,
     required this.transactionID,
+    this.baseUrl = 'NULL',
     this.source = 'Flutter',
   });
 
@@ -49,6 +51,7 @@ class NewReservationModel {
     AmountStatusRequest? amountStatus,
     PaymentMethod? paymentMethod,
     String? transactionID,
+    String? baseUrl,
     String? source,
   }) {
     return NewReservationModel(
@@ -65,6 +68,7 @@ class NewReservationModel {
       amountStatus: amountStatus ?? this.amountStatus,
       paymentMethod: paymentMethod ?? this.paymentMethod,
       transactionID: transactionID ?? this.transactionID,
+      baseUrl: baseUrl ?? this.baseUrl,
       source: source ?? this.source,
     );
   }
@@ -84,6 +88,7 @@ class NewReservationModel {
       'amountStatus': amountStatus?.label,
       'paymentMethod': paymentMethod?.label,
       'transactionID': transactionID,
+      'baseUrl': baseUrl,
       'source': source,
     };
   }
@@ -96,20 +101,14 @@ class NewReservationModel {
       email: map['email'] as String,
       chairs: map['chairs'] as String,
       message: map['message'] != null ? map['message'] as String : null,
-      shopmessage:
-          map['shopmessage'] != null ? map['shopmessage'] as String : null,
+      shopmessage: map['shopmessage'] != null ? map['shopmessage'] as String : null,
       bookingTime: map['bookingTime'] as String,
-      advancePayment:
-          ConditionValues.fromLabel(map['advancePayment'] as String),
+      advancePayment: ConditionValues.fromLabel(map['advancePayment'] as String),
       advanceAmount: map['advanceAmount'] as String,
-      amountStatus: map['amountStatus'] != null
-          ? AmountStatusRequest.fromLabel(map['amountStatus'] as String)
-          : null,
-      paymentMethod: map['paymentMethod'] != null
-          ? PaymentMethod.fromLabel(map['paymentMethod'] as String)
-          : null,
-      transactionID:
-          map['transactionID'] != null ? map['transactionID'] as String : null,
+      amountStatus: map['amountStatus'] != null ? AmountStatusRequest.fromLabel(map['amountStatus'] as String) : null,
+      paymentMethod: map['paymentMethod'] != null ? PaymentMethod.fromLabel(map['paymentMethod'] as String) : null,
+      transactionID: map['transactionID'] != null ? map['transactionID'] as String : null,
+      baseUrl:map['baseUrl'] as String ,
       source: map['source'] as String,
     );
   }
@@ -121,7 +120,7 @@ class NewReservationModel {
 
   @override
   String toString() {
-    return 'NewReservationModel(userID: $userID, name: $name, phone: $phone, email: $email, chairs: $chairs, message: $message, shopmessage: $shopmessage, bookingTime: $bookingTime, advancePayment: $advancePayment, advanceAmount: $advanceAmount, amountStatus: $amountStatus, paymentMethod: $paymentMethod, transactionID: $transactionID, source: $source)';
+    return 'NewReservationModel(userID: $userID, name: $name, phone: $phone, email: $email, chairs: $chairs, message: $message, shopmessage: $shopmessage, bookingTime: $bookingTime, advancePayment: $advancePayment, advanceAmount: $advanceAmount, amountStatus: $amountStatus, paymentMethod: $paymentMethod, transactionID: $transactionID, baseUrl: $baseUrl ,source: $source)';
   }
 
   @override
@@ -141,6 +140,7 @@ class NewReservationModel {
         other.amountStatus == amountStatus &&
         other.paymentMethod == paymentMethod &&
         other.transactionID == transactionID &&
+        other.baseUrl == baseUrl &&
         other.source == source;
   }
 
@@ -159,6 +159,7 @@ class NewReservationModel {
         amountStatus.hashCode ^
         paymentMethod.hashCode ^
         transactionID.hashCode ^
+        baseUrl.hashCode^
         source.hashCode;
   }
 }
