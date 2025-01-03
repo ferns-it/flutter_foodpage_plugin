@@ -1,6 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+
 import 'add_dish_data.dart';
 
 class AddDishRequestWithVariationModel with AddDishData {
@@ -19,6 +22,8 @@ class AddDishRequestWithVariationModel with AddDishData {
   final List<String>? availability;
   final List<Map<String, dynamic>>? timing;
   final List<String>? addonsMasterGroup;
+  final String itemCode;
+
   AddDishRequestWithVariationModel({
     this.productType,
     this.type,
@@ -35,6 +40,7 @@ class AddDishRequestWithVariationModel with AddDishData {
     this.availability,
     this.timing,
     this.addonsMasterGroup,
+    required this.itemCode,
   });
 
   AddDishRequestWithVariationModel copyWith({
@@ -53,6 +59,7 @@ class AddDishRequestWithVariationModel with AddDishData {
     List<String>? availability,
     List<Map<String, dynamic>>? timing,
     List<String>? addonsMasterGroup,
+    String? itemCode,
   }) {
     return AddDishRequestWithVariationModel(
       productType: productType ?? this.productType,
@@ -70,9 +77,11 @@ class AddDishRequestWithVariationModel with AddDishData {
       availability: availability ?? this.availability,
       timing: timing ?? this.timing,
       addonsMasterGroup: addonsMasterGroup ?? this.addonsMasterGroup,
+      itemCode: itemCode ?? this.itemCode,
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'productType': productType,
@@ -90,6 +99,7 @@ class AddDishRequestWithVariationModel with AddDishData {
       'availability': availability,
       'timing': timing,
       'addonsMasterGroup': addonsMasterGroup,
+      'itemCode': itemCode,
     };
   }
 
@@ -135,6 +145,7 @@ class AddDishRequestWithVariationModel with AddDishData {
       addonsMasterGroup: map['addonsMasterGroup'] != null
           ? List<String>.from((map['addonsMasterGroup'] as List<String>))
           : null,
+      itemCode: map['itemCode'],
     );
   }
 
@@ -147,12 +158,13 @@ class AddDishRequestWithVariationModel with AddDishData {
 
   @override
   String toString() {
-    return 'AddVariationDishRequest(productType: $productType, type: $type, online: $online, dining: $dining, name: $name, description: $description, photo: $photo, category: $category, activeStatus: $activeStatus, productMenuGroup: $productMenuGroup, variations: $variations, allDayAvailable: $allDayAvailable, availability: $availability, timing: $timing, addonsMasterGroup: $addonsMasterGroup)';
+    return 'AddDishRequestWithVariationModel(productType: $productType, type: $type, online: $online, dining: $dining, name: $name, description: $description, photo: $photo, category: $category, activeStatus: $activeStatus, productMenuGroup: $productMenuGroup, variations: $variations, allDayAvailable: $allDayAvailable, availability: $availability, timing: $timing, addonsMasterGroup: $addonsMasterGroup, itemCode: $itemCode)';
   }
 
   @override
   bool operator ==(covariant AddDishRequestWithVariationModel other) {
     if (identical(this, other)) return true;
+    final listEquals = const DeepCollectionEquality().equals;
 
     return other.productType == productType &&
         other.type == type &&
@@ -168,7 +180,8 @@ class AddDishRequestWithVariationModel with AddDishData {
         other.allDayAvailable == allDayAvailable &&
         listEquals(other.availability, availability) &&
         listEquals(other.timing, timing) &&
-        listEquals(other.addonsMasterGroup, addonsMasterGroup);
+        listEquals(other.addonsMasterGroup, addonsMasterGroup) &&
+        other.itemCode == itemCode;
   }
 
   @override
@@ -187,7 +200,8 @@ class AddDishRequestWithVariationModel with AddDishData {
         allDayAvailable.hashCode ^
         availability.hashCode ^
         timing.hashCode ^
-        addonsMasterGroup.hashCode;
+        addonsMasterGroup.hashCode ^
+        itemCode.hashCode;
   }
 }
 
@@ -199,6 +213,7 @@ class VariationDishData {
   final int? quantity;
   final List<dynamic>? allergensMaster;
   final String? ingredients;
+
   VariationDishData({
     this.pvID,
     this.name,

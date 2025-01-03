@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../core/utils/helper_utils.dart';
@@ -129,6 +130,7 @@ class BasicData {
   final String identifierName;
   final String name;
   final String description;
+  final String itemCode;
   final String photo;
   final String type;
   final String online;
@@ -143,6 +145,7 @@ class BasicData {
     required this.identifierName,
     required this.name,
     required this.description,
+    required this.itemCode,
     required this.photo,
     required this.type,
     required this.online,
@@ -158,6 +161,7 @@ class BasicData {
     String? identifierName,
     String? name,
     String? description,
+    String? itemCode,
     String? photo,
     String? type,
     String? online,
@@ -172,6 +176,7 @@ class BasicData {
       identifierName: identifierName ?? this.identifierName,
       name: name ?? this.name,
       description: description ?? this.description,
+      itemCode: itemCode ?? this.itemCode,
       photo: photo ?? this.photo,
       type: type ?? this.type,
       online: online ?? this.online,
@@ -189,6 +194,7 @@ class BasicData {
       'identifierName': identifierName,
       'name': name,
       'description': description,
+      'itemCode': itemCode,
       'photo': photo,
       'type': type,
       'online': online,
@@ -206,6 +212,7 @@ class BasicData {
       identifierName: map['identifierName'] as String,
       name: map['name'] as String,
       description: map['description'] as String,
+      itemCode: map['itemCode'] ?? '',
       photo: map['photo'] as String,
       type: map['type'] as String,
       online: map['online'] as String,
@@ -221,7 +228,7 @@ class BasicData {
 
   @override
   String toString() {
-    return 'BasicData(pID: $pID, productType: $productType, shopID: $shopID, shopSpecificID: $shopSpecificID, identifierName: $identifierName, name: $name, description: $description, photo: $photo, type: $type, online: $online, dining: $dining, activeStatus: $activeStatus)';
+    return 'BasicData(pID: $pID, productType: $productType, shopID: $shopID, shopSpecificID: $shopSpecificID, identifierName: $identifierName, name: $name, description: $description, itemCode: $itemCode, photo: $photo, type: $type, online: $online, dining: $dining, activeStatus: $activeStatus)';
   }
 
   @override
@@ -235,6 +242,7 @@ class BasicData {
         other.identifierName == identifierName &&
         other.name == name &&
         other.description == description &&
+        other.itemCode == itemCode &&
         other.photo == photo &&
         other.type == type &&
         other.online == online &&
@@ -251,6 +259,7 @@ class BasicData {
         identifierName.hashCode ^
         name.hashCode ^
         description.hashCode ^
+        itemCode.hashCode ^
         photo.hashCode ^
         type.hashCode ^
         online.hashCode ^

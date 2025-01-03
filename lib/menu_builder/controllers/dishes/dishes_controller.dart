@@ -29,10 +29,14 @@ class DishesController extends ChangeNotifier with BaseController {
 
   APIResponse<DishViewDetailsModel> get viewDishDetails => _viewDishDetails;
 
+  bool get dishDetailsLoaded => viewDishDetails.data != null;
+
   AddDishInitializeDataModel? _addDishInitializeData;
 
   AddDishInitializeDataModel? get addDishInitializeData =>
       _addDishInitializeData;
+
+  int get totalCategories => addDishInitializeData?.category.data.length ?? 0;
 
   List<String> get listOfAvailabilityDays =>
       _addDishInitializeData?.availability.data?.availability?.options ?? [];
@@ -57,6 +61,8 @@ class DishesController extends ChangeNotifier with BaseController {
 
   bool get loadingDishAction => _loadingDishAction;
 
+  CategoryData get allCategory => CategoryData(name: "All", cID: "0");
+
   @override
   Future<void> init() async {
     fetchDishes();
@@ -69,9 +75,14 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void initializeSearchController() {
     searchTextEditingController = TextEditingController();
+    searchTextEditingController.addListener(() {
+      final query = searchTextEditingController.text;
+      searchDishes(query);
+    });
   }
 
   void disposeSearchController() {
+    searchDishes(null);
     searchTextEditingController.dispose();
   }
 
@@ -358,7 +369,7 @@ class DishesController extends ChangeNotifier with BaseController {
   ];
 
   void addAvailabilityEntries() {
-    dishAvailabilityEntries.add((null, null));
+    dishAvailabilityEntries = [...dishAvailabilityEntries, (null, null)];
     notifyListeners();
   }
 
@@ -431,6 +442,7 @@ class DishesController extends ChangeNotifier with BaseController {
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
   late TextEditingController nameController;
   late TextEditingController descriptionController;
+  late TextEditingController itemCodeController;
 
   String? _editDishId;
 
@@ -444,11 +456,13 @@ class DishesController extends ChangeNotifier with BaseController {
   void initializeAllFormControllers() {
     nameController = TextEditingController();
     descriptionController = TextEditingController();
+    itemCodeController = TextEditingController();
   }
 
   void disposeAllFormControllers() {
     nameController.dispose();
     descriptionController.dispose();
+    itemCodeController.dispose();
   }
 
   Future<void> fetchDishes() async {
@@ -505,6 +519,10 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   List<DishDetails> filterDishesByCategory(CategoryData category) {
+    if (category == allCategory) {
+      return dishesList;
+    }
+
     return dishesList
         .where((dish) => dish.categories.any((cat) => cat.cID == category.cID))
         .toList();
@@ -605,7 +623,7 @@ class DishesController extends ChangeNotifier with BaseController {
       final isDineinReq = _dineInStatus ? 'Yes' : 'No';
 
       // Extract values from variationsFormEntries and validate
-      final priceReq = double.parse(singleVariationPriceController.text);
+      final priceReq = double.tryParse(singleVariationPriceController.text);
 
       // Initialize and validate listOfParentCategoriesId and listOfSubCategoriesId
       final listOfParentCategoriesId = choosedParentCategory
@@ -679,6 +697,7 @@ class DishesController extends ChangeNotifier with BaseController {
               quantity: 0,
               addonsMasterGroup: addonsMasterGroup,
               productMenuGroup: choosedMenus,
+              itemCode: itemCodeController.text,
             )
           : AddDishRequestWithVariationModel(
               productType: productType,
@@ -688,7 +707,6 @@ class DishesController extends ChangeNotifier with BaseController {
               online: isOnlineReq,
               dining: isDineinReq,
               name: nameController.text,
-              // Ensure nameController is initialized
               description: descriptionController.text,
               category: listOfCategories,
               addonsMasterGroup: addonsMasterGroup,
@@ -696,6 +714,7 @@ class DishesController extends ChangeNotifier with BaseController {
               availability: availableDays,
               timing: timing,
               productMenuGroup: choosedMenus,
+              itemCode: itemCodeController.text,
             );
 
       // Perform either update or addition based on editDishId
@@ -748,6 +767,7 @@ class DishesController extends ChangeNotifier with BaseController {
     // Dish Name & Description
     nameController.text = dishData.basicData.name;
     descriptionController.text = removeHtmlTags(dishData.basicData.description);
+    itemCodeController.text = dishData.basicData.itemCode;
 
     // Dish Type
     final dishType = selectedDish?.type;
@@ -803,12 +823,11 @@ class DishesController extends ChangeNotifier with BaseController {
                 "ingredients": TextEditingController()
                   ..text = variation.ingredients,
                 "isUnlimitedStock": variation.isUnlimitedStock,
-                "allergens": variation.selectedallergens.map((e) {
-                  return e.id;
-                }).toList(),
+                "allergens": variation.selectedallergens,
               })
           .toList();
       variationsFormEntries = List.from(elements);
+      onChangeDishVariationType(DishVariationType.multiple);
     } else if (dishData.variationData.isNotEmpty) {
       final variation = dishData.variationData.first;
       singleVariationPriceController.text = variation.price;
@@ -899,6 +918,7 @@ class DishesController extends ChangeNotifier with BaseController {
     }
     _onlineStatus = true;
     _dineInStatus = true;
+    onChangeDishVariationType(DishVariationType.single);
     variationsFormEntries.clear();
     variationsFormEntries.add(variationFormEntry);
     choosedMasterAddons.clear();
@@ -916,6 +936,7 @@ class DishesController extends ChangeNotifier with BaseController {
     singleVariationPriceController.clear();
     singleVariationIngredientsController.clear();
     singleSelectedAllergens.clear();
+    itemCodeController.clear();
 
     activeDefaultSelectedInMenu();
   }

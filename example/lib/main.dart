@@ -23,11 +23,15 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: appTheme(context),
         debugShowCheckedModeBanner: false,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child!,
+        ),
         home: FlutterFoodpageMenuBuilder(
           config: MenuBuilderConfig(
-            authenticationKey: "bb1fad8038d623bf7446cdf031d3deab",
+            authenticationKey: "949221b4ca632538eff4a088de002fc1",
             mode: DevelopmentMode.development,
-            geminiAPIKey: "AIzaSyCHY942WKRPYPucmyaANG9HOHSJGb77T9E",
+            geminiAPIKey: "<gemini-api-key>",
             applicationName: "EPOS",
           ),
         ),

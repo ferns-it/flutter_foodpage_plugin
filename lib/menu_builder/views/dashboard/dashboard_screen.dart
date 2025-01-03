@@ -37,7 +37,7 @@ class DashboardScreen extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(FluentIcons.apps_list_20_regular),
                     title: const Text("Total Categories"),
-                    subtitle: Text("${dishCategoryController.totalCategories}"),
+                    subtitle: Text("${dishController.totalCategories}"),
                   ),
                 ),
               ),
