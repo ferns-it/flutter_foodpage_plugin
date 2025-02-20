@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_foodpage_plugin/order_online/constants/enums.dart';
+import 'package:flutter_foodpage_plugin/order_online/storage/auth/auth_prefs.dart';
 
 import '../constants/api_endpoints.dart';
 import 'exceptions/app_exceptions.dart';
@@ -34,12 +36,33 @@ class BaseClient {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    final authModel = await AuthPrefs().readAuthKeyData();
+    if (authModel == null) {
+      final error = UnAuthorizedException(
+        message: "Sorry, you are not authorized to access this resource.",
+      );
+      return handler.reject(
+        DioException(
+          requestOptions: options,
+          message: error.message,
+          type: DioExceptionType.unknown,
+          error: error,
+        ),
+      );
+    }
+
+    if (authModel.mode == DevMode.development) {
+      options.baseUrl = ApiEndpoints.devBaseUrl;
+    } else {
+      options.baseUrl = ApiEndpoints.baseUrl;
+    }
+
     final needAuth = (options.headers["needToken"] as bool);
     if (!needAuth) return handler.next(options);
     final user = await UserPreference.readUserData();
     if (user == null || user.token == null) {
       return handler.reject(
-        DioError(requestOptions: options, error: "User not authenticated"),
+        DioException(requestOptions: options, error: "User not authenticated"),
       );
     }
 
@@ -81,8 +104,7 @@ class BaseClient {
     String? message;
 
     if (errorObject is Map<String, dynamic>) {
-      message =
-          errorObject["messages"]["error"] ?? errorObject['No order found'];
+      message = errorObject["messages"]["error"] ?? errorObject['No order found'];
     }
 
     if (error.error is SocketException) {
@@ -102,8 +124,7 @@ class BaseClient {
       //forbidden
       case 403:
         throw UnAuthorizedException(
-          message: message ??
-              "Sorry, you are not authorized to access this resource.",
+          message: message ?? "Sorry, you are not authorized to access this resource.",
         );
       //not found
       case 404:
@@ -112,8 +133,7 @@ class BaseClient {
         );
       default:
         throw InternalServerException(
-          message:
-              message ?? "Oops, something went wrong. Please try again later.",
+          message: message ?? "Oops, something went wrong. Please try again later.",
         );
     }
   }
@@ -145,9 +165,7 @@ class BaseClient {
     Map<String, dynamic>? queryParameters,
   }) async {
     final response = await dio.post<String>(api,
-        data: data,
-        queryParameters: queryParameters,
-        options: Options(headers: {"needToken": needAuth}));
+        data: data, queryParameters: queryParameters, options: Options(headers: {"needToken": needAuth}));
     return response.data;
   }
 
@@ -161,9 +179,7 @@ class BaseClient {
     Map<String, dynamic>? queryParameters,
   }) async {
     final response = await dio.put<String>(api + params,
-        data: data,
-        queryParameters: queryParameters,
-        options: Options(headers: {'needToken': needAuthentication}));
+        data: data, queryParameters: queryParameters, options: Options(headers: {'needToken': needAuthentication}));
     return response.data;
   }
 

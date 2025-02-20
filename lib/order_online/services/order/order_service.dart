@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import '../../constants/api_endpoints.dart';
+import '../../constants/enums.dart';
 import '../../models/order/dinein_order_data.dart';
 import '../../models/order/online_order_data.dart';
 import '../../models/order/view_order_data.dart';
 import '../base_client.dart';
 
 class OrderService {
-  static Future<List<OnlineOrderData>> fetchOnlineOrders(
-      {required String filter}) async {
+  static Future<List<OnlineOrderData>> fetchOnlineOrders({required OnlineOrderFilter filter}) async {
     final response = await BaseClient.get(
       api: ApiEndpoints.onlineOrderList,
-      params: filter,
+      params: filter.name,
       needAuth: true,
     );
     if (response == null) return <OnlineOrderData>[];
@@ -22,11 +22,9 @@ class OrderService {
     }).toList();
     return orderList;
   }
-  
-    static Future<List<DineinOrderData>> fetchDineinOrders(
-      {required String filter}) async {
-    final response = await BaseClient.get(
-        api: ApiEndpoints.diningOrderList, params: filter, needAuth: true);
+
+  static Future<List<DineinOrderData>> fetchDineinOrders({required DineinOrderFilter filter}) async {
+    final response = await BaseClient.get(api: ApiEndpoints.diningOrderList, params: filter.name, needAuth: true);
 
     if (response == null) return <DineinOrderData>[];
     final decodedJson = jsonDecode(response);
@@ -34,13 +32,11 @@ class OrderService {
     final ordersList = dineinOrders.map((item) {
       return DineinOrderData.fromMap(item as Map<String, dynamic>);
     }).toList();
-    return ordersList; 
+    return ordersList;
   }
 
-    static Future<ViewOrderData?> fetchOrderDetails(
-      {required String orderID}) async {
-    final response = await BaseClient.get(
-        api: ApiEndpoints.orderDetails, params: orderID, needAuth: true);
+  static Future<ViewOrderData?> fetchOrderDetails({required String orderID}) async {
+    final response = await BaseClient.get(api: ApiEndpoints.orderDetails, params: orderID, needAuth: true);
     if (response == null) return null;
     return ViewOrderData.fromJson(response);
   }

@@ -1,13 +1,15 @@
 //EXAMPLE FOR POST METHOD
 
+import 'dart:developer';
+
 import 'package:example/order_online/controller/auth/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
+import 'package:flutter_foodpage_plugin/order_online/constants/enums.dart';
 
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
-import '../../custom/custom_widgets.dart';
 import '../../utils/build_appbar.dart';
 
 class LoginPage extends GetView<AuthController> {
@@ -16,82 +18,106 @@ class LoginPage extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppbar(
-        title: "Login",
-        widget: Obx(() => Visibility(
-              visible: controller.loading,
-              child: const LinearProgressIndicator(
-                backgroundColor: AppColors.kWhite,
-              ),
-            )),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-          child: Column(
-            children: <Widget>[
-              CustomTextFormField(
-                hintText: "Username",
-                textEditingController: controller.userTextController,
-              ),
-              const SizedBox(
-                height: 15.0,
-              ),
-              CustomTextFormField(
-                hintText: "Password",
-                textEditingController: controller.passwordTextController,
-              ),
-              const SizedBox(
-                height: 15.0,
+        appBar: buildAppbar(
+          title: "Login",
+          widget: Obx(() => Visibility(
+                visible: controller.loading,
+                child: const LinearProgressIndicator(
+                  backgroundColor: AppColors.kWhite,
+                ),
+              )),
+        ),
+        body: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  final result =
+                      await controller.flutterFoodpageOrderOnline.getOnlineOrder(filter: OnlineOrderFilter.all);
+                  inspect(result);
+                },
+                child: const Text("GET ALL ONLINE ORDERS"),
               ),
               ElevatedButton(
                 onPressed: () async {
-                  final username = controller.userTextController.text;
-                  final password = controller.passwordTextController.text;
-                  final data = LoginRequest(
-                      username: username,
-                      password: password,
-                      deviceId: "deviceId");
-                  if (username.isEmpty && password.isEmpty ||
-                      username.isEmpty ||
-                      password.isEmpty) {
-                    Get.snackbar(
-                        'Required', 'Username or password should not be empty',
-                        snackPosition: SnackPosition.BOTTOM,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 15.0, vertical: 25.0),
-                        colorText: AppColors.primaryColor);
-                  } else {
-                    try {
-                      controller.onChangeLoading(true);
-                      final user = await FlutterFoodpageOrderOnline.userLogin(
-                          data: data);
-                      if (user != null) {
-                        controller.onChangeUser(user);
-                      }
-                    } catch (e) {
-                      Get.snackbar('Invalid Credentials',
-                          'Incorrect username or password',
-                          snackPosition: SnackPosition.BOTTOM,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 15.0, vertical: 25.0),
-                          colorText: AppColors.primaryColor);
-                    } finally {
-                      controller.onChangeLoading(false);
-                    }
-                  }
+                  final result =
+                      await controller.flutterFoodpageOrderOnline.getDineinOrder(filter: DineinOrderFilter.all);
+                  inspect(result);
                 },
-                child: const Text("LOGIN"),
+                child: const Text("GET ALL DINEIN ORDERS"),
               ),
-              const SizedBox(height: 50.0),
-              Obx(() => Visibility(
-                  visible: controller.user != null,
-                  child: const _ShopDetailsCard()))
             ],
           ),
-        ),
-      ),
-    );
+        )
+
+        //  SingleChildScrollView(
+        //   child: Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+        //     child: Column(
+        //       children: <Widget>[
+        //         CustomTextFormField(
+        //           hintText: "Username",
+        //           textEditingController: controller.userTextController,
+        //         ),
+        //         const SizedBox(
+        //           height: 15.0,
+        //         ),
+        //         CustomTextFormField(
+        //           hintText: "Password",
+        //           textEditingController: controller.passwordTextController,
+        //         ),
+        //         const SizedBox(
+        //           height: 15.0,
+        //         ),
+        //         ElevatedButton(
+        //           onPressed: () async {
+        //             final username = controller.userTextController.text;
+        //             final password = controller.passwordTextController.text;
+        //             final data = LoginRequest(
+        //                 username: username,
+        //                 password: password,
+        //                 deviceId: "deviceId");
+        //             if (username.isEmpty && password.isEmpty ||
+        //                 username.isEmpty ||
+        //                 password.isEmpty) {
+        //               Get.snackbar(
+        //                   'Required', 'Username or password should not be empty',
+        //                   snackPosition: SnackPosition.BOTTOM,
+        //                   margin: const EdgeInsets.symmetric(
+        //                       horizontal: 15.0, vertical: 25.0),
+        //                   colorText: AppColors.primaryColor);
+        //             } else {
+        //               try {
+        //                 controller.onChangeLoading(true);
+        //                 final user = await FlutterFoodpageOrderOnline.userLogin(
+        //                     data: data);
+        //                 if (user != null) {
+        //                   controller.onChangeUser(user);
+        //                 }
+        //               } catch (e) {
+        //                 Get.snackbar('Invalid Credentials',
+        //                     'Incorrect username or password',
+        //                     snackPosition: SnackPosition.BOTTOM,
+        //                     margin: const EdgeInsets.symmetric(
+        //                         horizontal: 15.0, vertical: 25.0),
+        //                     colorText: AppColors.primaryColor);
+        //               } finally {
+        //                 controller.onChangeLoading(false);
+        //               }
+        //             }
+        //           },
+        //           child: const Text("LOGIN"),
+        //         ),
+        //         const SizedBox(height: 50.0),
+        //         Obx(() => Visibility(
+        //             visible: controller.user != null,
+        //             child: const _ShopDetailsCard()))
+        //       ],
+        //     ),
+        //   ),
+        // ),
+        );
   }
 }
 
@@ -147,16 +173,14 @@ class _ShopDetailsCard extends GetView<AuthController> {
                   height: 100.0,
                   width: 70.0,
                   decoration: const BoxDecoration(
-                      color: AppColors.secondaryColor,
-                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                      color: AppColors.secondaryColor, borderRadius: BorderRadius.all(Radius.circular(8.0))),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
                         controller.user?.id ?? "N/A",
-                        style: const TextStyle(
-                            color: AppColors.primaryColor, fontSize: 35.0),
+                        style: const TextStyle(color: AppColors.primaryColor, fontSize: 35.0),
                       ),
                       const Text(
                         "Shop ID",

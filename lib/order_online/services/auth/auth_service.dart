@@ -15,4 +15,15 @@ class AuthService {
     UserPreference.saveUserData(data: userData);
     return LoginResponse.fromJson(response);
   }
+
+  static Future<LoginResponse?> getAccessToken({required String authKey}) async {
+    final response = await BaseClient.post(
+      api: ApiEndpoints.getAccessToken,
+      data: {"secretkey": authKey},
+    );
+    if (response == null) return null;
+    final userData = LoginResponse.fromJson(response);
+    UserPreference.saveUserData(data: userData);
+    return LoginResponse.fromJson(response);
+  }
 }

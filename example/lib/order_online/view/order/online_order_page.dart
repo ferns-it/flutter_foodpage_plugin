@@ -37,21 +37,21 @@ class OnlineOrderPage extends GetView<OrderController> {
                 ),
                 ElevatedButton(
                     onPressed: () async {
-                      try {
-                        controller.onChangeLoading(true);
-                        final onlineOrders =
-                            await FlutterFoodpageOrderOnline.getOnlineOrder(
-                                filter: "all");
-                        controller.onlineOrders.value = onlineOrders;
-                      } catch (e) {
-                        Get.snackbar('Error', 'User not authenticated',
-                            snackPosition: SnackPosition.BOTTOM,
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 25.0),
-                            colorText: AppColors.primaryColor);
-                      } finally {
-                        controller.onChangeLoading(false);
-                      }
+                      // try {
+                      //   controller.onChangeLoading(true);
+                      //   final onlineOrders =
+                      //       await FlutterFoodpageOrderOnline.getOnlineOrder(
+                      //           filter: "all");
+                      //   controller.onlineOrders.value = onlineOrders;
+                      // } catch (e) {
+                      //   Get.snackbar('Error', 'User not authenticated',
+                      //       snackPosition: SnackPosition.BOTTOM,
+                      //       margin: const EdgeInsets.symmetric(
+                      //           horizontal: 15.0, vertical: 25.0),
+                      //       colorText: AppColors.primaryColor);
+                      // } finally {
+                      //   controller.onChangeLoading(false);
+                      // }
                     },
                     child: const Text("FETCH"))
               ],

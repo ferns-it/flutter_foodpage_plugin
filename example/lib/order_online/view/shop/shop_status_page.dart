@@ -39,24 +39,24 @@ class ShopStatusPage extends GetView<ShopController> {
                       Expanded(
                         child: InkWell(
                           onTap: () async {
-                            try {
-                              controller.onChangeLoading(true);
-                              controller.onChangeSelectedIndex(0);
-                              final status = await FlutterFoodpageOrderOnline
-                                  .changeShopStatus(status: "open");
-                              if (status != null) {
-                                controller.onChangeShopStatus(status);
-                              }
-                            } catch (e) {
-                              Get.snackbar('Error', 'User not authenticated',
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 15.0, vertical: 25.0),
-                                  colorText: AppColors.primaryColor);
-                              controller.onChangeSelectedIndex(-1);
-                            } finally {
-                              controller.onChangeLoading(false);
-                            }
+                            // try {
+                            //   controller.onChangeLoading(true);
+                            //   controller.onChangeSelectedIndex(0);
+                            //   final status = await FlutterFoodpageOrderOnline
+                            //       .changeShopStatus(status: "open");
+                            //   if (status != null) {
+                            //     controller.onChangeShopStatus(status);
+                            //   }
+                            // } catch (e) {
+                            //   Get.snackbar('Error', 'User not authenticated',
+                            //       snackPosition: SnackPosition.BOTTOM,
+                            //       margin: const EdgeInsets.symmetric(
+                            //           horizontal: 15.0, vertical: 25.0),
+                            //       colorText: AppColors.primaryColor);
+                            //   controller.onChangeSelectedIndex(-1);
+                            // } finally {
+                            //   controller.onChangeLoading(false);
+                            // }
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -82,24 +82,24 @@ class ShopStatusPage extends GetView<ShopController> {
                       Expanded(
                         child: InkWell(
                           onTap: () async {
-                            try {
-                              controller.onChangeLoading(true);
-                              controller.onChangeSelectedIndex(1);
-                              final status = await FlutterFoodpageOrderOnline
-                                  .changeShopStatus(status: "close");
-                              if (status != null) {
-                                controller.onChangeShopStatus(status);
-                              }
-                            } catch (e) {
-                              Get.snackbar('Error', 'User not authenticated',
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 15.0, vertical: 25.0),
-                                  colorText: AppColors.primaryColor);
-                              controller.onChangeSelectedIndex(-1);
-                            } finally {
-                              controller.onChangeLoading(false);
-                            }
+                            // try {
+                            //   controller.onChangeLoading(true);
+                            //   controller.onChangeSelectedIndex(1);
+                            //   final status = await FlutterFoodpageOrderOnline
+                            //       .changeShopStatus(status: "close");
+                            //   if (status != null) {
+                            //     controller.onChangeShopStatus(status);
+                            //   }
+                            // } catch (e) {
+                            //   Get.snackbar('Error', 'User not authenticated',
+                            //       snackPosition: SnackPosition.BOTTOM,
+                            //       margin: const EdgeInsets.symmetric(
+                            //           horizontal: 15.0, vertical: 25.0),
+                            //       colorText: AppColors.primaryColor);
+                            //   controller.onChangeSelectedIndex(-1);
+                            // } finally {
+                            //   controller.onChangeLoading(false);
+                            // }
                           },
                           child: Container(
                             decoration: BoxDecoration(

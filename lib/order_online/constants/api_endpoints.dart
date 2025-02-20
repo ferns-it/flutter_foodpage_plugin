@@ -1,5 +1,6 @@
 class ApiEndpoints {
-  static const baseUrl = 'https://foodpage.co.uk/development/v1/mobile/shop';
+  static const baseUrl = 'https://foodpage.co.uk/v1/mobile/shop';
+  static const devBaseUrl = 'https://development.foodpage.co.uk/v1/mobile/shop';
   static const baseUrlTwo = 'https://foodpage.co.uk/development/v2/shop';
   static const socketBaseUrl = "https://foodpagenodeserver.vgrex.com/";
   static const loginUser = '/admin/login';
@@ -19,4 +20,5 @@ class ApiEndpoints {
   static const rejectOrder = '/manageorder/reject/';
   static const dispatchOrder = '/manageorder/dispatch/';
   static const categoryList = '/categories/';
+  static const getAccessToken = '/admin/gettoken';
 }
