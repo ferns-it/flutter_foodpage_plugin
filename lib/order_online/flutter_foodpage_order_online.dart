@@ -39,13 +39,11 @@ class FlutterFoodpageOrderOnline {
   //   return await AuthService.loginUser(data: data);
   // }
 
-   Future<List<OnlineOrderData>>  getOnlineOrder(
-      {required OnlineOrderFilter filter}) async {
+  Future<List<OnlineOrderData>> getOnlineOrder({required OnlineOrderFilter filter}) async {
     return await OrderService.fetchOnlineOrders(filter: filter);
   }
 
-   Future<List<DineinOrderData>> getDineinOrder(
-      {required DineinOrderFilter filter}) async {
+  Future<List<DineinOrderData>> getDineinOrder({required DineinOrderFilter filter}) async {
     return await OrderService.fetchDineinOrders(filter: filter);
   }
 
@@ -54,26 +52,24 @@ class FlutterFoodpageOrderOnline {
   //   return await OrderService.fetchOrderDetails(orderID: orderID);
   // }
 
-  // static Future<OrderStatusUpdateData?> acceptOrder(
-  //     {required OrderStatusAcceptRequest acceptMessage,
-  //     required String orderID}) async {
-  //   return await OrderStatusService.sendAcceptOrderStatus(
-  //       orderID: orderID, data: acceptMessage);
-  // }
+  Future<OrderStatusUpdateData?> acceptOrder(
+      {required OrderStatusAcceptRequest acceptMessage, required String orderID}) async {
+    return await OrderStatusService.sendAcceptOrderStatus(orderID: orderID, data: acceptMessage);
+  }
 
-  // static Future<OrderStatusUpdateData?> dispatchOrder(
-  //     {required OrderStatusDispatchRequest dispatchMessage,
-  //     required String orderID}) async {
-  //   return await OrderStatusService.sendDispatchOrderStatus(
-  //       orderID: orderID, data: dispatchMessage);
-  // }
+  static Future<OrderStatusUpdateData?> dispatchOrder(
+      {required OrderStatusDispatchRequest dispatchMessage,
+      required String orderID}) async {
+    return await OrderStatusService.sendDispatchOrderStatus(
+        orderID: orderID, data: dispatchMessage);
+  }
 
-  // static Future<OrderStatusUpdateData?> rejectOrder(
-  //     {required OrderStatusRejectRequest rejectMessage,
-  //     required String orderID}) async {
-  //   return await OrderStatusService.sendRejectOrderStatus(
-  //       orderID: orderID, data: rejectMessage);
-  // }
+  static Future<OrderStatusUpdateData?> rejectOrder(
+      {required OrderStatusRejectRequest rejectMessage,
+      required String orderID}) async {
+    return await OrderStatusService.sendRejectOrderStatus(
+        orderID: orderID, data: rejectMessage);
+  }
 
   // static Future<List<DishData>> fetchAllDishes() async {
   //   return await DishesService.fetchAllDishes();
