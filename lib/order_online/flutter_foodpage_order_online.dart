@@ -57,14 +57,14 @@ class FlutterFoodpageOrderOnline {
     return await OrderStatusService.sendAcceptOrderStatus(orderID: orderID, data: acceptMessage);
   }
 
-  static Future<OrderStatusUpdateData?> dispatchOrder(
+   Future<OrderStatusUpdateData?> dispatchOrder(
       {required OrderStatusDispatchRequest dispatchMessage,
       required String orderID}) async {
     return await OrderStatusService.sendDispatchOrderStatus(
         orderID: orderID, data: dispatchMessage);
   }
 
-  static Future<OrderStatusUpdateData?> rejectOrder(
+   Future<OrderStatusUpdateData?> rejectOrder(
       {required OrderStatusRejectRequest rejectMessage,
       required String orderID}) async {
     return await OrderStatusService.sendRejectOrderStatus(
