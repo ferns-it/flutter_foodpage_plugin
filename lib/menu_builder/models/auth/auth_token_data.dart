@@ -29,8 +29,9 @@ class AuthTokenData {
     required this.shopCustomToken,
     required this.timezone,
     required this.token,
-    this.mode = DevelopmentMode.development,
+    this.mode = DevelopmentMode.release,
   });
+
 
   AuthTokenData copyWith({
     String? id,
