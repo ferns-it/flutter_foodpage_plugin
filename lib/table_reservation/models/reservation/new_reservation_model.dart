@@ -19,6 +19,7 @@ class NewReservationModel {
   final String? transactionID;
   final String? baseUrl;
   final String source;
+  final String status;
   NewReservationModel({
     required this.userID,
     required this.name,
@@ -35,6 +36,7 @@ class NewReservationModel {
     required this.transactionID,
     this.baseUrl = 'NULL',
     this.source = 'Flutter',
+    required this.status,
   });
 
   NewReservationModel copyWith({
@@ -53,6 +55,7 @@ class NewReservationModel {
     String? transactionID,
     String? baseUrl,
     String? source,
+    String? status,
   }) {
     return NewReservationModel(
       userID: userID ?? this.userID,
@@ -70,6 +73,7 @@ class NewReservationModel {
       transactionID: transactionID ?? this.transactionID,
       baseUrl: baseUrl ?? this.baseUrl,
       source: source ?? this.source,
+      status: status ?? this.status,
     );
   }
 
@@ -90,6 +94,7 @@ class NewReservationModel {
       'transactionID': transactionID,
       'baseUrl': baseUrl,
       'source': source,
+      'status': status,
     };
   }
 
@@ -108,8 +113,9 @@ class NewReservationModel {
       amountStatus: map['amountStatus'] != null ? AmountStatusRequest.fromLabel(map['amountStatus'] as String) : null,
       paymentMethod: map['paymentMethod'] != null ? PaymentMethod.fromLabel(map['paymentMethod'] as String) : null,
       transactionID: map['transactionID'] != null ? map['transactionID'] as String : null,
-      baseUrl:map['baseUrl'] as String ,
+      baseUrl: map["baseUrl"] != null ? map['baseUrl'] as String : null,
       source: map['source'] as String,
+      status: map['status'] as String,
     );
   }
 
@@ -120,7 +126,7 @@ class NewReservationModel {
 
   @override
   String toString() {
-    return 'NewReservationModel(userID: $userID, name: $name, phone: $phone, email: $email, chairs: $chairs, message: $message, shopmessage: $shopmessage, bookingTime: $bookingTime, advancePayment: $advancePayment, advanceAmount: $advanceAmount, amountStatus: $amountStatus, paymentMethod: $paymentMethod, transactionID: $transactionID, baseUrl: $baseUrl ,source: $source)';
+    return 'NewReservationModel(userID: $userID, name: $name, phone: $phone, email: $email, chairs: $chairs, message: $message, shopmessage: $shopmessage, bookingTime: $bookingTime, advancePayment: $advancePayment, advanceAmount: $advanceAmount, amountStatus: $amountStatus, paymentMethod: $paymentMethod, transactionID: $transactionID, baseUrl: $baseUrl ,source: $source, status: $status)';
   }
 
   @override
@@ -141,7 +147,8 @@ class NewReservationModel {
         other.paymentMethod == paymentMethod &&
         other.transactionID == transactionID &&
         other.baseUrl == baseUrl &&
-        other.source == source;
+        other.source == source &&
+        other.status == status;
   }
 
   @override
@@ -159,7 +166,8 @@ class NewReservationModel {
         amountStatus.hashCode ^
         paymentMethod.hashCode ^
         transactionID.hashCode ^
-        baseUrl.hashCode^
-        source.hashCode;
+        baseUrl.hashCode ^
+        source.hashCode ^
+        status.hashCode;
   }
 }
