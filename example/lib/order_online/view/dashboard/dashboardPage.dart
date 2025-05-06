@@ -31,10 +31,11 @@ class _DashboardPageState extends State<DashboardPage>
 
   Future<void> createInstance() async {
     foodpageTableReservation = await FoodpageTableReservation.create(
-      authenticationKey: "5521bacd985f98bbcb30c9e0f1a242ae",
+      authenticationKey: "97f5c2b20e9771333c04ee6ee6c99c8d",
       shopId: '1',
       socketHandler: this,
       onFcmTopicRegister: (topic) {},
+      developmentMode: DevelopmentMode.release,
     );
     getNewRequests();
   }

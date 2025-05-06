@@ -30,7 +30,8 @@ enum ReservationStatus {
   modified(label: "Modified"),
   approved(label: "Approved"),
   cancelled(label: "Cancelled"),
-  completed(label: "Completed");
+  completed(label: "Completed"),
+  rejected(label: "Rejected"),;
 
   const ReservationStatus({required this.label});
 
