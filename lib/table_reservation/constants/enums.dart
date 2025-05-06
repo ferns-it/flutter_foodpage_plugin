@@ -29,14 +29,17 @@ enum ReservationStatus {
   requested(label: "Requested"),
   modified(label: "Modified"),
   approved(label: "Approved"),
-  cancelled(label: "Cancelled");
+  cancelled(label: "Cancelled"),
+  completed(label: "Completed");
 
   const ReservationStatus({required this.label});
 
   static ReservationStatus fromLabel(String label) {
     if (label.isEmpty) return ReservationStatus.initial;
 
-    return ReservationStatus.values.firstWhere((e) => e.label == label);
+    return ReservationStatus.values.firstWhere(
+      (e) => e.label == label,
+    );
   }
 
   final String label;
