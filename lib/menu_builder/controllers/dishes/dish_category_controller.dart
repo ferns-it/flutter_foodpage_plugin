@@ -18,11 +18,9 @@ class DishCategoryController extends ChangeNotifier with BaseController {
   late TextEditingController nameController;
   late TextEditingController descriptionController;
 
-  APIResponse<DishCategoryCollectionModel> _dishCategoryCollection =
-      APIResponse.initial();
+  APIResponse<DishCategoryCollectionModel> _dishCategoryCollection = APIResponse.initial();
 
-  APIResponse<DishCategoryCollectionModel> get categoriesCollection =>
-      _dishCategoryCollection;
+  APIResponse<DishCategoryCollectionModel> get categoriesCollection => _dishCategoryCollection;
 
   int get totalCategories => categoriesCollection.data?.totalCategories ?? 0;
 
@@ -119,18 +117,15 @@ class DishCategoryController extends ChangeNotifier with BaseController {
 
       final response = await DishesCategoryService.fetchCategoryList(id: '1');
 
-      _dishCategoryCollection = response != null
-          ? APIResponse.completed(response)
-          : throwNotFoundException<DishCategoryCollectionModel>();
+      _dishCategoryCollection =
+          response != null ? APIResponse.completed(response) : throwNotFoundException<DishCategoryCollectionModel>();
 
       notifyListeners();
     } on AppExceptions catch (error) {
-      _dishCategoryCollection =
-          APIResponse.error(error.message, exception: error);
+      _dishCategoryCollection = APIResponse.error(error.message, exception: error);
       notifyListeners();
     } catch (e) {
-      _dishCategoryCollection =
-          throwUnknownErrorException<DishCategoryCollectionModel>();
+      _dishCategoryCollection = throwUnknownErrorException<DishCategoryCollectionModel>();
       notifyListeners();
     }
   }
@@ -141,13 +136,11 @@ class DishCategoryController extends ChangeNotifier with BaseController {
       notifyListeners();
 
       if (formKey.currentState?.validate() == false) return;
-      if (_addCategoryType == CategoryType.child &&
-          _selectedCategoryId == null) {
+      if (_addCategoryType == CategoryType.child && _selectedCategoryId == null) {
         //?? ADD TOAST
         return;
       }
-      final parentId =
-          _addCategoryType == CategoryType.parent ? "0" : _selectedCategoryId!;
+      final parentId = _addCategoryType == CategoryType.parent ? "0" : _selectedCategoryId!;
       final response = await DishesCategoryService.addNewCategory(
         name: nameController.text,
         description: descriptionController.text,
@@ -218,8 +211,7 @@ class DishCategoryController extends ChangeNotifier with BaseController {
         return;
       }
       // Toggle category status between "Active" and "Inactive"
-      final newStatus =
-          targetCategory!.categoryStatus == "Active" ? "Inactive" : "Active";
+      final newStatus = targetCategory!.categoryStatus == "Active" ? "Inactive" : "Active";
 
       final response = await DishesCategoryService.disableEnableCategory(
         targetCategory.cID!,
@@ -244,8 +236,7 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     final category = listOfCategories.elementAtOrNull(oldIndex);
     if (category?.cID == null) return;
 
-    DishesCategoryService.updateCategorySortOrder(category!.cID!, newIndex)
-        .then((result) {
+    DishesCategoryService.updateCategorySortOrder(category!.cID!, newIndex).then((result) {
       return result.fold((error) {
         Fluttertoast.showToast(msg: error.message);
       }, (_) => null);

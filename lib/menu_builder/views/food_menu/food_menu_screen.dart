@@ -104,9 +104,7 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
                   shadowColor: Colors.grey.withOpacity(0.3),
                   child: SearchBarWidget(
                     onSearchChanged: (String? query) {},
-                    searchTextController: context
-                        .read<DishesController>()
-                        .searchTextEditingController,
+                    searchTextController: context.read<DishesController>().searchTextEditingController,
                     borderRadius: 8.0,
                     fillColor: MenuBuilderColors.kWhite,
                   ),
@@ -120,13 +118,9 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
               return const Center(child: CircularProgressIndicator());
             }, completed: (_) {
               var categoriesCollection = controller.listOfCategories;
-              var categories = [
-                controller.allCategory,
-                ...categoriesCollection
-              ];
+              var categories = [controller.allCategory, ...categoriesCollection];
 
-              final categoryController =
-                  context.watch<DishCategoryController>();
+              final categoryController = context.watch<DishCategoryController>();
 
               return Expanded(
                 child: DefaultTabController(
@@ -139,9 +133,7 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
                             text: (category.name ?? "Unknown").toUpperCase(),
                           );
                         }).toList(),
-                        tabAlignment: categories.length <= 8
-                            ? TabAlignment.fill
-                            : TabAlignment.center,
+                        tabAlignment: categories.length <= 8 ? TabAlignment.fill : TabAlignment.center,
                         indicatorPadding: EdgeInsets.zero,
                         indicatorSize: TabBarIndicatorSize.label,
                         isScrollable: categories.length > 10,
@@ -152,50 +144,60 @@ class _FoodMenuScreenState extends State<FoodMenuScreen> {
                       Expanded(
                         child: TabBarView(
                             children: categories.map((category) {
-                          final dishes =
-                              controller.filterDishesByCategory(category);
+                          final dishes = controller.filterDishesByCategory(category);
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               if (category != controller.allCategory)
                                 !categoryController.categoryStatusLoading
-                                    ? OutlinedButton.icon(
-                                        label: const Text("Active"),
-                                        style: OutlinedButton.styleFrom(
-                                          textStyle: textTheme.titleMedium,
-                                          backgroundColor: Colors.white,
-                                          side: BorderSide(
-                                            width: 1,
-                                            color: Colors.grey.shade300,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          categoryController
-                                              .disableEnableCategory(
+                                    ? Align(
+                                        alignment: Alignment.centerRight,
+                                        child: OutlinedButton.icon(
+                                            label: category.categoryStatus != "Active"
+                                                ? const Text("Enable Category")
+                                                : const Text("Disable Category"),
+                                            style: OutlinedButton.styleFrom(
+                                              textStyle: textTheme.titleMedium,
+                                              backgroundColor: Colors.white,
+                                              foregroundColor: category.categoryStatus != "Active"
+                                                  ? MenuBuilderColors.kSuccessGreen2
+                                                  : MenuBuilderColors.kMaterialRed,
+                                              side: BorderSide(
+                                                width: 1,
+                                                color: Colors.grey.shade300,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              categoryController.disableEnableCategory(
                                                   category: category,
                                                   onRequestRefresh: () async {
-                                                    await controller
-                                                        .initializeAddDishRequiredData();
+                                                    await controller.initializeAddDishRequiredData();
                                                   });
-                                        },
-                                        icon:
-                                            category.categoryStatus != "Active"
-                                                ? const Icon(
-                                                    Icons.close,
-                                                    color: MenuBuilderColors
-                                                        .kMaterialRed,
-                                                  )
-                                                : const Icon(
-                                                    Icons.check,
-                                                    color: MenuBuilderColors
-                                                        .kSuccessGreen2,
-                                                  ),
+                                            },
+                                            icon: null
+                                            // category.categoryStatus != "Active"
+                                            //     ? const Icon(
+                                            //         Icons.close,
+                                            //         color: MenuBuilderColors
+                                            //             .kMaterialRed,
+                                            //       )
+                                            //     : const Icon(
+                                            //         Icons.check,
+                                            //         color: MenuBuilderColors
+                                            //             .kSuccessGreen2,
+                                            //       ),
+                                            ),
                                       )
-                                    : const SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: CircularProgressIndicator(
-                                            strokeWidth: 3),
+                                    : const Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(right: 10.0, top: 10.0),
+                                          child: SizedBox(
+                                            height: 30,
+                                            width: 30,
+                                            child: CircularProgressIndicator(strokeWidth: 3),
+                                          ),
+                                        ),
                                       ),
                               verticalSpaceSmall,
                               Expanded(
