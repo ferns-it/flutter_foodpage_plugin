@@ -31,7 +31,8 @@ enum ReservationStatus {
   approved(label: "Approved"),
   cancelled(label: "Cancelled"),
   completed(label: "Completed"),
-  rejected(label: "Rejected"),;
+  rejected(label: "Rejected"),
+  seated(label: "Seated"),;
 
   const ReservationStatus({required this.label});
 
