@@ -6,6 +6,7 @@ import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
 import 'package:flutter_foodpage_plugin/order_online/constants/api_endpoints.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/auth/auth_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/today/today_request_collection_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/app_exception/app_exception.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/reservation_service_abstract.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/shared_preference/auth_preference.dart';
@@ -19,16 +20,14 @@ typedef FCMTopicRegisterCallback = void Function(String topic);
 
 class FoodpageTableReservation {
   static final _preference = AuthPreference();
-  static final _reservationHistoryPreference =
-      ReservationNotificationPreference();
+  static final _reservationHistoryPreference = ReservationNotificationPreference();
   static late SocketService _socketService;
   static late ReservationSocketHandler _socketHandler;
 
   FoodpageTableReservation._internal();
 
   /// FCM Table Reservation Events Topic Name
-  static String getReservationEventsTopic(String shopId) =>
-      "$kFCMTableReservationTopic-$shopId";
+  static String getReservationEventsTopic(String shopId) => "$kFCMTableReservationTopic-$shopId";
 
   static Future<FoodpageTableReservation> create({
     required String authenticationKey,
@@ -85,8 +84,7 @@ class FoodpageTableReservation {
   static void _updateNotificationHistory(
     ReservationNotificationModel reservationNotification,
   ) async {
-    final reservationHistory =
-        await _reservationHistoryPreference.readReservationNotication();
+    final reservationHistory = await _reservationHistoryPreference.readReservationNotication();
     var reservations = reservationHistory?.reservations ?? [];
     reservations.removeWhere((x) {
       return x.reservationId == reservationNotification.reservationId;
@@ -126,8 +124,7 @@ class FoodpageTableReservation {
           }
           if (status == ReservationStatus.approved) {
             _updateNotificationHistory(reservationNotification);
-            _socketHandler
-                .onNewApprovedReservationRecieved(reservation.copyWith(
+            _socketHandler.onNewApprovedReservationRecieved(reservation.copyWith(
               notificationModel: reservationNotification,
             ));
             return;
@@ -190,29 +187,21 @@ class FoodpageTableReservation {
     );
   }
 
-  Future<List<EnquirieModel>> _modifyReservationRequestsList(
-      List<EnquirieModel> list) async {
-    final reservationHistory =
-        (await _reservationHistoryPreference.readReservationNotication())
-                ?.reservations ??
-            [];
+  Future<List<EnquirieModel>> _modifyReservationRequestsList(List<EnquirieModel> list) async {
+    final reservationHistory = (await _reservationHistoryPreference.readReservationNotication())?.reservations ?? [];
     List<EnquirieModel> newModifiedList = [];
     for (var reservation in list) {
-      final index = reservationHistory
-          .indexWhere((element) => element.reservationId == reservation.id);
-      newModifiedList.add(index == -1
-          ? reservation
-          : reservation.copyWith(notificationModel: reservationHistory[index]));
+      final index = reservationHistory.indexWhere((element) => element.reservationId == reservation.id);
+      newModifiedList
+          .add(index == -1 ? reservation : reservation.copyWith(notificationModel: reservationHistory[index]));
     }
 
     return List<EnquirieModel>.from(newModifiedList);
   }
 
-  Future<APIResponse<NewRequestCollectionModel>> getNewRequests(
-      {String? searchQuery}) async {
+  Future<APIResponse<NewRequestCollectionModel>> getNewRequests({String? searchQuery}) async {
     try {
-      var response = await ReservationService.instance
-          .getNewRequests(searchQuery: searchQuery);
+      var response = await ReservationService.instance.getNewRequests(searchQuery: searchQuery);
       if (response == null) {
         return _throwNotFoundException<NewRequestCollectionModel>();
       }
@@ -228,11 +217,27 @@ class FoodpageTableReservation {
     }
   }
 
-  Future<APIResponse<UpcomingRequestCollection>> getUpcomingRequests(
-      {String? searchQuery}) async {
+  Future<APIResponse<TodayRequestCollectionModel>> getTodaysRequests({String? searchQuery}) async {
     try {
-      var response = await ReservationService.instance
-          .getUpcomingList(searchQuery: searchQuery);
+      var response = await ReservationService.instance.getTodaysRequests(searchQuery: searchQuery);
+      if (response == null) {
+        return _throwNotFoundException<TodayRequestCollectionModel>();
+      }
+      final modifiedList = await _modifyReservationRequestsList(
+        response.upcomingEnquiries,
+      );
+      response = response.copyWith(upcomingEnquiries: modifiedList);
+      return APIResponse.completed(response);
+    } on AppExceptions catch (error) {
+      return APIResponse.error(error.message, exception: error);
+    } catch (e) {
+      return _throwUnknownErrorException<TodayRequestCollectionModel>();
+    }
+  }
+
+  Future<APIResponse<UpcomingRequestCollection>> getUpcomingRequests({String? searchQuery}) async {
+    try {
+      var response = await ReservationService.instance.getUpcomingList(searchQuery: searchQuery);
       if (response == null) {
         return _throwNotFoundException<UpcomingRequestCollection>();
       }
@@ -248,27 +253,23 @@ class FoodpageTableReservation {
     }
   }
 
-  Future<APIResponse<ReservationHistoryRequestCollectionModel>>
-      getReservationHistory({String? searchQuery}) async {
+  Future<APIResponse<ReservationHistoryRequestCollectionModel>> getReservationHistory({String? searchQuery}) async {
     try {
       final response = await ReservationService.instance.getReservationHistory(
         searchQuery: searchQuery,
       );
       if (response == null) {
-        return _throwNotFoundException<
-            ReservationHistoryRequestCollectionModel>();
+        return _throwNotFoundException<ReservationHistoryRequestCollectionModel>();
       }
       return APIResponse.completed(response);
     } on AppExceptions catch (error) {
       return APIResponse.error(error.message, exception: error);
     } catch (e) {
-      return _throwUnknownErrorException<
-          ReservationHistoryRequestCollectionModel>();
+      return _throwUnknownErrorException<ReservationHistoryRequestCollectionModel>();
     }
   }
 
-  Future<APIResponse<ReservationDetailsModel>> getReservationDetails(
-      String reservationID) async {
+  Future<APIResponse<ReservationDetailsModel>> getReservationDetails(String reservationID) async {
     try {
       final response = await ReservationService.instance.getReservationDetails(
         reservationID,
@@ -294,8 +295,7 @@ class FoodpageTableReservation {
     ApproveOrCancelRequestModel payload,
   ) async {
     try {
-      final response =
-          await ReservationService.instance.approveOrCancelReservation(
+      final response = await ReservationService.instance.approveOrCancelReservation(
         payload,
       );
       return response;
@@ -304,8 +304,7 @@ class FoodpageTableReservation {
     }
   }
 
-  Future<APIResponse<ChatMessage>> sendMessageToCustomer(
-      SendMessageModel message) async {
+  Future<APIResponse<ChatMessage>> sendMessageToCustomer(SendMessageModel message) async {
     final response = await ReservationService.instance.sendMessageToCustomer(
       message,
     );
@@ -317,8 +316,7 @@ class FoodpageTableReservation {
     String reservationID,
   ) async {
     try {
-      final response = await ReservationService.instance
-          .collectAdvancePayment(reservationID);
+      final response = await ReservationService.instance.collectAdvancePayment(reservationID);
       if (response == null) _throwInvalidResponseFromServer<EnquirieModel>();
       return APIResponse.completed(response);
     } on AppExceptions catch (error) {
@@ -360,8 +358,7 @@ class FoodpageTableReservation {
     }
   }
 
-  Future<APIResponse<EnquirieModel>> newReservation(
-      NewReservationModel reservation) async {
+  Future<APIResponse<EnquirieModel>> newReservation(NewReservationModel reservation) async {
     try {
       final response = await ReservationService.instance.newReservation(
         reservation,

@@ -4,6 +4,7 @@ import 'package:example/order_online/view/order/online_order_page.dart';
 import 'package:example/order_online/view/shop/shop_status_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/today/today_request_collection_model.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
@@ -17,11 +18,11 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage>
-    with ReservationSocketHandler {
+class _DashboardPageState extends State<DashboardPage> with ReservationSocketHandler {
   late FoodpageTableReservation foodpageTableReservation;
-  APIResponse<NewRequestCollectionModel> newRequestCollection =
-      APIResponse<NewRequestCollectionModel>.initial();
+  APIResponse<NewRequestCollectionModel> newRequestCollection = APIResponse<NewRequestCollectionModel>.initial();
+
+  APIResponse<TodayRequestCollectionModel> todayRequestCollection = APIResponse<TodayRequestCollectionModel>.initial();
 
   @override
   void initState() {
@@ -31,11 +32,11 @@ class _DashboardPageState extends State<DashboardPage>
 
   Future<void> createInstance() async {
     foodpageTableReservation = await FoodpageTableReservation.create(
-      authenticationKey: "97f5c2b20e9771333c04ee6ee6c99c8d",
+      authenticationKey: "6b6035bd8e22c350ab03e2b9b64009e7",
       shopId: '1',
       socketHandler: this,
       onFcmTopicRegister: (topic) {},
-      developmentMode: DevelopmentMode.release,
+      developmentMode: DevelopmentMode.development,
     );
     getNewRequests();
   }
@@ -47,6 +48,16 @@ class _DashboardPageState extends State<DashboardPage>
     final response = await foodpageTableReservation.getNewRequests();
     setState(() {
       newRequestCollection = response;
+    });
+  }
+
+  Future<void> getTodayRequests() async {
+    setState(() {
+      todayRequestCollection = APIResponse.loading();
+    });
+    final response = await foodpageTableReservation.getTodaysRequests();
+    setState(() {
+      todayRequestCollection = response;
     });
   }
 
@@ -127,7 +138,7 @@ class _DashboardPageState extends State<DashboardPage>
       body: Column(
         children: [
           Expanded(
-            child: newRequestCollection.when(
+            child: todayRequestCollection.when(
               initial: () {
                 return const SizedBox();
               },
@@ -138,16 +149,15 @@ class _DashboardPageState extends State<DashboardPage>
               },
               completed: (data) {
                 return ListView.builder(
-                  itemCount: data.enquiries.length,
+                  itemCount: data.upcomingEnquiries.length,
                   itemBuilder: (context, index) {
-                    final enquiry = data.enquiries[index];
+                    final enquiry = data.upcomingEnquiries[index];
                     return ListTile(
                       title: Text("${enquiry.name} (${enquiry.id})"),
                       subtitle: Text(enquiry.amountStatus.toString()),
                       leading: const Icon(Icons.table_restaurant),
                       onTap: () async {
-                        final response = await foodpageTableReservation
-                            .revokeAdvance(enquiry.id ?? "");
+                        final response = await foodpageTableReservation.revokeAdvance(enquiry.id ?? "");
                         inspect(response);
                       },
                     );
@@ -162,7 +172,8 @@ class _DashboardPageState extends State<DashboardPage>
           const SizedBox(height: 100),
           ElevatedButton(
               onPressed: () {
-                newReservation();
+                // newReservation();
+                getTodayRequests();
               },
               child: const Text("New Booking"))
         ],
@@ -220,8 +231,7 @@ class _DashboardCard extends GetView<DashboardController> {
               Positioned(
                 top: 0,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
                   decoration: const BoxDecoration(
                       color: AppColors.secondaryColor,
                       borderRadius: BorderRadius.only(

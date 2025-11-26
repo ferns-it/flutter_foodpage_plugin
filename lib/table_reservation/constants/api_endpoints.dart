@@ -13,4 +13,6 @@ class ApiEndpoints {
   static const captureamount = '/captureamount/';
   static const cancelcapturedamount = '/cancelcapturedamount/';
   static const refundAmount = '/refundamount/';
+
+  static const getTodaysRequests = '/today';
 }

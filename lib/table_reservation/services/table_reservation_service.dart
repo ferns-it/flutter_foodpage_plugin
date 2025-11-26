@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_foodpage_plugin/table_reservation/models/enquire/enquire_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/reservation/new_reservation_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/models/send_message/send_message_model.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/today/today_request_collection_model.dart';
 
 import '../constants/api_endpoints.dart';
 import '../constants/enums.dart';
@@ -25,6 +26,18 @@ class TableReservationService implements ReservationService {
     );
     if (result == null) return null;
     return NewRequestCollectionModel.fromJson(result);
+  }
+
+  @override
+  Future<TodayRequestCollectionModel?> getTodaysRequests(
+      {String? searchQuery}) async {
+    final result = await BaseClient.get(
+      api: ApiEndpoints.getTodaysRequests,
+      params:
+          searchQuery != null && searchQuery.isNotEmpty ? '/$searchQuery' : '',
+    );
+    if (result == null) return null;
+    return TodayRequestCollectionModel.fromJson(result);
   }
 
   @override

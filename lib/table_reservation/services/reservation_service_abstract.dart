@@ -1,4 +1,5 @@
 import 'package:flutter_foodpage_plugin/flutter_foodpage_plugin.dart';
+import 'package:flutter_foodpage_plugin/table_reservation/models/today/today_request_collection_model.dart';
 import 'package:flutter_foodpage_plugin/table_reservation/services/table_reservation_service.dart';
 
 import '../models/history/history_request_collection_model.dart';
@@ -13,6 +14,8 @@ abstract class ReservationService {
   Future<EnquirieModel?> newReservation(NewReservationModel reservation);
 
   Future<NewRequestCollectionModel?> getNewRequests({String? searchQuery});
+
+  Future<TodayRequestCollectionModel?> getTodaysRequests({String? searchQuery});
 
   Future<UpcomingRequestCollection?> getUpcomingList({String? searchQuery});
 
