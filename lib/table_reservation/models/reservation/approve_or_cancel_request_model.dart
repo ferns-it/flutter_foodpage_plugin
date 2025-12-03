@@ -9,12 +9,14 @@ class ApproveOrCancelRequestModel {
   final String bookingDate;
   final String bookingTime;
   final String shopMessage;
+  final String isReScheduled;
   ApproveOrCancelRequestModel({
     required this.reservationId,
     required this.status,
     required this.bookingDate,
     required this.bookingTime,
     required this.shopMessage,
+    required this.isReScheduled,
   });
 
   ApproveOrCancelRequestModel copyWith({
@@ -23,6 +25,7 @@ class ApproveOrCancelRequestModel {
     String? bookingDate,
     String? bookingTime,
     String? shopMessage,
+    String? isReScheduled,
   }) {
     return ApproveOrCancelRequestModel(
       reservationId: reservationId ?? this.reservationId,
@@ -30,6 +33,7 @@ class ApproveOrCancelRequestModel {
       bookingDate: bookingDate ?? this.bookingDate,
       bookingTime: bookingTime ?? this.bookingTime,
       shopMessage: shopMessage ?? this.shopMessage,
+      isReScheduled: isReScheduled ?? this.isReScheduled,
     );
   }
 
@@ -40,6 +44,7 @@ class ApproveOrCancelRequestModel {
       'bookingDate': bookingDate,
       'bookingTime': bookingTime,
       'shopMessage': shopMessage,
+      'isReScheduled': isReScheduled,
     };
   }
 
@@ -50,18 +55,18 @@ class ApproveOrCancelRequestModel {
       bookingDate: map['bookingDate'] as String,
       bookingTime: map['bookingTime'] as String,
       shopMessage: map['shopMessage'] as String,
+      isReScheduled: map['isReScheduled'] as String,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory ApproveOrCancelRequestModel.fromJson(String source) =>
-      ApproveOrCancelRequestModel.fromMap(
-          json.decode(source) as Map<String, dynamic>);
+      ApproveOrCancelRequestModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'UpdateReservationRequestModel(reservationId: $reservationId, status: $status, bookingDate: $bookingDate, bookingTime: $bookingTime, shopMessage: $shopMessage)';
+    return 'UpdateReservationRequestModel(reservationId: $reservationId, status: $status, bookingDate: $bookingDate, bookingTime: $bookingTime, shopMessage: $shopMessage, isReScheduled: $isReScheduled)';
   }
 
   @override
@@ -72,7 +77,8 @@ class ApproveOrCancelRequestModel {
         other.status == status &&
         other.bookingDate == bookingDate &&
         other.bookingTime == bookingTime &&
-        other.shopMessage == shopMessage;
+        other.shopMessage == shopMessage &&
+        other.isReScheduled == isReScheduled;
   }
 
   @override
@@ -81,6 +87,7 @@ class ApproveOrCancelRequestModel {
         status.hashCode ^
         bookingDate.hashCode ^
         bookingTime.hashCode ^
-        shopMessage.hashCode;
+        shopMessage.hashCode ^
+        isReScheduled.hashCode;
   }
 }
