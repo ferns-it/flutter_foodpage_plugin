@@ -9,14 +9,14 @@ class ApproveOrCancelRequestModel {
   final String bookingDate;
   final String bookingTime;
   final String shopMessage;
-  final String isReScheduled;
+  final String? isReScheduled;
   ApproveOrCancelRequestModel({
     required this.reservationId,
     required this.status,
     required this.bookingDate,
     required this.bookingTime,
     required this.shopMessage,
-    required this.isReScheduled,
+     this.isReScheduled,
   });
 
   ApproveOrCancelRequestModel copyWith({
@@ -55,7 +55,7 @@ class ApproveOrCancelRequestModel {
       bookingDate: map['bookingDate'] as String,
       bookingTime: map['bookingTime'] as String,
       shopMessage: map['shopMessage'] as String,
-      isReScheduled: map['isReScheduled'] as String,
+      isReScheduled: map['isReScheduled'] != null ?  map['isReScheduled']  as String : null,
     );
   }
 
