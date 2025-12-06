@@ -14,7 +14,8 @@ enum ResponseResult {
 
 enum ReservationStatusUpdate {
   cancelled(label: "Cancelled"),
-  approved(label: "Approved");
+  approved(label: "Approved"),
+  completed(label: "Completed");
 
   const ReservationStatusUpdate({required this.label});
   static ReservationStatusUpdate fromLabel(String label) {
