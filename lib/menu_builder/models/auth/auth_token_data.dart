@@ -3,8 +3,6 @@ import 'dart:convert';
 
 import '../../core/constants/enums.dart';
 
-
-
 class AuthTokenData {
   final String id;
   final String shopName;
@@ -31,7 +29,6 @@ class AuthTokenData {
     required this.token,
     this.mode = DevelopmentMode.release,
   });
-
 
   AuthTokenData copyWith({
     String? id,
@@ -73,10 +70,14 @@ class AuthTokenData {
       'shopCustomToken': shopCustomToken,
       'timezone': timezone,
       'token': token,
+      'mode': mode.name,
     };
   }
 
   factory AuthTokenData.fromMap(Map<String, dynamic> map) {
+    final shopName = map['shopName'] as String;
+    final isDevelopment = shopName.toLowerCase().contains('development');
+    final mode = isDevelopment ? DevelopmentMode.development : DevelopmentMode.release;
     return AuthTokenData(
       id: map['id'] as String,
       shopName: map['shopName'] as String,
@@ -88,13 +89,13 @@ class AuthTokenData {
       shopCustomToken: map['shopCustomToken'] as String,
       timezone: map['timezone'] as String,
       token: map['token'] as String,
+      mode: mode,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory AuthTokenData.fromJson(String source) =>
-      AuthTokenData.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AuthTokenData.fromJson(String source) => AuthTokenData.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
