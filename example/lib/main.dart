@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/global/global_variable.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/models/common/menu_builder_config.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/core/dependency_register_widget.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/flutter_foodpage_menu_builder.dart';
 import 'package:get/get.dart';
 
-import 'order_online/bindings/app_binding.dart';
-import 'order_online/constants/app_routes.dart';
-import 'order_online/constants/route_names.dart';
 import 'order_online/utils/app_theme.dart';
 
 void main() {
@@ -15,12 +17,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Flutter Demo',
-      theme: appTheme(context),
-      initialBinding: AppBinding(),
-      initialRoute: RouteNames.kDashBoard,
-      getPages: appRoutes,
+    return DependencyRegisterWidget(
+      child: GetMaterialApp(
+        key: MenuBuilderGlobalVariable.navState,
+        title: 'Flutter Demo',
+        theme: appTheme(context),
+        debugShowCheckedModeBanner: false,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child!,
+        ),
+        home: FlutterFoodpageMenuBuilder(
+          config: MenuBuilderConfig(
+            authenticationKey: "6b6035bd8e22c350ab03e2b9b64009e7",
+            mode: DevelopmentMode.development,
+            geminiAPIKey: "AIzaSyCHY942WKRPYPucmyaANG9HOHSJGb77T9E",
+            applicationName: "EPOS",
+          ),
+        ),
+      ),
     );
   }
 }

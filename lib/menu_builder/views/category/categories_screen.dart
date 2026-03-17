@@ -25,9 +25,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void resetTableViewController() {
     final controller = context.read<DishesController>();
     final categoryController = context.read<DishCategoryController>();
-    final listOfCategories = controller.listOfCategories
-        .where((category) => category.cID != null)
-        .map((category) {
+    final listOfCategories = controller.listOfCategories.where((category) => category.cID != null).map((category) {
       final children = category.childrens
           .where((child) => child.cID != null)
           .map((child) => Node(
@@ -98,8 +96,7 @@ class _CategoryTreeViewWidget extends StatefulWidget {
   const _CategoryTreeViewWidget();
 
   @override
-  State<_CategoryTreeViewWidget> createState() =>
-      _CategoryTreeViewWidgetState();
+  State<_CategoryTreeViewWidget> createState() => _CategoryTreeViewWidgetState();
 }
 
 class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
@@ -114,9 +111,7 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
   void initializeTableViewController() {
     final controller = context.read<DishesController>();
     final categoryController = context.read<DishCategoryController>();
-    final listOfCategories = controller.listOfCategories
-        .where((category) => category.cID != null)
-        .map((category) {
+    final listOfCategories = controller.listOfCategories.where((category) => category.cID != null).map((category) {
       final children = category.childrens
           .where((child) => child.cID != null)
           .map((child) => Node(
@@ -168,8 +163,7 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                   TextButton(
                     onPressed: categoryController.selectedCategory != null
                         ? () {
-                            final controller =
-                                context.read<DishCategoryController>();
+                            final controller = context.read<DishCategoryController>();
                             controller.resetSelectedCategory();
                           }
                         : null,
@@ -192,21 +186,15 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
                       final category = listOfCategories.elementAt(index);
-                      final selectedCId =
-                          categoryController.selectedCategory?.cID;
+                      final selectedCId = categoryController.selectedCategory?.cID;
                       return ListTile(
                         key: ValueKey(category.cID),
-                        tileColor: category.categoryStatus != "Active"
-                            ? Colors.grey.shade100
-                            : null,
+                        tileColor: category.categoryStatus != "Active" ? Colors.grey.shade100 : null,
                         title: Text(category.name ?? "Unknown"),
-                        onTap: () =>
-                            categoryController.onPressCategory(category),
+                        onTap: () => categoryController.onPressCategory(category),
                         selectedTileColor: MenuBuilderColors.kAccentOrange,
-                        selected:
-                            selectedCId != null && selectedCId == category.cID,
-                        visualDensity:
-                            const VisualDensity(horizontal: 0, vertical: -2),
+                        selected: selectedCId != null && selectedCId == category.cID,
+                        visualDensity: const VisualDensity(horizontal: 0, vertical: -2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4.0),
                         ),
@@ -214,9 +202,7 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
                     },
                     itemCount: listOfCategories.length,
                     onReorder: (int oldIndex, int newIndex) {
-                      return context
-                          .read<DishCategoryController>()
-                          .reOrderCategory(context, oldIndex, newIndex);
+                      return context.read<DishCategoryController>().reOrderCategory(context, oldIndex, newIndex);
                     }),
               )
               // Flexible(
@@ -292,12 +278,10 @@ class _BuildAddUpdateCategorySection extends StatefulWidget {
   const _BuildAddUpdateCategorySection({Key? key}) : super(key: key);
 
   @override
-  State<_BuildAddUpdateCategorySection> createState() =>
-      _BuildAddUpdateCategorySectionState();
+  State<_BuildAddUpdateCategorySection> createState() => _BuildAddUpdateCategorySectionState();
 }
 
-class _BuildAddUpdateCategorySectionState
-    extends State<_BuildAddUpdateCategorySection> {
+class _BuildAddUpdateCategorySectionState extends State<_BuildAddUpdateCategorySection> {
   // void initializeTableViewController() {
   //   final controller = context.read<DishesController>();
   //   final categoryController = context.read<DishCategoryController>();
@@ -335,8 +319,7 @@ class _BuildAddUpdateCategorySectionState
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          side: BorderSide(color: Colors.grey.shade300)),
+          borderRadius: BorderRadius.circular(8.0), side: BorderSide(color: Colors.grey.shade300)),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -364,54 +347,89 @@ class _BuildAddUpdateCategorySectionState
                     ),
                     if (controller.selectedCategory != null) ...[
                       const Spacer(),
-                      !controller.categoryStatusLoading
-                          ? OutlinedButton.icon(
-                              label: const Text("Active"),
-                              style: OutlinedButton.styleFrom(
-                                textStyle: textTheme.titleMedium,
-                                side: BorderSide(
-                                  width: 1,
-                                  color: Colors.grey.shade300,
+                      // !controller.categoryStatusLoading
+                      GestureDetector(
+                        onTap: controller.categoryStatusLoading
+                            ? null
+                            : () async {
+                                controller.disableEnableCategory(
+                                  onRequestRefresh: () async {
+                                    final dishCategoryController = context.read<DishCategoryController>();
+
+                                    await dishController.initializeAddDishRequiredData();
+
+                                    final category = dishController.listOfCategories.firstWhere(
+                                      (category) => category.cID == dishCategoryController.selectedCategory?.cID,
+                                    );
+
+                                    dishCategoryController.onPressCategory(category);
+                                  },
+                                );
+                              },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          width: 110,
+                          height: 36,
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: controller.categoryStatusLoading
+                                ? Colors.grey.shade300
+                                : controller.selectedCategory!.categoryStatus == "Active"
+                                    ? MenuBuilderColors.kSuccessGreen2.withOpacity(0.15)
+                                    : MenuBuilderColors.kMaterialRed.withOpacity(0.15),
+                          ),
+                          child: Stack(
+                            children: [
+                              /// Sliding circle
+                              AnimatedAlign(
+                                duration: const Duration(milliseconds: 250),
+                                alignment: controller.selectedCategory!.categoryStatus == "Active"
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                child: Container(
+                                  width: 40,
+                                  height: 28,
+                                  decoration: BoxDecoration(
+                                    color: controller.categoryStatusLoading
+                                        ? Colors.grey
+                                        : controller.selectedCategory!.categoryStatus == "Active"
+                                            ? MenuBuilderColors.kSuccessGreen2
+                                            : MenuBuilderColors.kMaterialRed,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                                 ),
                               ),
-                              onPressed: () {
-                                controller.disableEnableCategory(
-                                    onRequestRefresh: () async {
-                                  final dishCategoryController =
-                                      context.read<DishCategoryController>();
-                                  await dishController
-                                      .initializeAddDishRequiredData();
 
-                                  final category = dishController
-                                      .listOfCategories
-                                      .firstWhere(
-                                    (category) =>
-                                        category.cID ==
-                                        dishCategoryController
-                                            .selectedCategory?.cID,
-                                  );
-
-                                  dishCategoryController
-                                      .onPressCategory(category);
-                                });
-                              },
-                              icon: controller
-                                          .selectedCategory!.categoryStatus !=
-                                      "Active"
-                                  ? const Icon(
-                                      Icons.close,
-                                      color: MenuBuilderColors.kMaterialRed,
-                                    )
-                                  : const Icon(
-                                      Icons.check,
-                                      color: MenuBuilderColors.kSuccessGreen2,
+                              /// Text
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: controller.selectedCategory!.categoryStatus == "Active" ? 10 : 0,
+                                  right: controller.selectedCategory!.categoryStatus == "Active" ? 0 : 7,
+                                ),
+                                child: Align(
+                                  alignment: controller.selectedCategory!.categoryStatus == "Active"
+                                      ? Alignment.centerLeft
+                                      : Alignment.centerRight,
+                                  child: Text(
+                                    controller.selectedCategory!.categoryStatus == "Active" ? "Active" : "Inactive",
+                                    style: textTheme.labelLarge?.copyWith(
+                                      color: controller.categoryStatusLoading
+                                          ? Colors.grey
+                                          : controller.selectedCategory!.categoryStatus == "Active"
+                                              ? MenuBuilderColors.kSuccessGreen2
+                                              : MenuBuilderColors.kMaterialRed,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
                                     ),
-                            )
-                          : const SizedBox(
-                              height: 30,
-                              width: 30,
-                              child: CircularProgressIndicator(strokeWidth: 3),
-                            ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                      // : const SizedBox()
                     ]
                   ],
                 ),
@@ -456,8 +474,7 @@ class _BuildAddUpdateCategorySectionState
                       height: 50,
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String?>(
-                          items: dishController.listOfCategories
-                              .map<DropdownMenuItem<String?>>((category) {
+                          items: dishController.listOfCategories.map<DropdownMenuItem<String?>>((category) {
                             return DropdownMenuItem<String?>(
                               value: category.cID,
                               child: Text(
@@ -508,16 +525,13 @@ class _BuildAddUpdateCategorySectionState
                   onPressed: !controller.isLoading
                       ? () {
                           if (controller.editMode) {
-                            controller.updateCategory(
-                                onRequestRefresh: () async {
-                              await dishController
-                                  .initializeAddDishRequiredData();
+                            controller.updateCategory(onRequestRefresh: () async {
+                              await dishController.initializeAddDishRequiredData();
                             });
                             return;
                           }
                           controller.addNewCategory(onRequestRefresh: () async {
-                            await dishController
-                                .initializeAddDishRequiredData();
+                            await dishController.initializeAddDishRequiredData();
                           });
                         }
                       : null,
