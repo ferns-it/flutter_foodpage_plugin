@@ -18,11 +18,14 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> with ReservationSocketHandler {
+class _DashboardPageState extends State<DashboardPage>
+    with ReservationSocketHandler {
   late FoodpageTableReservation foodpageTableReservation;
-  APIResponse<NewRequestCollectionModel> newRequestCollection = APIResponse<NewRequestCollectionModel>.initial();
+  APIResponse<NewRequestCollectionModel> newRequestCollection =
+      APIResponse<NewRequestCollectionModel>.initial();
 
-  APIResponse<TodayRequestCollectionModel> todayRequestCollection = APIResponse<TodayRequestCollectionModel>.initial();
+  APIResponse<TodayRequestCollectionModel> todayRequestCollection =
+      APIResponse<TodayRequestCollectionModel>.initial();
 
   @override
   void initState() {
@@ -32,7 +35,7 @@ class _DashboardPageState extends State<DashboardPage> with ReservationSocketHan
 
   Future<void> createInstance() async {
     foodpageTableReservation = await FoodpageTableReservation.create(
-      authenticationKey: "6b6035bd8e22c350ab03e2b9b64009e7",
+      authenticationKey: "7462053d572583ec917ad141fdf01a20",
       shopId: '1',
       socketHandler: this,
       onFcmTopicRegister: (topic) {},
@@ -157,7 +160,8 @@ class _DashboardPageState extends State<DashboardPage> with ReservationSocketHan
                       subtitle: Text(enquiry.amountStatus.toString()),
                       leading: const Icon(Icons.table_restaurant),
                       onTap: () async {
-                        final response = await foodpageTableReservation.revokeAdvance(enquiry.id ?? "");
+                        final response = await foodpageTableReservation
+                            .revokeAdvance(enquiry.id ?? "");
                         inspect(response);
                       },
                     );
@@ -173,7 +177,8 @@ class _DashboardPageState extends State<DashboardPage> with ReservationSocketHan
           ElevatedButton(
               onPressed: () {
                 // newReservation();
-                getTodayRequests();
+                // getTodayRequests();
+                getNewRequests();
               },
               child: const Text("New Booking"))
         ],
@@ -231,7 +236,8 @@ class _DashboardCard extends GetView<DashboardController> {
               Positioned(
                 top: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
                   decoration: const BoxDecoration(
                       color: AppColors.secondaryColor,
                       borderRadius: BorderRadius.only(
