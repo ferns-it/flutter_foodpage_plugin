@@ -79,7 +79,8 @@ class _DashboardPageState extends State<DashboardPage>
       "amountStatus": "Ready",
       "paymentMethod": "STRIPE",
       "transactionID": "123",
-      "source": "Flutter"
+      "source": "Flutter",
+      "addedTime": "2026-07-03 10:10:10",
     };
     final reservation = NewReservationModel.fromMap(payload);
     await foodpageTableReservation.newReservation(reservation);
