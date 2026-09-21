@@ -118,6 +118,14 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
+String isFeaturedProduct = 'No';
+
+void setFeaturedProduct(String value) {
+  isFeaturedProduct = value;
+  notifyListeners();
+}
+
+
   String? _dishType;
 
   String get dishType => _dishType ?? "";
@@ -686,6 +694,7 @@ class DishesController extends ChangeNotifier with BaseController {
               isUnlimitedStock: 1,
               online: isOnlineReq,
               dining: isDineinReq,
+               featured:isFeaturedProduct,
               name: nameController.text,
               description: descriptionController.text,
               ingredients: singleVariationIngredientsController.text,
@@ -706,6 +715,7 @@ class DishesController extends ChangeNotifier with BaseController {
               variations: variations,
               online: isOnlineReq,
               dining: isDineinReq,
+              featured: isFeaturedProduct,
               name: nameController.text,
               description: descriptionController.text,
               category: listOfCategories,

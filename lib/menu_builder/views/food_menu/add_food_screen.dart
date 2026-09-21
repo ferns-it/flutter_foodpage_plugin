@@ -27,7 +27,8 @@ class AddFoodScreen extends StatefulWidget {
   State<AddFoodScreen> createState() => _AddFoodScreenState();
 }
 
-class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProviderStateMixin {
+class _AddFoodScreenState extends State<AddFoodScreen>
+    with SingleTickerProviderStateMixin {
   // @override
   // void dispose() {
   //   context.read<DishesController>().disposeAllFormControllers();
@@ -86,7 +87,9 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
 
           return Scaffold(
             appBar: AppBar(
-              title: controller.editDishId != null ? const Text("Edit Dish") : const Text("Add Dish"),
+              title: controller.editDishId != null
+                  ? const Text("Edit Dish")
+                  : const Text("Add Dish"),
               actions: <Widget>[
                 OutlinedButton.icon(
                   onPressed: !controller.loadingDishAction
@@ -98,7 +101,9 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                           })
                       : null,
                   icon: const Icon(FluentIcons.save_24_filled),
-                  label: controller.editDishId != null ? const Text("Update Dish") : const Text("Save Dish"),
+                  label: controller.editDishId != null
+                      ? const Text("Update Dish")
+                      : const Text("Save Dish"),
                   style: OutlinedButton.styleFrom(
                     textStyle: textTheme.titleMedium,
                   ),
@@ -145,47 +150,58 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                   const Divider(),
                                   verticalSpaceRegular,
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Flexible(
                                         flex: 1,
                                         child: CustomRoundedTextField.topText(
                                           hintText: "Enter dish name",
                                           topText: "Dish name",
-                                          borderRadius: BorderRadius.circular(8.0),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                           keyboardType: TextInputType.name,
                                           textInputAction: TextInputAction.next,
-                                          textEditingController: controller.nameController,
-                                          validator: MenuBuilderValidators.validateDishName,
+                                          textEditingController:
+                                              controller.nameController,
+                                          validator: MenuBuilderValidators
+                                              .validateDishName,
                                         ),
                                       ),
                                       horizontalSpaceRegular,
                                       Flexible(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
                                               "Variation Type",
-                                              style: textTheme.titleSmall!.copyWith(
+                                              style: textTheme.titleSmall!
+                                                  .copyWith(
                                                 color: Colors.grey.shade700,
                                               ),
                                             ),
                                             verticalSpaceTiny,
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 vertical: 5.0,
                                                 horizontal: 6.0,
                                               ),
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
                                                 border: Border.all(
                                                   width: 1.5,
-                                                  color: Colors.grey.withOpacity(0.4),
+                                                  color: Colors.grey
+                                                      .withOpacity(0.4),
                                                 ),
                                               ),
                                               child: Row(
-                                                children: DishVariationType.values
+                                                children: DishVariationType
+                                                    .values
                                                     .map(
                                                       (value) => Flexible(
                                                         child: RadioListTile(
@@ -195,11 +211,17 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                                             ),
                                                           ),
                                                           value: value,
-                                                          groupValue: controller.dishVariationType,
-                                                          onChanged: controller.onChangeDishVariationType,
-                                                          visualDensity: const VisualDensity(
-                                                            horizontal: VisualDensity.minimumDensity,
-                                                            vertical: VisualDensity.minimumDensity,
+                                                          groupValue: controller
+                                                              .dishVariationType,
+                                                          onChanged: controller
+                                                              .onChangeDishVariationType,
+                                                          visualDensity:
+                                                              const VisualDensity(
+                                                            horizontal:
+                                                                VisualDensity
+                                                                    .minimumDensity,
+                                                            vertical: VisualDensity
+                                                                .minimumDensity,
                                                           ),
                                                         ),
                                                       ),
@@ -220,95 +242,138 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                         child: CustomRoundedTextField.topText(
                                           hintText: "Short note about dish..",
                                           topText: "Description",
-                                          borderRadius: BorderRadius.circular(8.0),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                           maxLines: 2,
                                           keyboardType: TextInputType.text,
                                           textInputAction: TextInputAction.next,
-                                          textEditingController: controller.descriptionController,
-                                          suffixIcon: context.watch<GeminiController>().dishDescriptionGenerating
+                                          textEditingController:
+                                              controller.descriptionController,
+                                          suffixIcon: context
+                                                  .watch<GeminiController>()
+                                                  .dishDescriptionGenerating
                                               ? const Padding(
                                                   padding: EdgeInsets.all(10.0),
                                                   child: SizedBox(
                                                     height: 26.0,
                                                     width: 26.0,
-                                                    child: CircularProgressIndicator(
+                                                    child:
+                                                        CircularProgressIndicator(
                                                       strokeWidth: 2.5,
                                                     ),
                                                   ),
                                                 )
                                               : InkWell(
-                                                  customBorder: const CircleBorder(),
-                                                  onTapDown: (TapDownDetails details) {
-                                                    _tapDownPosition = details.globalPosition;
+                                                  customBorder:
+                                                      const CircleBorder(),
+                                                  onTapDown:
+                                                      (TapDownDetails details) {
+                                                    _tapDownPosition =
+                                                        details.globalPosition;
                                                   },
                                                   onLongPress: () async {
-                                                    if (_tapDownPosition == null) {
+                                                    if (_tapDownPosition ==
+                                                        null) {
                                                       return;
                                                     }
 
                                                     final RenderBox overlay =
-                                                        Overlay.of(context).context.findRenderObject() as RenderBox;
+                                                        Overlay.of(context)
+                                                                .context
+                                                                .findRenderObject()
+                                                            as RenderBox;
 
                                                     await showMenu(
                                                       context: context,
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(8.0),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
                                                       ),
                                                       items: [
                                                         PopupMenuItem(
                                                           value: 0,
                                                           child: const Row(
-                                                            mainAxisSize: MainAxisSize.min,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
                                                             children: <Widget>[
                                                               Icon(
-                                                                Icons.spellcheck_outlined,
+                                                                Icons
+                                                                    .spellcheck_outlined,
                                                                 size: 22,
                                                               ),
-                                                              SizedBox(width: 14.0),
-                                                              Text("Spelling & Grammar"),
+                                                              SizedBox(
+                                                                  width: 14.0),
+                                                              Text(
+                                                                  "Spelling & Grammar"),
                                                             ],
                                                           ),
                                                           onTap: () async {
-                                                            final desc = controller.descriptionController.text;
+                                                            final desc = controller
+                                                                .descriptionController
+                                                                .text;
                                                             if (desc.isEmpty) {
-                                                              Fluttertoast.showToast(
-                                                                msg: "Description cannot be empty!",
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg:
+                                                                    "Description cannot be empty!",
                                                               );
                                                               return;
                                                             }
                                                             final generatedContent =
-                                                                await geminiController.spellAndGrammarDishDescription(
+                                                                await geminiController
+                                                                    .spellAndGrammarDishDescription(
                                                               desc,
                                                             );
 
-                                                            if (generatedContent != null) {
-                                                              controller.descriptionController.text = generatedContent;
+                                                            if (generatedContent !=
+                                                                null) {
+                                                              controller
+                                                                      .descriptionController
+                                                                      .text =
+                                                                  generatedContent;
                                                             }
                                                           },
                                                         ),
                                                       ],
-                                                      position: RelativeRect.fromLTRB(
+                                                      position:
+                                                          RelativeRect.fromLTRB(
                                                         _tapDownPosition!.dx,
                                                         _tapDownPosition!.dy,
-                                                        overlay.size.width - _tapDownPosition!.dx,
-                                                        overlay.size.height - _tapDownPosition!.dy,
+                                                        overlay.size.width -
+                                                            _tapDownPosition!
+                                                                .dx,
+                                                        overlay.size.height -
+                                                            _tapDownPosition!
+                                                                .dy,
                                                       ),
                                                     );
                                                   },
                                                   onTap: () async {
-                                                    final name = controller.nameController.text;
+                                                    final name = controller
+                                                        .nameController.text;
                                                     if (name.isEmpty) {
-                                                      Fluttertoast.showToast(msg: "Dish Name cannot be empty!");
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              "Dish Name cannot be empty!");
                                                       return;
                                                     }
                                                     final generatedContent =
-                                                        await geminiController.generateDishDescription(name);
-                                                    if (generatedContent != null) {
-                                                      controller.descriptionController.text = generatedContent;
+                                                        await geminiController
+                                                            .generateDishDescription(
+                                                                name);
+                                                    if (generatedContent !=
+                                                        null) {
+                                                      controller
+                                                          .descriptionController
+                                                          .text = generatedContent;
                                                     }
                                                   },
                                                   child: const Icon(
-                                                    FluentIcons.sparkle_24_regular,
+                                                    FluentIcons
+                                                        .sparkle_24_regular,
                                                   ),
                                                 ),
                                         ),
@@ -316,14 +381,16 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                       horizontalSpaceMedium,
                                       Flexible(
                                         child: CustomRoundedTextField.topText(
-                                          hintText: "Enter Item Code (eg: 1, 2, 3...)",
+                                          hintText:
+                                              "Enter Item Code (eg: 1, 2, 3...)",
                                           topText: "Item Code",
                                           borderRadius: BorderRadius.circular(
                                             8.0,
                                           ),
                                           keyboardType: TextInputType.text,
                                           textInputAction: TextInputAction.done,
-                                          textEditingController: controller.itemCodeController,
+                                          textEditingController:
+                                              controller.itemCodeController,
                                         ),
                                       )
                                     ],
@@ -332,10 +399,14 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                   CustomRadioCheckboxGroup(
                                     title1: "Veg/Non Veg",
                                     title2: "Available On",
-                                    options1: addDishInitializeData!.dishtype.data,
+                                    options1:
+                                        addDishInitializeData!.dishtype.data,
                                     groupValue: controller.dishType,
                                     options2: const ["Online", "Dine In"],
-                                    checkboxValues: [controller.onlineStatus, controller.dineInStatus],
+                                    checkboxValues: [
+                                      controller.onlineStatus,
+                                      controller.dineInStatus
+                                    ],
                                     onChangedCheckbox: (index, value) {
                                       if (value == null) return;
                                       if (index == 0) {
@@ -353,61 +424,85 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                               ),
                             ),
                           ),
-                          controller.dishVariationType == DishVariationType.single
+                          controller.dishVariationType ==
+                                  DishVariationType.single
                               ? LayoutBuilder(builder: (context, constraints) {
                                   return Card(
                                     child: Padding(
                                       padding: defaultCardPadding,
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: <Widget>[
                                           SizedBox(
                                             width: constraints.maxWidth / 2,
-                                            child: CustomRoundedTextField.topText(
+                                            child:
+                                                CustomRoundedTextField.topText(
                                               topText: "Dish price",
                                               hintText: "Enter dish price",
-                                              borderRadius: BorderRadius.circular(8.0),
-                                              keyboardType: TextInputType.number,
-                                              textInputAction: TextInputAction.next,
-                                              validator: MenuBuilderValidators.validatePrice,
-                                              textEditingController: controller.singleVariationPriceController,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              validator: MenuBuilderValidators
+                                                  .validatePrice,
+                                              textEditingController: controller
+                                                  .singleVariationPriceController,
                                             ),
                                           ),
                                           verticalSpaceRegular,
                                           CustomRoundedTextField.topText(
                                             topText: "Ingredients",
-                                            hintText: "Short note about dish ingredients..",
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            hintText:
+                                                "Short note about dish ingredients..",
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                             maxLines: 2,
                                             keyboardType: TextInputType.text,
-                                            textInputAction: TextInputAction.done,
-                                            textEditingController: controller.singleVariationIngredientsController,
-                                            suffixIcon: geminiController.dishIngredientsGenerating
+                                            textInputAction:
+                                                TextInputAction.done,
+                                            textEditingController: controller
+                                                .singleVariationIngredientsController,
+                                            suffixIcon: geminiController
+                                                    .dishIngredientsGenerating
                                                 ? const Padding(
-                                                    padding: EdgeInsets.all(10.0),
+                                                    padding:
+                                                        EdgeInsets.all(10.0),
                                                     child: SizedBox(
                                                       height: 26.0,
                                                       width: 26.0,
-                                                      child: CircularProgressIndicator(
+                                                      child:
+                                                          CircularProgressIndicator(
                                                         strokeWidth: 2.5,
                                                       ),
                                                     ),
                                                   )
                                                 : IconButton(
                                                     onPressed: () async {
-                                                      final name = controller.nameController.text;
+                                                      final name = controller
+                                                          .nameController.text;
                                                       if (name.isEmpty) {
-                                                        Fluttertoast.showToast(msg: "Dish Name cannot be empty!");
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                                "Dish Name cannot be empty!");
                                                         return;
                                                       }
                                                       final generatedContent =
-                                                          await geminiController.generateDishIngredients(name);
-                                                      if (generatedContent != null) {
-                                                        controller.singleVariationIngredientsController.text =
+                                                          await geminiController
+                                                              .generateDishIngredients(
+                                                                  name);
+                                                      if (generatedContent !=
+                                                          null) {
+                                                        controller
+                                                                .singleVariationIngredientsController
+                                                                .text =
                                                             generatedContent;
                                                       }
                                                     },
-                                                    icon: const Icon(FluentIcons.sparkle_24_regular),
+                                                    icon: const Icon(FluentIcons
+                                                        .sparkle_24_regular),
                                                   ),
                                           ),
                                           verticalSpaceRegular,
@@ -422,7 +517,8 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                     padding: defaultCardPadding,
                                     child: Center(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Row(
                                             children: [
@@ -434,22 +530,30 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                               Builder(builder: (context) {
                                                 return OutlinedButton.icon(
                                                   onPressed: () {
-                                                    controller.onChangeSideSheetType(
-                                                      AddDishSideSheetType.variation,
+                                                    controller
+                                                        .onChangeSideSheetType(
+                                                      AddDishSideSheetType
+                                                          .variation,
                                                     );
 
-                                                    Scaffold.of(context).openEndDrawer();
+                                                    Scaffold.of(context)
+                                                        .openEndDrawer();
                                                   },
                                                   icon: const Icon(
                                                     FluentIcons.add_24_filled,
                                                   ),
-                                                  label: const Text("Add Variation"),
-                                                  style: OutlinedButton.styleFrom(
-                                                    textStyle: textTheme.titleMedium,
-                                                    foregroundColor: MenuBuilderColors.kBlue,
+                                                  label: const Text(
+                                                      "Add Variation"),
+                                                  style:
+                                                      OutlinedButton.styleFrom(
+                                                    textStyle:
+                                                        textTheme.titleMedium,
+                                                    foregroundColor:
+                                                        MenuBuilderColors.kBlue,
                                                     side: const BorderSide(
                                                       width: 1,
-                                                      color: MenuBuilderColors.kBlue,
+                                                      color: MenuBuilderColors
+                                                          .kBlue,
                                                     ),
                                                   ),
                                                 );
@@ -458,17 +562,24 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                           ),
                                           const Divider(),
                                           verticalSpaceRegular,
-                                          if (controller.variationsFormEntriesEmpty)
+                                          if (controller
+                                              .variationsFormEntriesEmpty)
                                             Center(
                                               child: Padding(
-                                                padding: const EdgeInsets.symmetric(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
                                                   vertical: 10.0,
                                                 ),
                                                 child: Text(
                                                   "You have no variations yet. To add a variation, press the Add Variation (+) button.",
-                                                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                                        fontWeight: FontWeight.normal,
-                                                        color: Colors.grey.shade600,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium!
+                                                      .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color: Colors
+                                                            .grey.shade600,
                                                       ),
                                                 ),
                                               ),
@@ -480,38 +591,59 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                               ),
                                               child: AlignedGridView.count(
                                                 crossAxisCount: 2,
-                                                itemCount: controller.variationsFormEntries.length,
+                                                itemCount: controller
+                                                    .variationsFormEntries
+                                                    .length,
                                                 mainAxisSpacing: 14.0,
                                                 crossAxisSpacing: 14.0,
                                                 shrinkWrap: true,
-                                                physics: const NeverScrollableScrollPhysics(),
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
                                                 itemBuilder: (context, index) {
-                                                  final entry = controller.variationsFormEntries[index];
-                                                  final hasValues = controller.checkVariationEntryIsEmpty(index);
+                                                  final entry = controller
+                                                          .variationsFormEntries[
+                                                      index];
+                                                  final hasValues = controller
+                                                      .checkVariationEntryIsEmpty(
+                                                          index);
 
                                                   if (hasValues) {
-                                                    return const SizedBox.shrink();
+                                                    return const SizedBox
+                                                        .shrink();
                                                   }
 
-                                                  final name = (entry["name"] as TextEditingController).text;
-                                                  final price = (entry["price"] as TextEditingController).text;
+                                                  final name = (entry["name"]
+                                                          as TextEditingController)
+                                                      .text;
+                                                  final price = (entry["price"]
+                                                          as TextEditingController)
+                                                      .text;
 
-                                                  if (name.isEmpty || price.isEmpty) {
-                                                    return const SizedBox.shrink();
+                                                  if (name.isEmpty ||
+                                                      price.isEmpty) {
+                                                    return const SizedBox
+                                                        .shrink();
                                                   }
 
                                                   return ListTile(
-                                                    shape: RoundedRectangleBorder(
+                                                    shape:
+                                                        RoundedRectangleBorder(
                                                       side: BorderSide(
-                                                        color: Colors.grey.shade300,
+                                                        color: Colors
+                                                            .grey.shade300,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(6.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6.0),
                                                     ),
                                                     title: Text(name),
                                                     subtitle: Text(
                                                       "£$price",
-                                                      style: textTheme.bodyLarge!.copyWith(
-                                                        color: Colors.grey.shade500,
+                                                      style: textTheme
+                                                          .bodyLarge!
+                                                          .copyWith(
+                                                        color: Colors
+                                                            .grey.shade500,
                                                       ),
                                                     ),
                                                   );
@@ -607,10 +739,12 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                 child: Padding(
                                   padding: defaultCardPadding,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text(
                                             "Categories",
@@ -619,14 +753,17 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                           Builder(builder: (context) {
                                             return InkWell(
                                               onTap: () {
-                                                controller.onChangeSideSheetType(
+                                                controller
+                                                    .onChangeSideSheetType(
                                                   AddDishSideSheetType.category,
                                                 );
-                                                Scaffold.of(context).openEndDrawer();
+                                                Scaffold.of(context)
+                                                    .openEndDrawer();
                                               },
                                               child: Icon(
                                                 FluentIcons.add_20_filled,
-                                                color: Theme.of(context).primaryColor,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
                                               ),
                                             );
                                           }),
@@ -641,7 +778,8 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium!
-                                            .copyWith(color: Colors.grey.shade600),
+                                            .copyWith(
+                                                color: Colors.grey.shade600),
                                       ),
                                       verticalSpaceSmall,
                                       Divider(color: Colors.grey.shade300),
@@ -650,26 +788,37 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                         child: ListView.separated(
                                           scrollDirection: Axis.horizontal,
                                           shrinkWrap: true,
-                                          itemCount: controller.choosedParentCategory.length,
+                                          itemCount: controller
+                                              .choosedParentCategory.length,
                                           itemBuilder: (context, index) {
-                                            final element = controller.choosedParentCategory[index];
+                                            final element = controller
+                                                .choosedParentCategory[index];
                                             return Chip(
                                               onDeleted: () {
                                                 controller.removeParentCategory(
                                                   element.$1,
                                                 );
                                               },
-                                              backgroundColor: MenuBuilderColors.kPurple.withOpacity(0.1),
+                                              backgroundColor: MenuBuilderColors
+                                                  .kPurple
+                                                  .withOpacity(0.1),
                                               side: BorderSide.none,
-                                              padding: const EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: 6.0,
                                               ),
-                                              label: Text(capitalizeFirstLetter(element.$2 ?? "")),
-                                              labelStyle: textTheme.bodyLarge!.copyWith(
-                                                color: MenuBuilderColors.kPurple,
+                                              label: Text(capitalizeFirstLetter(
+                                                  element.$2 ?? "")),
+                                              labelStyle:
+                                                  textTheme.bodyLarge!.copyWith(
+                                                color:
+                                                    MenuBuilderColors.kPurple,
                                               ),
-                                              deleteIcon: const Icon(Icons.close, size: 20),
-                                              deleteIconColor: MenuBuilderColors.kPurple,
+                                              deleteIcon: const Icon(
+                                                  Icons.close,
+                                                  size: 20),
+                                              deleteIconColor:
+                                                  MenuBuilderColors.kPurple,
                                               // selected: true,
                                               // selectedColor: AppColors.backgroundColor,
                                             );
@@ -680,7 +829,8 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                         ),
                                       ),
                                       verticalSpaceSmall,
-                                      if (controller.choosedSubCategories.isNotEmpty) ...[
+                                      if (controller
+                                          .choosedSubCategories.isNotEmpty) ...[
                                         Divider(color: Colors.grey.shade300),
                                         verticalSpaceSmall,
                                         Text(
@@ -688,7 +838,8 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium!
-                                              .copyWith(color: Colors.grey.shade600),
+                                              .copyWith(
+                                                  color: Colors.grey.shade600),
                                         ),
                                         verticalSpaceSmall,
                                         Divider(color: Colors.grey.shade300),
@@ -697,28 +848,39 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                           child: ListView.separated(
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
-                                            itemCount: controller.choosedSubCategories.length,
+                                            itemCount: controller
+                                                .choosedSubCategories.length,
                                             itemBuilder: (context, index) {
-                                              final element = controller.choosedSubCategories[index];
+                                              final element = controller
+                                                  .choosedSubCategories[index];
                                               return Chip(
                                                 onDeleted: () {
-                                                  controller.removeChildCategory(
+                                                  controller
+                                                      .removeChildCategory(
                                                     element.$1,
                                                     element.$3,
                                                   );
                                                 },
-                                                backgroundColor: MenuBuilderColors.kOrange.withOpacity(0.1),
+                                                backgroundColor:
+                                                    MenuBuilderColors.kOrange
+                                                        .withOpacity(0.1),
                                                 side: BorderSide.none,
-                                                padding: const EdgeInsets.symmetric(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
                                                   horizontal: 6.0,
                                                 ),
                                                 label: Text(
                                                     "${capitalizeFirstLetter(element.$4 ?? "")} ( ${capitalizeFirstLetter(element.$2 ?? "")} )"),
-                                                labelStyle: textTheme.bodyLarge!.copyWith(
-                                                  color: MenuBuilderColors.kOrange,
+                                                labelStyle: textTheme.bodyLarge!
+                                                    .copyWith(
+                                                  color:
+                                                      MenuBuilderColors.kOrange,
                                                 ),
-                                                deleteIcon: const Icon(Icons.close, size: 20),
-                                                deleteIconColor: MenuBuilderColors.kOrange,
+                                                deleteIcon: const Icon(
+                                                    Icons.close,
+                                                    size: 20),
+                                                deleteIconColor:
+                                                    MenuBuilderColors.kOrange,
                                                 // selected: true,
                                                 // selectedColor: AppColors.backgroundColor,
                                               );
@@ -734,16 +896,72 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                 ),
                               ),
                             ),
+                            Card(
+                              child: Padding(
+                                padding: defaultCardPadding,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Is Featured Product",
+                                      style: textTheme.titleMedium,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      children: [
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Radio<String>(
+                                              value: 'No',
+                                              groupValue:
+                                                  controller.isFeaturedProduct,
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  controller.setFeaturedProduct(
+                                                      value);
+                                                }
+                                              },
+                                            ),
+                                            const Text("No"),
+                                          ],
+                                        ),
+                                        const SizedBox(width: 24),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Radio<String>(
+                                              value: 'Yes',
+                                              groupValue:
+                                                  controller.isFeaturedProduct,
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  controller.setFeaturedProduct(
+                                                      value);
+                                                }
+                                              },
+                                            ),
+                                            const Text("Yes"),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                             SizedBox(
                               width: double.infinity,
                               child: Card(
                                 child: Padding(
                                   padding: defaultCardPadding,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             "Menus",
@@ -752,14 +970,17 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                           Builder(builder: (context) {
                                             return InkWell(
                                               onTap: () {
-                                                controller.onChangeSideSheetType(
+                                                controller
+                                                    .onChangeSideSheetType(
                                                   AddDishSideSheetType.menu,
                                                 );
-                                                Scaffold.of(context).openEndDrawer();
+                                                Scaffold.of(context)
+                                                    .openEndDrawer();
                                               },
                                               child: Icon(
                                                 FluentIcons.add_20_filled,
-                                                color: Theme.of(context).primaryColor,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
                                               ),
                                             );
                                           }),
@@ -769,15 +990,20 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                       Wrap(
                                         runSpacing: 2.0,
                                         spacing: 8.0,
-                                        children: controller.choosedMenus.map((key) {
+                                        children:
+                                            controller.choosedMenus.map((key) {
                                           return Chip(
-                                            backgroundColor: MenuBuilderColors.kOrange.withOpacity(0.1),
+                                            backgroundColor: MenuBuilderColors
+                                                .kOrange
+                                                .withOpacity(0.1),
                                             side: BorderSide.none,
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 6.0,
                                             ),
-                                            label: Text(controller.listOfMenus[key]),
-                                            labelStyle: textTheme.bodyLarge!.copyWith(
+                                            label: Text(
+                                                controller.listOfMenus[key]),
+                                            labelStyle:
+                                                textTheme.bodyLarge!.copyWith(
                                               color: MenuBuilderColors.kOrange,
                                             ),
                                           );
@@ -794,10 +1020,12 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                 child: Padding(
                                   padding: defaultCardPadding,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             "Availability",
@@ -806,14 +1034,18 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                           Builder(builder: (context) {
                                             return InkWell(
                                               onTap: () {
-                                                controller.onChangeSideSheetType(
-                                                  AddDishSideSheetType.availability,
+                                                controller
+                                                    .onChangeSideSheetType(
+                                                  AddDishSideSheetType
+                                                      .availability,
                                                 );
-                                                Scaffold.of(context).openEndDrawer();
+                                                Scaffold.of(context)
+                                                    .openEndDrawer();
                                               },
                                               child: Icon(
                                                 FluentIcons.edit_20_regular,
-                                                color: Theme.of(context).primaryColor,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
                                               ),
                                             );
                                           }),
@@ -826,8 +1058,11 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                             Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                shopController.shopAvailableDaysStartEnd,
-                                                style: Theme.of(context).textTheme.bodyMedium,
+                                                shopController
+                                                    .shopAvailableDaysStartEnd,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                             ),
                                             verticalSpaceSmall,
@@ -835,37 +1070,58 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                               alignment: Alignment.centerLeft,
                                               child: Text(
                                                 "Dish availability matches the shop's operating hours.",
-                                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                      color: MenuBuilderColors.kPrimaryColor,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium!
+                                                    .copyWith(
+                                                      color: MenuBuilderColors
+                                                          .kPrimaryColor,
                                                     ),
                                               ),
                                             ),
                                             verticalSpaceSmall,
                                             Builder(builder: (context) {
-                                              final dishAvailabilityEntries = controller.dishAvailabilityEntries
-                                                  .where((entry) => entry.$1 != null && entry.$2 != null);
+                                              final dishAvailabilityEntries =
+                                                  controller
+                                                      .dishAvailabilityEntries
+                                                      .where((entry) =>
+                                                          entry.$1 != null &&
+                                                          entry.$2 != null);
                                               return Visibility(
-                                                visible: dishAvailabilityEntries.isNotEmpty,
+                                                visible: dishAvailabilityEntries
+                                                    .isNotEmpty,
                                                 child: Container(
-                                                  padding: const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                     vertical: 8.0,
                                                     horizontal: 10.0,
                                                   ),
                                                   decoration: BoxDecoration(
                                                     border: Border.all(
-                                                      color: MenuBuilderColors.kLightGrey,
+                                                      color: MenuBuilderColors
+                                                          .kLightGrey,
                                                     ),
-                                                    borderRadius: BorderRadius.circular(8.0),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
                                                   ),
                                                   child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: dishAvailabilityEntries.map((entry) {
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children:
+                                                        dishAvailabilityEntries
+                                                            .map((entry) {
                                                       return Text(
                                                         "${formatTimeOfDay(entry.$1!)} to ${formatTimeOfDay(entry.$2!)}",
-                                                        style: textTheme.bodyMedium!.copyWith(
-                                                          color: Colors.grey.shade500,
+                                                        style: textTheme
+                                                            .bodyMedium!
+                                                            .copyWith(
+                                                          color: Colors
+                                                              .grey.shade500,
                                                         ),
-                                                        textAlign: TextAlign.left,
+                                                        textAlign:
+                                                            TextAlign.left,
                                                       );
                                                     }).toList(),
                                                   ),
@@ -880,21 +1136,31 @@ class _AddFoodScreenState extends State<AddFoodScreen> with SingleTickerProvider
                                             children: <Widget>[
                                               _buildExpansionTileContainer(
                                                 context,
-                                                icon: FluentIcons.calendar_24_regular,
-                                                title: capitalizeFirstLetter(day),
-                                                children: controller.dishAvailabilityEntries
-                                                    .where((entry) => entry.$1 != null && entry.$2 != null)
+                                                icon: FluentIcons
+                                                    .calendar_24_regular,
+                                                title:
+                                                    capitalizeFirstLetter(day),
+                                                children: controller
+                                                    .dishAvailabilityEntries
+                                                    .where((entry) =>
+                                                        entry.$1 != null &&
+                                                        entry.$2 != null)
                                                     .map((entry) {
                                                   return Padding(
-                                                    padding: const EdgeInsets.symmetric(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
                                                       vertical: 4.0,
                                                     ),
                                                     child: Align(
-                                                      alignment: Alignment.centerLeft,
+                                                      alignment:
+                                                          Alignment.centerLeft,
                                                       child: Text(
                                                         "${formatTimeOfDay(entry.$1!)} to ${formatTimeOfDay(entry.$2!)}",
-                                                        style: textTheme.bodyMedium!.copyWith(
-                                                          color: Colors.grey.shade600,
+                                                        style: textTheme
+                                                            .bodyMedium!
+                                                            .copyWith(
+                                                          color: Colors
+                                                              .grey.shade600,
                                                         ),
                                                       ),
                                                     ),
@@ -1083,7 +1349,8 @@ class CustomOptionGroup extends StatelessWidget {
                           : CheckboxListTile(
                               value: values[options.indexOf(option)],
                               onChanged: onChangedCheckbox != null
-                                  ? (value) => onChangedCheckbox!(options.indexOf(option), value)
+                                  ? (value) => onChangedCheckbox!(
+                                      options.indexOf(option), value)
                                   : null,
                               controlAffinity: ListTileControlAffinity.leading,
                               title: Text(

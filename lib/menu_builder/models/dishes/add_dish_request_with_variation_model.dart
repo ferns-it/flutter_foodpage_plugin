@@ -11,6 +11,7 @@ class AddDishRequestWithVariationModel with AddDishData {
   final String? type;
   final String? online;
   final String? dining;
+  final String? featured;
   final String? name;
   final String? description;
   final String? photo;
@@ -29,6 +30,7 @@ class AddDishRequestWithVariationModel with AddDishData {
     this.type,
     this.online,
     this.dining,
+    this.featured,
     this.name,
     this.description,
     this.photo,
@@ -48,6 +50,7 @@ class AddDishRequestWithVariationModel with AddDishData {
     String? type,
     String? online,
     String? dining,
+    String? featured,
     String? name,
     String? description,
     String? photo,
@@ -66,6 +69,7 @@ class AddDishRequestWithVariationModel with AddDishData {
       type: type ?? this.type,
       online: online ?? this.online,
       dining: dining ?? this.dining,
+      featured: featured ?? this.featured,
       name: name ?? this.name,
       description: description ?? this.description,
       photo: photo ?? this.photo,
@@ -88,6 +92,7 @@ class AddDishRequestWithVariationModel with AddDishData {
       'type': type,
       'online': online,
       'dining': dining,
+      'featured': featured,
       'name': name,
       'description': description,
       'photo': photo,
@@ -110,6 +115,7 @@ class AddDishRequestWithVariationModel with AddDishData {
       type: map['type'] != null ? map['type'] as String : null,
       online: map['online'] != null ? map['online'] as String : null,
       dining: map['dining'] != null ? map['dining'] as String : null,
+      featured: map['featured'] != null ? map['featured'] as String : null,
       name: map['name'] != null ? map['name'] as String : null,
       description:
           map['description'] != null ? map['description'] as String : null,
@@ -158,7 +164,7 @@ class AddDishRequestWithVariationModel with AddDishData {
 
   @override
   String toString() {
-    return 'AddDishRequestWithVariationModel(productType: $productType, type: $type, online: $online, dining: $dining, name: $name, description: $description, photo: $photo, category: $category, activeStatus: $activeStatus, productMenuGroup: $productMenuGroup, variations: $variations, allDayAvailable: $allDayAvailable, availability: $availability, timing: $timing, addonsMasterGroup: $addonsMasterGroup, itemCode: $itemCode)';
+    return 'AddDishRequestWithVariationModel(productType: $productType, type: $type, online: $online, dining: $dining,featured: $featured, name: $name, description: $description, photo: $photo, category: $category, activeStatus: $activeStatus, productMenuGroup: $productMenuGroup, variations: $variations, allDayAvailable: $allDayAvailable, availability: $availability, timing: $timing, addonsMasterGroup: $addonsMasterGroup, itemCode: $itemCode)';
   }
 
   @override
@@ -170,6 +176,7 @@ class AddDishRequestWithVariationModel with AddDishData {
         other.type == type &&
         other.online == online &&
         other.dining == dining &&
+        other.featured == featured &&
         other.name == name &&
         other.description == description &&
         other.photo == photo &&
@@ -190,6 +197,7 @@ class AddDishRequestWithVariationModel with AddDishData {
         type.hashCode ^
         online.hashCode ^
         dining.hashCode ^
+        featured.hashCode ^
         name.hashCode ^
         description.hashCode ^
         photo.hashCode ^
