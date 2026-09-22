@@ -118,13 +118,26 @@ class DishesController extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-String isFeaturedProduct = 'No';
+  String isFeaturedProduct = 'No';
 
-void setFeaturedProduct(String value) {
-  isFeaturedProduct = value;
-  notifyListeners();
-}
+  void setFeaturedProduct(String value) {
+    isFeaturedProduct = value;
+    notifyListeners();
+  }
 
+  bool isUnlimitedStock = false;
+
+  final quantityController = TextEditingController();
+
+  void onChangeUnlimitedStock(bool value) {
+    isUnlimitedStock = value;
+
+    if (value) {
+      quantityController.clear();
+    }
+
+    notifyListeners();
+  }
 
   String? _dishType;
 
@@ -385,17 +398,41 @@ void setFeaturedProduct(String value) {
     dishAvailabilityEntries.removeAt(index);
     notifyListeners();
   }
+bool onStartTimeChange(int index, TimeOfDay time) {
+  final endTime = dishAvailabilityEntries[index].$2;
 
-  void onStartTimeChange(int index, TimeOfDay time) {
-    dishAvailabilityEntries[index] = (time, dishAvailabilityEntries[index].$2);
-    notifyListeners();
+  if (endTime != null) {
+    final startMinutes = time.hour * 60 + time.minute;
+    final endMinutes = endTime.hour * 60 + endTime.minute;
+
+    if (startMinutes >= endMinutes) {
+      return false;
+    }
   }
 
-  void onEndTimeChange(int index, TimeOfDay time) {
-    dishAvailabilityEntries[index] = (dishAvailabilityEntries[index].$1, time);
-    notifyListeners();
+  dishAvailabilityEntries[index] = (time, endTime);
+  notifyListeners();
+
+  return true;
+}
+
+bool onEndTimeChange(int index, TimeOfDay time) {
+  final startTime = dishAvailabilityEntries[index].$1;
+
+  if (startTime != null) {
+    final startMinutes = startTime.hour * 60 + startTime.minute;
+    final endMinutes = time.hour * 60 + time.minute;
+
+    if (endMinutes <= startMinutes) {
+      return false;
+    }
   }
 
+  dishAvailabilityEntries[index] = (startTime, time);
+  notifyListeners();
+
+  return true;
+}
   bool _allDaysEnabled = true;
 
   bool get allDaysEnabled => _allDaysEnabled;
@@ -617,6 +654,16 @@ void setFeaturedProduct(String value) {
         return ResponseResult.failure;
       }
 
+      // validate dish quantity
+      if (!isUnlimitedStock) {
+        final quantity = int.tryParse(quantityController.text.trim());
+
+        if (quantity == null || quantity <= 0) {
+          showToastMessage("Please enter a valid quantity.");
+          return ResponseResult.failure;
+        }
+      }
+
       // Check if variationsFormEntries has at least one entry
       final productType = !isMultiVariation ? "single" : "variation";
 
@@ -632,6 +679,8 @@ void setFeaturedProduct(String value) {
 
       // Extract values from variationsFormEntries and validate
       final priceReq = double.tryParse(singleVariationPriceController.text);
+
+      final quantityReq = int.tryParse(quantityController.text.trim());
 
       // Initialize and validate listOfParentCategoriesId and listOfSubCategoriesId
       final listOfParentCategoriesId = choosedParentCategory
@@ -663,8 +712,8 @@ void setFeaturedProduct(String value) {
                 price: double.parse(price.text),
                 allergensMaster: allergens,
                 ingredients: ingredientsController.text,
-                isUnlimitedStock: 1,
-                quantity: 0,
+                isUnlimitedStock: isUnlimitedStock ? 1 : 0,
+                quantity: isUnlimitedStock ? 0 : quantityReq,
               );
             }).toList()
           : const <VariationDishData>[];
@@ -691,10 +740,9 @@ void setFeaturedProduct(String value) {
               type: dishType,
               activeStatus: 1,
               price: priceReq,
-              isUnlimitedStock: 1,
               online: isOnlineReq,
               dining: isDineinReq,
-               featured:isFeaturedProduct,
+              featured: isFeaturedProduct,
               name: nameController.text,
               description: descriptionController.text,
               ingredients: singleVariationIngredientsController.text,
@@ -703,7 +751,8 @@ void setFeaturedProduct(String value) {
               allDayAvailable: allDayAvailable,
               availability: availableDays,
               timing: timing,
-              quantity: 0,
+              isUnlimitedStock: isUnlimitedStock ? 1 : 0,
+              quantity: isUnlimitedStock ? 0 : quantityReq,
               addonsMasterGroup: addonsMasterGroup,
               productMenuGroup: choosedMenus,
               itemCode: itemCodeController.text,
@@ -788,6 +837,9 @@ void setFeaturedProduct(String value) {
     final dineInStatus = selectedDish?.dining == "Yes";
     _onlineStatus = onlineStatus;
     _dineInStatus = dineInStatus;
+
+    // Featured Product
+    isFeaturedProduct = selectedDish?.featured ?? "No";
 
     // Category
     List<CategoryData> selectedCategories = [];
@@ -947,6 +999,7 @@ void setFeaturedProduct(String value) {
     singleVariationIngredientsController.clear();
     singleSelectedAllergens.clear();
     itemCodeController.clear();
+    quantityController.clear();
 
     activeDefaultSelectedInMenu();
   }

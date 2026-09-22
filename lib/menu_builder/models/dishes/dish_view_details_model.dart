@@ -279,6 +279,7 @@ class VariationData {
   final List<Allergen> allergens;
   final List<dynamic> selectedallergens;
   final List<dynamic> allergensMaster;
+  final String? spiceLevel;
 
   VariationData({
     required this.pvID,
@@ -291,6 +292,7 @@ class VariationData {
     required this.allergens,
     required this.selectedallergens,
     required this.allergensMaster,
+    required this.spiceLevel,
   });
 
   VariationData copyWith({
@@ -304,6 +306,7 @@ class VariationData {
     List<Allergen>? allergens,
     List<String>? selectedallergens,
     List<String>? allergensMaster,
+    String? spiceLevel,
   }) {
     return VariationData(
       pvID: pvID ?? this.pvID,
@@ -316,6 +319,7 @@ class VariationData {
       allergens: allergens ?? this.allergens,
       selectedallergens: selectedallergens ?? this.selectedallergens,
       allergensMaster: allergensMaster ?? this.allergensMaster,
+      spiceLevel: spiceLevel ?? this.spiceLevel,
     );
   }
 
@@ -331,6 +335,7 @@ class VariationData {
       'allergens': allergens.map((x) => x.toMap()).toList(),
       'selectedallergens': selectedallergens,
       'allergensMaster': allergensMaster,
+      'spiceLevel': spiceLevel,
     };
   }
 
@@ -351,6 +356,8 @@ class VariationData {
       ),
       selectedallergens: List<dynamic>.from((map['selectedallergens'] ?? [])),
       allergensMaster: List<dynamic>.from((map['allergensMaster'] ?? [])),
+      spiceLevel:
+          map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
     );
   }
 
@@ -364,7 +371,7 @@ class VariationData {
 
   @override
   String toString() {
-    return 'VariationData(pvID: $pvID, name: $name, price: $price, displayPrice: $displayPrice, ingredients: $ingredients, isUnlimitedStock: $isUnlimitedStock, stock: $stock, allergens: $allergens, selectedallergens: $selectedallergens, allergensMaster: $allergensMaster)';
+    return 'VariationData(pvID: $pvID, name: $name, price: $price, displayPrice: $displayPrice, ingredients: $ingredients, isUnlimitedStock: $isUnlimitedStock, stock: $stock, allergens: $allergens, selectedallergens: $selectedallergens, allergensMaster: $allergensMaster,spiceLevel: $spiceLevel)';
   }
 
   @override
@@ -380,7 +387,8 @@ class VariationData {
         other.stock == stock &&
         listEquals(other.allergens, allergens) &&
         listEquals(other.selectedallergens, selectedallergens) &&
-        listEquals(other.allergensMaster, allergensMaster);
+        listEquals(other.allergensMaster, allergensMaster) &&
+        other.spiceLevel == spiceLevel;
   }
 
   @override
@@ -394,7 +402,8 @@ class VariationData {
         stock.hashCode ^
         allergens.hashCode ^
         selectedallergens.hashCode ^
-        allergensMaster.hashCode;
+        allergensMaster.hashCode ^
+        spiceLevel.hashCode;
   }
 }
 

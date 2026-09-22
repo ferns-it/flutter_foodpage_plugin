@@ -35,6 +35,7 @@ class DishDetails {
   final String type;
   final String online;
   final String dining;
+  final String featured;
   final String activeStatus;
   final String price;
   final String priceValue;
@@ -52,6 +53,7 @@ class DishDetails {
     required this.type,
     required this.online,
     required this.dining,
+    required this.featured,
     required this.activeStatus,
     required this.price,
     required this.priceValue,
@@ -70,6 +72,7 @@ class DishDetails {
     String? type,
     String? online,
     String? dining,
+    String? featured,
     String? activeStatus,
     String? price,
     String? priceValue,
@@ -87,6 +90,7 @@ class DishDetails {
       type: type ?? this.type,
       online: online ?? this.online,
       dining: dining ?? this.dining,
+      featured: featured ?? this.featured,
       activeStatus: activeStatus ?? this.activeStatus,
       price: price ?? this.price,
       priceValue: priceValue ?? this.priceValue,
@@ -107,6 +111,7 @@ class DishDetails {
       'type': type,
       'online': online,
       'dining': dining,
+      'featured': featured,
       'activeStatus': activeStatus,
       'price': price,
       'priceValue': priceValue,
@@ -127,6 +132,7 @@ class DishDetails {
       type: map['type'] as String,
       online: map['online'] as String,
       dining: map['dining'] as String,
+      featured: map['featured'] as String,
       activeStatus: map['activeStatus'] as String,
       price: map['price'] as String,
       priceValue: map['priceValue'] as String,
@@ -151,7 +157,7 @@ class DishDetails {
 
   @override
   String toString() {
-    return 'DishDetails(pID: $pID, shopID: $shopID, shopSpecificID: $shopSpecificID, identifierName: $identifierName, name: $name, description: $description, photo: $photo, productType: $productType, type: $type, online: $online, dining: $dining, activeStatus: $activeStatus, price: $price, priceValue: $priceValue, categories: $categories)';
+    return 'DishDetails(pID: $pID, shopID: $shopID, shopSpecificID: $shopSpecificID, identifierName: $identifierName, name: $name, description: $description, photo: $photo, productType: $productType, type: $type, online: $online, dining: $dining,featured:$featured, activeStatus: $activeStatus, price: $price, priceValue: $priceValue,categories: $categories)';
   }
 
   @override
@@ -169,6 +175,7 @@ class DishDetails {
         other.type == type &&
         other.online == online &&
         other.dining == dining &&
+        other.featured == featured &&
         other.activeStatus == activeStatus &&
         other.price == price &&
         other.priceValue == priceValue &&
@@ -188,6 +195,7 @@ class DishDetails {
         type.hashCode ^
         online.hashCode ^
         dining.hashCode ^
+        featured.hashCode ^
         activeStatus.hashCode ^
         price.hashCode ^
         priceValue.hashCode ^

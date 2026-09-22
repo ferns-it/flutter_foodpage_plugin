@@ -104,10 +104,31 @@ class AddAvailabilitySideSheet extends StatelessWidget {
                           final pickedTime = await showTimePicker(
                             context: context,
                             initialTime: TimeOfDay.now(),
-
                           );
                           if (pickedTime == null) return;
-                          controller.onStartTimeChange(index, pickedTime);
+                          // controller.onStartTimeChange(index, pickedTime);
+                          final isValid =
+                              controller.onStartTimeChange(index, pickedTime);
+
+                          if (!isValid && context.mounted) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Invalid Time'),
+                                  content: const Text(
+                                    'Start time must be earlier than end time.',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
                         },
                         textEditingController: startTimeController,
                         borderRadius: BorderRadius.circular(4.0),
@@ -133,7 +154,29 @@ class AddAvailabilitySideSheet extends StatelessWidget {
                               initialTime: TimeOfDay.now(),
                             );
                             if (pickedTime == null) return;
-                            controller.onEndTimeChange(index, pickedTime);
+                            final isValid =
+                                controller.onEndTimeChange(index, pickedTime);
+
+                            if (!isValid && context.mounted) {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text('Invalid Time'),
+                                    content: const Text(
+                                      'End time must be later than start time.',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                            // controller.onEndTimeChange(index, pickedTime);
                           },
                           child: const Icon(
                             Icons.schedule,

@@ -18,10 +18,12 @@ class FoodDetailsSideSheetWidget extends StatefulWidget {
   const FoodDetailsSideSheetWidget({super.key});
 
   @override
-  State<FoodDetailsSideSheetWidget> createState() => _FoodDetailsSideSheetWidgetState();
+  State<FoodDetailsSideSheetWidget> createState() =>
+      _FoodDetailsSideSheetWidgetState();
 }
 
-class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget> {
+class _FoodDetailsSideSheetWidgetState
+    extends State<FoodDetailsSideSheetWidget> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -52,86 +54,20 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
           ),
           child: Stack(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                        onPressed: () => Scaffold.of(context).closeEndDrawer(),
-                        icon: const Icon(
-                          Icons.close,
-                          color: MenuBuilderColors.kBlack,
-                        )),
-                    const Spacer(),
-                    if (controller.dishDetailsLoaded) ...[
-                      InkWell(
-                        onTap: () {
-                          controller.initializeAllFormControllers();
-                          controller.onPressEditButton();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              fullscreenDialog: true,
-                              builder: (context) => const AddFoodScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: MenuBuilderColors.kBlue.withOpacity(0.1),
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: MenuBuilderColors.kBlue,
-                          ),
-                        ),
-                      ),
-                      horizontalSpaceRegular,
-                      !controller.loadingDishAction
-                          ? InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () {
-                                controller.deleteDish();
-                                Future.delayed(
-                                  const Duration(seconds: 1),
-                                  () {
-                                    Navigator.pop(context);
-                                  },
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: MenuBuilderColors.kPrimaryColor.withOpacity(0.1),
-                                ),
-                                child: const Icon(
-                                  Icons.delete_forever,
-                                  color: MenuBuilderColors.kPrimaryColor,
-                                ),
-                              ),
-                            )
-                          : const SizedBox(
-                              height: 30,
-                              width: 30,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3.0,
-                              ),
-                            ),
-                    ]
-                  ],
-                ),
-              ),
               controller.viewDishDetails.when(initial: () {
                 return const SizedBox();
               }, loading: () {
                 return const Center(child: CircularProgressIndicator());
               }, completed: (data) {
-                const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const weekDays = [
+                  'Sunday',
+                  'Monday',
+                  'Tuesday',
+                  'Wednesday',
+                  'Thursday',
+                  'Friday',
+                  'Saturday'
+                ];
 
                 return Positioned.fill(
                   child: Padding(
@@ -197,12 +133,14 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                                         )
                                       : const Icon(
                                           Icons.check,
-                                          color: MenuBuilderColors.kSuccessGreen2,
+                                          color:
+                                              MenuBuilderColors.kSuccessGreen2,
                                         ),
                                   label: Text(
                                     "Online",
                                     style: textTheme.labelLarge!.copyWith(
-                                      color: !controller.selectedDish!.onlineEnabled
+                                      color: !controller
+                                              .selectedDish!.onlineEnabled
                                           ? MenuBuilderColors.kMaterialRed
                                           : MenuBuilderColors.kSuccessGreen2,
                                     ),
@@ -218,12 +156,14 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                                         )
                                       : const Icon(
                                           Icons.check,
-                                          color: MenuBuilderColors.kSuccessGreen2,
+                                          color:
+                                              MenuBuilderColors.kSuccessGreen2,
                                         ),
                                   label: Text(
                                     "Dine In",
                                     style: textTheme.labelLarge!.copyWith(
-                                      color: !controller.selectedDish!.diningEnabled
+                                      color: !controller
+                                              .selectedDish!.diningEnabled
                                           ? MenuBuilderColors.kMaterialRed
                                           : MenuBuilderColors.kSuccessGreen2,
                                     ),
@@ -239,7 +179,8 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                                         )
                                       : const Icon(
                                           Icons.check,
-                                          color: MenuBuilderColors.kSuccessGreen2,
+                                          color:
+                                              MenuBuilderColors.kSuccessGreen2,
                                         ),
                                   label: Text(
                                     "Active",
@@ -260,7 +201,8 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                                   controller.updateDishStatus();
                                   return;
                                 }
-                                Fluttertoast.showToast(msg: "This feature is under development");
+                                Fluttertoast.showToast(
+                                    msg: "This feature is under development");
                               },
                               style: SegmentedButton.styleFrom(
                                 backgroundColor: MenuBuilderColors.kWhite2,
@@ -306,8 +248,10 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                               FluentIcons.food_20_regular,
                               controller.selectedDish!.name,
                             ),
-                            if (data.variationData.length != 1) verticalSpaceRegular,
-                            ...data.variationData.mapIndexed((index, variation) {
+                            if (data.variationData.length != 1)
+                              verticalSpaceRegular,
+                            ...data.variationData
+                                .mapIndexed((index, variation) {
                               return _buildVariationDetailsTile(
                                 index + 1,
                                 variation,
@@ -327,13 +271,15 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                               child: Wrap(
                                 runSpacing: 2.0,
                                 spacing: 8.0,
-                                children: data.formattedCategories.map((category) {
+                                children:
+                                    data.formattedCategories.map((category) {
                                   return Chip(
                                     label: Text(
                                       category,
                                       style: textTheme.labelMedium,
                                     ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
                                     backgroundColor: MenuBuilderColors.kWhite,
                                     side: const BorderSide(
                                       color: MenuBuilderColors.kLightGrey,
@@ -356,8 +302,10 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                                 child: Wrap(
                                   runSpacing: 5.0,
                                   spacing: 8.0,
-                                  children: data.selectedAddonGroups.map((addon) {
-                                    return _buildFilterChip(textTheme, addon["name"]);
+                                  children:
+                                      data.selectedAddonGroups.map((addon) {
+                                    return _buildFilterChip(
+                                        textTheme, addon["name"]);
                                   }).toList(),
                                 ),
                               )
@@ -383,7 +331,8 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                                   .map(
                                     (menu) => Align(
                                       alignment: Alignment.centerLeft,
-                                      child: _buildFilterChip(textTheme, menu["name"]),
+                                      child: _buildFilterChip(
+                                          textTheme, menu["name"]),
                                     ),
                                   )
                                   .toList(),
@@ -435,7 +384,8 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
                                     borderRadius: BorderRadius.circular(4.0),
                                   ),
                                   children: weekDays
-                                      .where((day) => data.availability.days.contains(day.toLowerCase()))
+                                      .where((day) => data.availability.days
+                                          .contains(day.toLowerCase()))
                                       .map((day) {
                                     return _buildMultiDataTableRow(
                                       context,
@@ -453,6 +403,81 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
               }, error: (String? message, AppExceptions? exceptions) {
                 return Center(child: Text(message ?? "Unknown error"));
               }),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                        onPressed: () => Scaffold.of(context).closeEndDrawer(),
+                        icon: const Icon(
+                          Icons.close,
+                          color: MenuBuilderColors.kBlack,
+                        )),
+                    const Spacer(),
+                    if (controller.dishDetailsLoaded) ...[
+                      InkWell(
+                        onTap: () {
+                          controller.initializeAllFormControllers();
+                          controller.onPressEditButton();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              fullscreenDialog: true,
+                              builder: (context) => const AddFoodScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: MenuBuilderColors.kBlue.withOpacity(0.1),
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            color: MenuBuilderColors.kBlue,
+                          ),
+                        ),
+                      ),
+                      horizontalSpaceRegular,
+                      !controller.loadingDishAction
+                          ? InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () {
+                                controller.deleteDish();
+                                Future.delayed(
+                                  const Duration(seconds: 1),
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: MenuBuilderColors.kPrimaryColor
+                                      .withOpacity(0.1),
+                                ),
+                                child: const Icon(
+                                  Icons.delete_forever,
+                                  color: MenuBuilderColors.kPrimaryColor,
+                                ),
+                              ),
+                            )
+                          : const SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3.0,
+                              ),
+                            ),
+                    ]
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -529,10 +554,12 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
       children: <Widget>[
         Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: timings.length > 1 ? 14.0 : 8.0),
+            padding:
+                EdgeInsets.symmetric(vertical: timings.length > 1 ? 14.0 : 8.0),
             child: Text(
               day,
-              style: textTheme.bodyMedium!.copyWith(color: Colors.grey.shade500),
+              style:
+                  textTheme.bodyMedium!.copyWith(color: Colors.grey.shade500),
             ),
           ),
         ),
@@ -558,7 +585,8 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
     );
   }
 
-  Widget _buildVariationDetailsTile(int number, VariationData data, [bool showCard = true]) {
+  Widget _buildVariationDetailsTile(int number, VariationData data,
+      [bool showCard = true]) {
     return showCard
         ? Card(
             elevation: 0,
@@ -575,7 +603,8 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
         : _buildVariationDetailsTileWidget(number, data, showCard);
   }
 
-  Widget _buildVariationDetailsTileWidget(int number, VariationData data, [bool showCard = false]) {
+  Widget _buildVariationDetailsTileWidget(int number, VariationData data,
+      [bool showCard = false]) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -602,7 +631,18 @@ class _FoodDetailsSideSheetWidgetState extends State<FoodDetailsSideSheetWidget>
           _buildInfoRow(
             context,
             FluentIcons.book_star_20_regular,
-            data.ingredients.trimRight()..trimLeft(),
+            removeHtmlTags(
+              data.ingredients.trimRight()..trimLeft(),
+            ),
+            smallText: true,
+          ),
+        ],
+        if (data.spiceLevel != 'Not Applicable') ...[
+          verticalSpaceSmall,
+          _buildInfoRow(
+            context,
+            FluentIcons.fire_20_regular,
+            "Spice Level: ${data.spiceLevel}",
             smallText: true,
           ),
         ],

@@ -409,6 +409,20 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                     ],
                                     onChangedCheckbox: (index, value) {
                                       if (value == null) return;
+                                      // Don't allow both Online and Dine In to become unchecked.
+                                      if (!value) {
+                                        final otherSelected = index == 0
+                                            ? controller.dineInStatus
+                                            : controller.onlineStatus;
+
+                                        if (!otherSelected) {
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                "At least one option must be selected.",
+                                          );
+                                          return;
+                                        }
+                                      }
                                       if (index == 0) {
                                         controller.onChangeOnlineStatus(value);
                                       } else {
@@ -505,6 +519,49 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                                         .sparkle_24_regular),
                                                   ),
                                           ),
+                                          verticalSpaceRegular,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 2.0),
+                                            child: Text(
+                                              "Stock",
+                                              style: textTheme.titleSmall!
+                                                  .copyWith(
+                                                color: Colors.grey.shade700,
+                                              ),
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Checkbox(
+                                                value:
+                                                    controller.isUnlimitedStock,
+                                                onChanged: (value) {
+                                                  if (value != null) {
+                                                    controller
+                                                        .onChangeUnlimitedStock(
+                                                            value);
+                                                  }
+                                                },
+                                              ),
+                                              const Text("Unlimited Stock"),
+                                            ],
+                                          ),
+                                          if (!controller.isUnlimitedStock) ...[
+                                            verticalSpaceSmall,
+                                            CustomRoundedTextField.topText(
+                                              topText: "Quantity",
+                                              hintText: "Enter quantity",
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              textInputAction:
+                                                  TextInputAction.done,
+                                              textEditingController:
+                                                  controller.quantityController,
+                                            ),
+                                          ],
                                           verticalSpaceRegular,
                                           const BuildAllergensWidget()
                                         ],
