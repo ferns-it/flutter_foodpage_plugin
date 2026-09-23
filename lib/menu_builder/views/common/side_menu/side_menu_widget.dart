@@ -2,6 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_navigation_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,7 @@ class SideMenuWidget extends StatelessWidget {
     final readPageNavigationController =
         context.read<PageNavigationController>();
     final pageNavigationController = context.watch<PageNavigationController>();
+    final dishesController = context.read<DishesController>();
 
     return Container(
       width: size.width * 0.17,
@@ -55,6 +57,9 @@ class SideMenuWidget extends StatelessWidget {
               selected: pageNavigationController.currentPageIndex == 0,
               onTap: () {
                 resetSelectedCategory(context);
+                if (pageNavigationController.currentPageIndex == 1) {
+                  dishesController.clearDishSearch();
+                }
                 readPageNavigationController.onChangePageIndex(0);
               },
             ),
@@ -80,6 +85,9 @@ class SideMenuWidget extends StatelessWidget {
               title: "Categories",
               selected: pageNavigationController.currentPageIndex == 2,
               onTap: () {
+                if (pageNavigationController.currentPageIndex == 1) {
+                  dishesController.clearDishSearch();
+                }
                 readPageNavigationController.onChangePageIndex(2);
               },
             ),
@@ -93,6 +101,9 @@ class SideMenuWidget extends StatelessWidget {
               selected: pageNavigationController.currentPageIndex == 3,
               onTap: () {
                 resetSelectedCategory(context);
+                if (pageNavigationController.currentPageIndex == 1) {
+                  dishesController.clearDishSearch();
+                }
                 readPageNavigationController.onChangePageIndex(3);
               },
             ),

@@ -17,10 +17,12 @@ class AddVariationModifiersSideSheet extends StatefulWidget {
   final int index;
 
   @override
-  State<AddVariationModifiersSideSheet> createState() => _AddVariationModifiersSideSheetState();
+  State<AddVariationModifiersSideSheet> createState() =>
+      _AddVariationModifiersSideSheetState();
 }
 
-class _AddVariationModifiersSideSheetState extends State<AddVariationModifiersSideSheet>
+class _AddVariationModifiersSideSheetState
+    extends State<AddVariationModifiersSideSheet>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
 
@@ -86,7 +88,8 @@ class _AddVariationModifiersSideSheetState extends State<AddVariationModifiersSi
 }
 
 class FoodVariationItem extends StatelessWidget {
-  const FoodVariationItem({super.key, required this.entry, required this.index});
+  const FoodVariationItem(
+      {super.key, required this.entry, required this.index});
 
   final int index;
   final Map<String, dynamic> entry;
@@ -101,6 +104,9 @@ class FoodVariationItem extends StatelessWidget {
 
     final controller = context.watch<DishesController>();
     final geminiController = context.watch<GeminiController>();
+
+    final isUnlimitedStock =
+    entry["isUnlimitedStock"] as bool? ?? true;
 
     return Card(
       child: Padding(
@@ -162,7 +168,8 @@ class FoodVariationItem extends StatelessWidget {
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     validator: MenuBuilderValidators.validateDishName,
-                    textEditingController: entry["name"] as TextEditingController,
+                    textEditingController:
+                        entry["name"] as TextEditingController,
                   ),
                 ),
                 horizontalSpaceRegular,
@@ -174,7 +181,8 @@ class FoodVariationItem extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     validator: MenuBuilderValidators.validatePrice,
-                    textEditingController: entry["price"] as TextEditingController,
+                    textEditingController:
+                        entry["price"] as TextEditingController,
                   ),
                 ),
               ],
@@ -187,7 +195,8 @@ class FoodVariationItem extends StatelessWidget {
               maxLines: 2,
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.done,
-              textEditingController: entry["ingredients"] as TextEditingController,
+              textEditingController:
+                  entry["ingredients"] as TextEditingController,
               suffixIcon: geminiController.dishIngredientsGenerating
                   ? const Padding(
                       padding: EdgeInsets.all(10.0),
@@ -203,10 +212,12 @@ class FoodVariationItem extends StatelessWidget {
                       onPressed: () async {
                         final name = entry["name"].text;
                         if (name.isEmpty) {
-                          Fluttertoast.showToast(msg: "Dish Name cannot be empty!");
+                          Fluttertoast.showToast(
+                              msg: "Dish Name cannot be empty!");
                           return;
                         }
-                        final generatedContent = await geminiController.generateDishIngredients(name);
+                        final generatedContent = await geminiController
+                            .generateDishIngredients(name);
                         if (generatedContent != null) {
                           entry["ingredients"].text = generatedContent;
                         }
@@ -214,6 +225,44 @@ class FoodVariationItem extends StatelessWidget {
                       icon: const Icon(FluentIcons.sparkle_24_regular),
                     ),
             ),
+            verticalSpaceRegular,
+            Padding(
+              padding: const EdgeInsets.only(left: 2.0),
+              child: Text(
+                "Stock",
+                style: textTheme.titleSmall!.copyWith(
+                  color: Colors.grey.shade700,
+                ),
+              ),
+            ),
+           Row(
+  children: [
+    Checkbox(
+      value: isUnlimitedStock,
+      onChanged: (value) {
+        if (value != null) {
+          controller.onChangeVariationUnlimitedStock(
+            index,
+            value,
+          );
+        }
+      },
+    ),
+    const Text("Unlimited Stock"),
+  ],
+),
+if (!isUnlimitedStock) ...[
+  verticalSpaceSmall,
+  CustomRoundedTextField.topText(
+    topText: "Quantity",
+    hintText: "Enter quantity",
+    borderRadius: BorderRadius.circular(8.0),
+    keyboardType: TextInputType.number,
+    textInputAction: TextInputAction.next,
+    textEditingController:
+        entry["quantity"] as TextEditingController,
+  ),
+],
             verticalSpaceRegular,
             BuildAllergensWidget(index: index),
             verticalSpaceRegular,
@@ -325,7 +374,8 @@ class AddModifiersFormWidget extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 20.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
+                          color:
+                              MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
                         ),
                         child: const Icon(
                           Icons.delete_forever,
@@ -367,7 +417,8 @@ class AddModifiersFormWidget extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 20.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
+                          color:
+                              MenuBuilderColors.kPrimaryColor.withOpacity(0.25),
                         ),
                         child: const Icon(
                           Icons.delete_forever,

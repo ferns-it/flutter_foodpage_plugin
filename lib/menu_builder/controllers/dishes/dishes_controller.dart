@@ -82,7 +82,6 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   void disposeSearchController() {
-    searchDishes(null);
     searchTextEditingController.dispose();
   }
 
@@ -181,10 +180,28 @@ class DishesController extends ChangeNotifier with BaseController {
 
   final GlobalKey<FormState> variationFormKey = GlobalKey<FormState>();
 
+  void onChangeVariationUnlimitedStock(
+    int index,
+    bool value,
+  ) {
+    variationsFormEntries[index]["isUnlimitedStock"] = value;
+
+    if (value) {
+      final quantityController =
+          variationsFormEntries[index]["quantity"] as TextEditingController;
+
+      quantityController.clear();
+    }
+
+    notifyListeners();
+  }
+
   Map<String, dynamic> get variationFormEntry => {
         "name": TextEditingController(),
         "price": TextEditingController(),
         "ingredients": TextEditingController(),
+        "quantity": TextEditingController(),
+        "isUnlimitedStock": true,
         "allergens": <String>[]
       };
 
@@ -193,6 +210,8 @@ class DishesController extends ChangeNotifier with BaseController {
       "name": TextEditingController(),
       "price": TextEditingController(),
       "ingredients": TextEditingController(),
+      "quantity": TextEditingController(),
+      "isUnlimitedStock": true,
       "allergens": <String>[]
     }
   ];
@@ -262,6 +281,8 @@ class DishesController extends ChangeNotifier with BaseController {
       "name": TextEditingController()..text = entry["name"].text,
       "price": TextEditingController()..text = entry["price"].text,
       "ingredients": TextEditingController()..text = entry["ingredients"].text,
+      "quantity": TextEditingController()..text = entry["quantity"].text,
+      "isUnlimitedStock": entry["isUnlimitedStock"] as bool? ?? true,
       "allergens": List.from(entry["allergens"]),
     });
     notifyListeners();
@@ -398,41 +419,43 @@ class DishesController extends ChangeNotifier with BaseController {
     dishAvailabilityEntries.removeAt(index);
     notifyListeners();
   }
-bool onStartTimeChange(int index, TimeOfDay time) {
-  final endTime = dishAvailabilityEntries[index].$2;
 
-  if (endTime != null) {
-    final startMinutes = time.hour * 60 + time.minute;
-    final endMinutes = endTime.hour * 60 + endTime.minute;
+  bool onStartTimeChange(int index, TimeOfDay time) {
+    final endTime = dishAvailabilityEntries[index].$2;
 
-    if (startMinutes >= endMinutes) {
-      return false;
+    if (endTime != null) {
+      final startMinutes = time.hour * 60 + time.minute;
+      final endMinutes = endTime.hour * 60 + endTime.minute;
+
+      if (startMinutes >= endMinutes) {
+        return false;
+      }
     }
+
+    dishAvailabilityEntries[index] = (time, endTime);
+    notifyListeners();
+
+    return true;
   }
 
-  dishAvailabilityEntries[index] = (time, endTime);
-  notifyListeners();
+  bool onEndTimeChange(int index, TimeOfDay time) {
+    final startTime = dishAvailabilityEntries[index].$1;
 
-  return true;
-}
+    if (startTime != null) {
+      final startMinutes = startTime.hour * 60 + startTime.minute;
+      final endMinutes = time.hour * 60 + time.minute;
 
-bool onEndTimeChange(int index, TimeOfDay time) {
-  final startTime = dishAvailabilityEntries[index].$1;
-
-  if (startTime != null) {
-    final startMinutes = startTime.hour * 60 + startTime.minute;
-    final endMinutes = time.hour * 60 + time.minute;
-
-    if (endMinutes <= startMinutes) {
-      return false;
+      if (endMinutes <= startMinutes) {
+        return false;
+      }
     }
+
+    dishAvailabilityEntries[index] = (startTime, time);
+    notifyListeners();
+
+    return true;
   }
 
-  dishAvailabilityEntries[index] = (startTime, time);
-  notifyListeners();
-
-  return true;
-}
   bool _allDaysEnabled = true;
 
   bool get allDaysEnabled => _allDaysEnabled;
@@ -589,6 +612,10 @@ bool onEndTimeChange(int index, TimeOfDay time) {
     notifyListeners();
   }
 
+  void clearDishSearch() {
+    searchTextEditingController.clear();
+  }
+
   Future<void> initializeAddDishRequiredData() async {
     final response = await DishesService.initializeAddDishRequiredData();
     response.fold(
@@ -643,6 +670,41 @@ bool onEndTimeChange(int index, TimeOfDay time) {
         showToastMessage("Variations cannot be empty");
         return ResponseResult.failure;
       }
+      if (isMultiVariation) {
+        for (final entry in variationsFormEntries) {
+          final nameController = entry["name"] as TextEditingController;
+          final priceController = entry["price"] as TextEditingController;
+          final quantityController = entry["quantity"] as TextEditingController;
+          final isUnlimited = entry["isUnlimitedStock"] as bool? ?? true;
+
+          if (nameController.text.trim().isEmpty) {
+            showToastMessage("Variation name cannot be empty.");
+            return ResponseResult.failure;
+          }
+
+          final price = double.tryParse(
+            priceController.text.trim(),
+          );
+
+          if (price == null || price <= 0) {
+            showToastMessage("Please enter a valid variation price.");
+            return ResponseResult.failure;
+          }
+
+          if (!isUnlimited) {
+            final quantity = int.tryParse(
+              quantityController.text.trim(),
+            );
+
+            if (quantity == null || quantity <= 0) {
+              showToastMessage(
+                "Please enter a valid quantity for ${nameController.text}.",
+              );
+              return ResponseResult.failure;
+            }
+          }
+        }
+      }
 
       if (selectedDishCategories.isEmpty) {
         showToastMessage("Categories are not selected.");
@@ -653,9 +715,8 @@ bool onEndTimeChange(int index, TimeOfDay time) {
         showToastMessage("Dish Type (Veg or Non Veg) Field is not selected");
         return ResponseResult.failure;
       }
-
-      // validate dish quantity
-      if (!isUnlimitedStock) {
+      // Validate single dish quantity only
+      if (!isMultiVariation && !isUnlimitedStock) {
         final quantity = int.tryParse(quantityController.text.trim());
 
         if (quantity == null || quantity <= 0) {
@@ -706,14 +767,20 @@ bool onEndTimeChange(int index, TimeOfDay time) {
               final allergens = (entry["allergens"] as List).cast<String>();
               final ingredientsController =
                   entry["ingredients"] as TextEditingController;
+              final quantityController =
+                  entry["quantity"] as TextEditingController;
+              final isUnlimited = entry["isUnlimitedStock"] as bool? ?? true;
+
+              final quantity =
+                  isUnlimited ? 0 : int.parse(quantityController.text.trim());
               return VariationDishData(
                 pvID: null,
                 name: nameController.text,
                 price: double.parse(price.text),
                 allergensMaster: allergens,
                 ingredients: ingredientsController.text,
-                isUnlimitedStock: isUnlimitedStock ? 1 : 0,
-                quantity: isUnlimitedStock ? 0 : quantityReq,
+                isUnlimitedStock: isUnlimited ? 1 : 0,
+                quantity: quantity,
               );
             }).toList()
           : const <VariationDishData>[];
@@ -877,17 +944,22 @@ bool onEndTimeChange(int index, TimeOfDay time) {
 
     if (hasMultipleVariations) {
       // Variation Form Entries
-      final elements = dishData.variationData
-          .map((variation) => {
-                "pvID": variation.pvID,
-                "name": TextEditingController()..text = variation.name,
-                "price": TextEditingController()..text = variation.price,
-                "ingredients": TextEditingController()
-                  ..text = variation.ingredients,
-                "isUnlimitedStock": variation.isUnlimitedStock,
-                "allergens": variation.selectedallergens,
-              })
-          .toList();
+      final elements = dishData.variationData.map((variation) {
+        final isUnlimited = variation.isUnlimitedStock == 1;
+
+        return {
+          "pvID": variation.pvID,
+          "name": TextEditingController()..text = variation.name,
+          "price": TextEditingController()..text = variation.price,
+          "ingredients": TextEditingController()..text = variation.ingredients,
+          "quantity": TextEditingController()
+            ..text = isUnlimited ? "" : variation.stock,
+          "isUnlimitedStock": isUnlimited,
+          "allergens": List<String>.from(
+            variation.selectedallergens,
+          ),
+        };
+      }).toList();
       variationsFormEntries = List.from(elements);
       onChangeDishVariationType(DishVariationType.multiple);
     } else if (dishData.variationData.isNotEmpty) {
