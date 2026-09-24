@@ -1,6 +1,8 @@
 class ApiEndpoints {
+  // static const productionUrl =
+  //     'https://foodpage.co.uk/v2/shop/custome/tablereservation';
   static const productionUrl =
-      'https://foodpage.co.uk/v2/shop/custome/tablereservation';
+      'https://order.foodpage.co.uk/v2/shop/custome/tablereservation';
   static const developmentUrl =
       'https://foodpage.co.uk/development/v2/shop/custome/tablereservation';
   static const newReservation = '/newreservation';

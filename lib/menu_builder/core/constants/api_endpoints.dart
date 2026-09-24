@@ -1,6 +1,8 @@
 class ApiEndpoints {
-  static const productionUrl = 'https://foodpage.co.uk/v1/mobile/shop';
-  static const productionUrl2 = 'https://foodpage.co.uk/v2/shop';
+  // static const productionUrl = 'https://foodpage.co.uk/v1/mobile/shop';
+  // static const productionUrl2 = 'https://foodpage.co.uk/v2/shop';
+  static const productionUrl = 'https://order.foodpage.co.uk/v1/mobile/shop';
+  static const productionUrl2 = 'https://order.foodpage.co.uk/v2/shop';
   static const developmentUrl = 'https://foodpage.co.uk/development/v1/mobile/shop';
   static const developmentUrl2 = 'https://foodpage.co.uk/development/v2/shop';
   static const products = '/products';
