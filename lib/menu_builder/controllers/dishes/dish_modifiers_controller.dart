@@ -37,26 +37,25 @@ class DishModifiersController extends ChangeNotifier with BaseController {
   late TextEditingController minimumController;
   late TextEditingController maximumController;
 
-  final modifierEntry = {
-    "name": TextEditingController(),
-    "price": TextEditingController()
-  };
-
-  List<Map<String, dynamic>> modifierEntries = [
-    {"name": TextEditingController(), "price": TextEditingController()}
-  ];
-
+  late List<Map<String, dynamic>> modifierEntries;
   void addModifierEntry() {
-    final modifierEntry = {
-      "name": TextEditingController(),
-      "price": TextEditingController()
-    };
-    modifierEntries.add(modifierEntry);
+    modifierEntries.add(_createModifierEntry());
     notifyListeners();
   }
 
+  Map<String, dynamic> _createModifierEntry() {
+    return {
+      "name": TextEditingController(),
+      "price": TextEditingController(),
+    };
+  }
+
   void removeModifierEntry(int index) {
-    modifierEntries.removeAt(index);
+    final entry = modifierEntries.removeAt(index);
+
+    (entry["name"] as TextEditingController).dispose();
+    (entry["price"] as TextEditingController).dispose();
+
     notifyListeners();
   }
 
@@ -69,6 +68,9 @@ class DishModifiersController extends ChangeNotifier with BaseController {
     groupName = TextEditingController();
     minimumController = TextEditingController();
     maximumController = TextEditingController();
+    modifierEntries = [
+      _createModifierEntry(),
+    ];
     listAllModifiers();
   }
 
@@ -125,26 +127,40 @@ class DishModifiersController extends ChangeNotifier with BaseController {
       notifyListeners();
 
       if (formKey.currentState?.validate() == true) {
-        final name = groupName.text;
-        final minimum = minimumController.text;
-        final maximum = maximumController.text;
+        final name = groupName.text.trim();
+        final minimum = minimumController.text.trim();
+        final maximum = maximumController.text.trim();
+
         final payload = AddDishModifiersModel(
           name: name,
           minimumRequired: minimum,
           maximumRequired: maximum,
-          groupItems: modifierEntries.mapIndexed((index, data) {
-            final name = (data["name"] as TextEditingController).text;
-            final price = (data["price"] as TextEditingController).text;
+          groupItems: modifierEntries.where((data) {
+            final optionName =
+                (data["name"] as TextEditingController).text.trim();
+            final price = (data["price"] as TextEditingController).text.trim();
+
+            // Ignore completely empty modifier rows
+            return optionName.isNotEmpty || price.isNotEmpty;
+          }).mapIndexed((index, data) {
+            final optionName =
+                (data["name"] as TextEditingController).text.trim();
+            final price = (data["price"] as TextEditingController).text.trim();
+
             return GroupItems(
-                name: name,
-                price: price,
-                status: "Active",
-                sort: (index + 1).toString());
+              name: optionName,
+              price: price,
+              status: "Active",
+              sort: (index + 1).toString(),
+            );
           }).toList(),
         );
 
         if (editMode) {
-          await DishModifiersService.updateModifiers(_editModifierId!, payload);
+          await DishModifiersService.updateModifiers(
+            _editModifierId!,
+            payload,
+          );
         } else {
           await DishModifiersService.addModifier(payload);
         }
@@ -172,15 +188,21 @@ class DishModifiersController extends ChangeNotifier with BaseController {
   }
 
   void clearFormEntries() {
-    for (var entry in modifierEntries) {
-      (entry["name"] as TextEditingController).clear();
-      (entry["price"] as TextEditingController).clear();
+    for (final entry in modifierEntries) {
+      (entry["name"] as TextEditingController).dispose();
+      (entry["price"] as TextEditingController).dispose();
     }
+
     _editModifierId = null;
+
     groupName.clear();
     minimumController.clear();
     maximumController.clear();
-    modifierEntries = List.from([modifierEntry]);
+
+    modifierEntries = [
+      _createModifierEntry(),
+    ];
+
     notifyListeners();
   }
 }

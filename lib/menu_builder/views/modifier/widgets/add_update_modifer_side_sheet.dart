@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_modifiers_controller.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/menu_builder_app_colors.dart';
+import '../../../core/utils/input_formatters.dart';
 import '../../../core/utils/ui_utils.dart';
 import '../../../core/validators/menu_builder_validators.dart';
 import '../../../widgets/custom_rounded_textfield.dart';
@@ -92,6 +94,9 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.0),
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
+                    inputFormatters: const <TextInputFormatter>[
+                      NoEmojiTextInputFormatter(),
+                    ],
                     textEditingController: controller.groupName,
                     validator: MenuBuilderValidators.validateModifierGroupName,
                   ),
@@ -173,6 +178,9 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
                                         entry["name"] as TextEditingController,
                                     validator: MenuBuilderValidators
                                         .validateModifierOptionName,
+                                    inputFormatters: const <TextInputFormatter>[
+                                      NoEmojiTextInputFormatter(),
+                                    ],
                                   ),
                                 ),
                                 horizontalSpaceRegular,

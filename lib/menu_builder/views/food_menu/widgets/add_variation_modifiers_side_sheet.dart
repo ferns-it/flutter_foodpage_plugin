@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builder_validators.dart';
@@ -7,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/menu_builder_app_colors.dart';
+import '../../../core/utils/input_formatters.dart';
 import '../../../core/utils/ui_utils.dart';
 import '../../../widgets/custom_rounded_textfield.dart';
 import 'build_allergens_widget.dart';
@@ -105,8 +107,7 @@ class FoodVariationItem extends StatelessWidget {
     final controller = context.watch<DishesController>();
     final geminiController = context.watch<GeminiController>();
 
-    final isUnlimitedStock =
-    entry["isUnlimitedStock"] as bool? ?? true;
+    final isUnlimitedStock = entry["isUnlimitedStock"] as bool? ?? true;
 
     return Card(
       child: Padding(
@@ -235,34 +236,34 @@ class FoodVariationItem extends StatelessWidget {
                 ),
               ),
             ),
-           Row(
-  children: [
-    Checkbox(
-      value: isUnlimitedStock,
-      onChanged: (value) {
-        if (value != null) {
-          controller.onChangeVariationUnlimitedStock(
-            index,
-            value,
-          );
-        }
-      },
-    ),
-    const Text("Unlimited Stock"),
-  ],
-),
-if (!isUnlimitedStock) ...[
-  verticalSpaceSmall,
-  CustomRoundedTextField.topText(
-    topText: "Quantity",
-    hintText: "Enter quantity",
-    borderRadius: BorderRadius.circular(8.0),
-    keyboardType: TextInputType.number,
-    textInputAction: TextInputAction.next,
-    textEditingController:
-        entry["quantity"] as TextEditingController,
-  ),
-],
+            Row(
+              children: [
+                Checkbox(
+                  value: isUnlimitedStock,
+                  onChanged: (value) {
+                    if (value != null) {
+                      controller.onChangeVariationUnlimitedStock(
+                        index,
+                        value,
+                      );
+                    }
+                  },
+                ),
+                const Text("Unlimited Stock"),
+              ],
+            ),
+            if (!isUnlimitedStock) ...[
+              verticalSpaceSmall,
+              CustomRoundedTextField.topText(
+                topText: "Quantity",
+                hintText: "Enter quantity",
+                borderRadius: BorderRadius.circular(8.0),
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
+                textEditingController:
+                    entry["quantity"] as TextEditingController,
+              ),
+            ],
             verticalSpaceRegular,
             BuildAllergensWidget(index: index),
             verticalSpaceRegular,
@@ -318,6 +319,9 @@ class AddModifiersFormWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
               keyboardType: TextInputType.name,
               textInputAction: TextInputAction.next,
+              inputFormatters: const <TextInputFormatter>[
+                NoEmojiTextInputFormatter(),
+              ],
             ),
             verticalSpaceTiny,
             Padding(
@@ -354,6 +358,9 @@ class AddModifiersFormWidget extends StatelessWidget {
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
                           fillColor: MenuBuilderColors.kWhite,
+                          inputFormatters: const <TextInputFormatter>[
+                            NoEmojiTextInputFormatter(),
+                          ],
                         ),
                       ),
                       horizontalSpaceRegular,
@@ -397,6 +404,9 @@ class AddModifiersFormWidget extends StatelessWidget {
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
                           fillColor: MenuBuilderColors.kWhite,
+                          inputFormatters: const <TextInputFormatter>[
+                            NoEmojiTextInputFormatter(),
+                          ],
                         ),
                       ),
                       horizontalSpaceRegular,

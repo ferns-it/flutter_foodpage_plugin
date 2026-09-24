@@ -1,10 +1,12 @@
 // ignore_for_file: unused_field
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/enums.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/input_formatters.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builder_validators.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/widgets/custom_rounded_textfield.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
@@ -491,6 +493,9 @@ class _BuildAddUpdateCategorySectionState
                   validator: MenuBuilderValidators.validateCategoryName,
                   textEditingController: controller.nameController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  inputFormatters: const <TextInputFormatter>[
+                    NoEmojiTextInputFormatter(),
+                  ],
                 ),
                 verticalSpaceRegular,
                 CustomRoundedTextField.topText(
@@ -502,6 +507,9 @@ class _BuildAddUpdateCategorySectionState
                   textInputAction: TextInputAction.done,
                   textEditingController: controller.descriptionController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  inputFormatters: const <TextInputFormatter>[
+                    NoEmojiTextInputFormatter(),
+                  ],
                 ),
                 verticalSpaceRegular,
                 OutlinedButton(
