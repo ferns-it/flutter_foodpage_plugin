@@ -418,7 +418,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                         if (!otherSelected) {
                                           Fluttertoast.showToast(
                                             msg:
-                                                "At least one option must be selected.",
+                                                "Atleast one option must be selected.",
                                           );
                                           return;
                                         }

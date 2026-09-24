@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/helper_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/widgets/custom_rounded_textfield.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controllers/dishes/dishes_controller.dart';
@@ -111,22 +112,8 @@ class AddAvailabilitySideSheet extends StatelessWidget {
                               controller.onStartTimeChange(index, pickedTime);
 
                           if (!isValid && context.mounted) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Invalid Time'),
-                                  content: const Text(
-                                    'Start time must be earlier than end time.',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                );
-                              },
+                            Fluttertoast.showToast(
+                              msg: "Start time must be earlier than end time.",
                             );
                           }
                         },
@@ -158,22 +145,8 @@ class AddAvailabilitySideSheet extends StatelessWidget {
                                 controller.onEndTimeChange(index, pickedTime);
 
                             if (!isValid && context.mounted) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('Invalid Time'),
-                                    content: const Text(
-                                      'End time must be later than start time.',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  );
-                                },
+                              Fluttertoast.showToast(
+                                msg: "End time must be later than start time.",
                               );
                             }
                             // controller.onEndTimeChange(index, pickedTime);
