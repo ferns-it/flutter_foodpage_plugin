@@ -15,45 +15,17 @@ void main() {
   runApp(const MyApp());
 }
 
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GetMaterialApp(
-//       title: 'Flutter Demo',
-//       theme: appTheme(context),
-//       initialBinding: AppBinding(),
-//       initialRoute: RouteNames.kDashBoard,
-//       getPages: appRoutes,
-//     );
-//   }
-// }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return DependencyRegisterWidget(
-      child: GetMaterialApp(
-        key: MenuBuilderGlobalVariable.navState,
-        title: 'Flutter Demo',
-        theme: appTheme(context),
-        debugShowCheckedModeBanner: false,
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-          child: child!,
-        ),
-        home: FlutterFoodpageMenuBuilder(
-          config: MenuBuilderConfig(
-              authenticationKey: "7462053d572583ec917ad141fdf01a20",
-              mode: DevelopmentMode.development,
-              geminiAPIKey: "AIzaSyCHY942WKRPYPucmyaANG9HOHSJGb77T9E",
-              // applicationName: "EPOS",
-              applicationName: "Online Orders"),
-        ),
-      ),
+    return GetMaterialApp(
+      title: 'Flutter Demo',
+      theme: appTheme(context),
+      initialBinding: AppBinding(),
+      initialRoute: RouteNames.kDashBoard,
+      getPages: appRoutes,
     );
   }
 }

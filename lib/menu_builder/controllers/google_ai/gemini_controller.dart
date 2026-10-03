@@ -24,8 +24,10 @@ class GeminiController extends ChangeNotifier with BaseController {
       _dishDescriptionGenerating = true;
       notifyListeners();
       final gemini = Gemini.instance;
-      final result =
-          await gemini.text("Write a short description about $dishName");
+      final result = await gemini.text(
+        "Write a short, appealing restaurant menu description for the dish $dishName",
+        modelName: 'models/gemini-3.8-flash',
+      );
       return result?.output;
     } on DioException catch (e) {
       if (e.response?.statusCode == 429) {
@@ -57,8 +59,10 @@ class GeminiController extends ChangeNotifier with BaseController {
       _dishDescriptionGenerating = true;
       notifyListeners();
       final gemini = Gemini.instance;
-      final result =
-          await gemini.text("Correct the Writing and Grammar of $content");
+      final result = await gemini.text(
+        "Correct the Writing and Grammar of $content",
+        modelName: 'models/gemini-3.8-flash',
+      );
       return result?.output;
     } finally {
       _dishDescriptionGenerating = false;
@@ -74,6 +78,7 @@ class GeminiController extends ChangeNotifier with BaseController {
       final gemini = Gemini.instance;
       final result = await gemini.text(
         "Write down the ingredients for $dishName, separating the items with commas in the sentence. The sentence should contain only the ingredient details.",
+        modelName: 'models/gemini-3.8-flash',
       );
       return result?.output;
     } on DioException catch (e) {

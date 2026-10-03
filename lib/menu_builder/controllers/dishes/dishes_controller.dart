@@ -44,6 +44,7 @@ class DishesController extends ChangeNotifier with BaseController {
   List<MasterAddonsInitialiseSubData> get listOfMasterAddons =>
       _addDishInitializeData?.masterAddons.data ?? [];
 
+  //
   List<CategoryData> get listOfCategories =>
       (_addDishInitializeData?.category.data ?? [])
           .map((category) =>
@@ -55,13 +56,36 @@ class DishesController extends ChangeNotifier with BaseController {
       .map((category) => category)
       .toList();
 
+ List<CategoryData> get categoriesWithProducts {
+  final productCategoryIds = dishesList
+      .expand((dish) => dish.categories)
+      .map((category) => category.cID)
+      .whereType<String>()
+      .toSet();
+
+  return listOfCategories.where((parentCategory) {
+    // Parent category itself has a product
+    if (productCategoryIds.contains(parentCategory.cID)) {
+      return true;
+    }
+
+    // One of the child categories has a product
+    return parentCategory.childrens.any(
+      (childCategory) => productCategoryIds.contains(childCategory.cID),
+    );
+  }).toList();
+}
+
   late TextEditingController searchTextEditingController;
-
   bool _loadingDishAction = false;
-
   bool get loadingDishAction => _loadingDishAction;
-
   CategoryData get allCategory => CategoryData(name: "All", cID: "0");
+  List<CategoryData> get menuCategories {
+  return [
+    allCategory,
+    ...categoriesWithProducts,
+  ];
+}
 
   @override
   Future<void> init() async {
@@ -967,6 +991,8 @@ class DishesController extends ChangeNotifier with BaseController {
       singleVariationPriceController.text = variation.price;
       singleSelectedAllergens = variation.allergens.map((e) => e.id).toList();
       singleVariationIngredientsController.text = variation.ingredients;
+      quantityController.text =
+          variation.isUnlimitedStock == 1 ? "" : variation.stock;
     }
 
     // Modifiers

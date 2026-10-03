@@ -48,64 +48,72 @@ class SideMenuWidget extends StatelessWidget {
               ),
             ),
             verticalSpaceLarge,
-            _buildMenuItem(
-              context,
-              icon: pageNavigationController.currentPageIndex == 0
-                  ? FluentIcons.home_20_filled
-                  : FluentIcons.home_20_regular,
-              title: "Dashboard",
-              selected: pageNavigationController.currentPageIndex == 0,
-              onTap: () {
-                resetSelectedCategory(context);
-                if (pageNavigationController.currentPageIndex == 1) {
-                  dishesController.clearDishSearch();
-                }
-                readPageNavigationController.onChangePageIndex(0);
-              },
-            ),
-            verticalSpaceSmall,
-            _buildMenuItem(
-              context,
-              icon: pageNavigationController.currentPageIndex == 1
-                  ? FluentIcons.food_20_filled
-                  : FluentIcons.food_20_regular,
-              title: "Food Menu",
-              selected: pageNavigationController.currentPageIndex == 1,
-              onTap: () {
-                resetSelectedCategory(context);
-                readPageNavigationController.onChangePageIndex(1);
-              },
-            ),
-            verticalSpaceSmall,
-            _buildMenuItem(
-              context,
-              icon: pageNavigationController.currentPageIndex == 2
-                  ? FluentIcons.apps_list_20_filled
-                  : FluentIcons.apps_list_20_regular,
-              title: "Categories",
-              selected: pageNavigationController.currentPageIndex == 2,
-              onTap: () {
-                if (pageNavigationController.currentPageIndex == 1) {
-                  dishesController.clearDishSearch();
-                }
-                readPageNavigationController.onChangePageIndex(2);
-              },
-            ),
-            verticalSpaceSmall,
-            _buildMenuItem(
-              context,
-              icon: pageNavigationController.currentPageIndex == 3
-                  ? FluentIcons.apps_add_in_20_filled
-                  : FluentIcons.apps_add_in_20_regular,
-              title: "Modifiers",
-              selected: pageNavigationController.currentPageIndex == 3,
-              onTap: () {
-                resetSelectedCategory(context);
-                if (pageNavigationController.currentPageIndex == 1) {
-                  dishesController.clearDishSearch();
-                }
-                readPageNavigationController.onChangePageIndex(3);
-              },
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    _buildMenuItem(
+                      context,
+                      icon: pageNavigationController.currentPageIndex == 0
+                          ? FluentIcons.home_20_filled
+                          : FluentIcons.home_20_regular,
+                      title: "Dashboard",
+                      selected: pageNavigationController.currentPageIndex == 0,
+                      onTap: () {
+                        resetSelectedCategory(context);
+                        if (pageNavigationController.currentPageIndex == 1) {
+                          dishesController.clearDishSearch();
+                        }
+                        readPageNavigationController.onChangePageIndex(0);
+                      },
+                    ),
+                    verticalSpaceSmall,
+                    _buildMenuItem(
+                      context,
+                      icon: pageNavigationController.currentPageIndex == 1
+                          ? FluentIcons.food_20_filled
+                          : FluentIcons.food_20_regular,
+                      title: "Food Menu",
+                      selected: pageNavigationController.currentPageIndex == 1,
+                      onTap: () {
+                        resetSelectedCategory(context);
+                        readPageNavigationController.onChangePageIndex(1);
+                      },
+                    ),
+                    verticalSpaceSmall,
+                    _buildMenuItem(
+                      context,
+                      icon: pageNavigationController.currentPageIndex == 2
+                          ? FluentIcons.apps_list_20_filled
+                          : FluentIcons.apps_list_20_regular,
+                      title: "Categories",
+                      selected: pageNavigationController.currentPageIndex == 2,
+                      onTap: () {
+                        if (pageNavigationController.currentPageIndex == 1) {
+                          dishesController.clearDishSearch();
+                        }
+                        readPageNavigationController.onChangePageIndex(2);
+                      },
+                    ),
+                    verticalSpaceSmall,
+                    _buildMenuItem(
+                      context,
+                      icon: pageNavigationController.currentPageIndex == 3
+                          ? FluentIcons.apps_add_in_20_filled
+                          : FluentIcons.apps_add_in_20_regular,
+                      title: "Modifiers",
+                      selected: pageNavigationController.currentPageIndex == 3,
+                      onTap: () {
+                        resetSelectedCategory(context);
+                        if (pageNavigationController.currentPageIndex == 1) {
+                          dishesController.clearDishSearch();
+                        }
+                        readPageNavigationController.onChangePageIndex(3);
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
