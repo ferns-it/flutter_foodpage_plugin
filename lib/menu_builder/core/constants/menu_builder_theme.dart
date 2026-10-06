@@ -5,7 +5,7 @@ import '../utils/material_color_generator.dart';
 import 'menu_builder_app_colors.dart';
 
 ThemeData menuBuilderTheme(BuildContext context) {
-  final textTheme = Theme.of(context).textTheme;
+final textTheme = Theme.of(context).textTheme;
   return ThemeData(
     useMaterial3: true,
     scaffoldBackgroundColor: MenuBuilderColors.kWhite2,
@@ -15,11 +15,12 @@ ThemeData menuBuilderTheme(BuildContext context) {
     ),
     dividerColor: Colors.grey.shade300,
     dividerTheme: DividerThemeData(color: Colors.grey.shade300),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
     ),
-    textTheme: GoogleFonts.merriweatherSansTextTheme(textTheme),
-    drawerTheme: DrawerThemeData(
+  textTheme: textTheme.apply(
+      fontFamily: GoogleFonts.merriweatherSans().fontFamily,
+    ), drawerTheme: DrawerThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4.0),
       ),

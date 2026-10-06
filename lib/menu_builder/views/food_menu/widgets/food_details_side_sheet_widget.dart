@@ -105,12 +105,12 @@ class _FoodDetailsSideSheetWidgetState
                               ),
                               horizontalSpaceSmall,
                               controller.selectedDish!.type == "non veg"
-                                  ? const Icon(
+                                  ? const FaIcon(
                                       FontAwesomeIcons.drumstickBite,
                                       color: Color(0xFFA16868),
                                       size: 20,
                                     )
-                                  : const Icon(
+                                  : const FaIcon(
                                       FontAwesomeIcons.leaf,
                                       color: Color(0xFF5ca904),
                                       size: 20,
