@@ -65,7 +65,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
       },
       child: Theme(
         data: menuBuilderTheme(context).copyWith(
-          cardTheme: CardThemeData(
+          cardTheme: CardTheme(
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),

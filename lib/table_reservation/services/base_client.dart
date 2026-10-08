@@ -15,12 +15,12 @@ class BaseClient {
   static String get contentType => "application/json";
 
   static BaseOptions get _baseOptions => BaseOptions(
-    connectTimeout: const Duration(seconds: _timeLimit),
-    receiveTimeout: const Duration(seconds: _timeLimit),
-    contentType: contentType,
-    responseType: responeType,
-    headers: {"SOURCE": "OWNER", "Language": "en"},
-  );
+        connectTimeout: const Duration(seconds: _timeLimit),
+        receiveTimeout: const Duration(seconds: _timeLimit),
+        contentType: contentType,
+        responseType: responeType,
+        headers: {"SOURCE": "OWNER", "Language": "en"},
+      );
 
   static Dio get dio => Dio(_baseOptions)
     ..interceptors.add(
@@ -147,7 +147,6 @@ class BaseClient {
     switch (type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
-      case DioExceptionType.transformTimeout:
         exception = ConnectionSlowException();
         break;
 
@@ -171,29 +170,11 @@ class BaseClient {
       case DioExceptionType.unknown:
         exception = InternalServerErrorException(message: message);
         break;
+
+      default:
+        exception = InternalServerErrorException(message: message);
+        break;
     }
-    // switch (type) {
-    //   case DioExceptionType.connectionTimeout:
-    //   case DioExceptionType.sendTimeout:
-    //     exception = ConnectionSlowException();
-    //     break;
-    //   case DioExceptionType.receiveTimeout:
-    //     exception = TimeoutException();
-    //     break;
-    //   case DioExceptionType.badCertificate:
-    //   case DioExceptionType.badResponse:
-    //     exception = InternalServerErrorException(message: message);
-    //     break;
-    //   case DioExceptionType.cancel:
-    //     exception = UserCancelException();
-    //     break;
-    //   case DioExceptionType.connectionError:
-    //     exception = ConnectionLostException();
-    //     break;
-    //   case DioExceptionType.unknown:
-    //     exception = InternalServerErrorException(message: message);
-    //     break;
-    // }
 
     return handler.reject(
       DioException(

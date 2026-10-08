@@ -3,7 +3,7 @@ class ApiEndpoints {
   // static const productionUrl2 = 'https://foodpage.co.uk/v2/shop';
   static const productionUrl = 'https://order.foodpage.co.uk/v1/mobile/shop';
   static const productionUrl2 = 'https://order.foodpage.co.uk/v2/shop';
-  static const developmentUrl =
+   static const developmentUrl =
       'https://development.foodpage.co.uk/v1/mobile/shop';
   static const developmentUrl2 = 'https://development.foodpage.co.uk/v2/shop';
   static const products = '/products';

@@ -18,11 +18,11 @@ class BaseClient {
   static String get contentType => "application/json";
 
   static BaseOptions get _baseOptions => BaseOptions(
-    connectTimeout: const Duration(seconds: _timeLimit),
-    receiveTimeout: const Duration(seconds: _timeLimit),
-    contentType: contentType,
-    responseType: responseType,
-  );
+        connectTimeout: const Duration(seconds: _timeLimit),
+        receiveTimeout: const Duration(seconds: _timeLimit),
+        contentType: contentType,
+        responseType: responseType,
+      );
 
   static Dio get dio => Dio(_baseOptions)
     ..interceptors.add(
@@ -172,16 +172,17 @@ class BaseClient {
           message = jsonData['messages'] is String
               ? jsonData['messages']
               : (jsonData['messages']?['error']) ??
-                    (jsonData['error']?['message']) ??
-                    (jsonData['data']?['message']) ??
-                    (jsonData['error']) ??
-                    "An unknown error occurred.";
+                  (jsonData['error']?['message']) ??
+                  (jsonData['data']?['message']) ??
+                  (jsonData['error']) ??
+                  "An unknown error occurred.";
         }
       } catch (e) {
         debugPrint('Not JSON Decodable: $data');
         final error = GenericAppException(
           prefix: "Failed!",
-          message: "Received an invalid response from the server. Please try again later.",
+          message:
+              "Received an invalid response from the server. Please try again later.",
         );
 
         return handler.reject(
@@ -196,65 +197,39 @@ class BaseClient {
     }
 
     AppExceptions exception;
+
     switch (type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
-      case DioExceptionType.transformTimeout:
         exception = ConnectionSlowException();
         break;
-
       case DioExceptionType.receiveTimeout:
         exception = TimeoutException();
         break;
-
       case DioExceptionType.badCertificate:
       case DioExceptionType.badResponse:
         exception = InternalServerErrorException(message: message);
         break;
-
       case DioExceptionType.cancel:
         exception = UserCancelException();
         break;
-
       case DioExceptionType.connectionError:
         exception = ConnectionLostException();
         break;
-
       case DioExceptionType.unknown:
         exception = InternalServerErrorException(message: message);
         break;
+      default:
+        exception = InternalServerErrorException(message: message);
+        break;
     }
-    // switch (type) {
-    //   case DioExceptionType.connectionTimeout:
-    //   case DioExceptionType.sendTimeout:
-    //     exception = ConnectionSlowException();
-    //     break;
-    //   case DioExceptionType.receiveTimeout:
-    //     exception = TimeoutException();
-    //     break;
-    //   case DioExceptionType.badCertificate:
-    //   case DioExceptionType.badResponse:
-    //     exception = InternalServerErrorException(message: message);
-    //     break;
-    //   case DioExceptionType.cancel:
-    //     exception = UserCancelException();
-    //     break;
-    //   case DioExceptionType.connectionError:
-    //     exception = ConnectionLostException();
-    //     break;
-    //   case DioExceptionType.unknown:
-    //     exception = InternalServerErrorException(message: message);
-    //     break;
-    // }
 
-    return handler.reject(
-      DioException(
-        requestOptions: dioError.requestOptions,
-        error: exception,
-        type: type,
-        message: exception.message,
-      ),
-    );
+    return handler.reject(DioException(
+      requestOptions: dioError.requestOptions,
+      error: exception,
+      type: type,
+      message: exception.message,
+    ));
   }
 
   //GET
