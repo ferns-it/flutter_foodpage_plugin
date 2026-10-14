@@ -128,7 +128,7 @@ class AddDishRequestModel with AddDishData {
         'price': price,
         'isUnlimitedStock': isUnlimitedStock,
         'quantity': quantity,
-        'allergns': allergns,
+        'allergensMaster': allergns,
         'ingredients': ingredients,
       },
       // Top-level list, as in your old AddDishRequestWithVariationModel.

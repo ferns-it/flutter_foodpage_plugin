@@ -99,6 +99,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                       ? () => controller.addOrUpdateDish().then((result) {
                             if (result == ResponseResult.success) {
                               Navigator.pop(context);
+                             
                               controller.resetFormEntries();
                             }
                           })

@@ -722,7 +722,7 @@ class _FoodDetailsSideSheetWidgetState
             smallText: true,
           ),
         ],
-        if (data.allergens.isNotEmpty) ...[
+        if (data.selectedallergens.isNotEmpty) ...[
           verticalSpaceSmall,
           _buildInfoRow(
             context,
@@ -733,11 +733,10 @@ class _FoodDetailsSideSheetWidgetState
         ],
         verticalSpaceSmall,
         _buildInfoRow(
-          context,
-          FluentIcons.stack_20_regular,
-          data.isUnlimitedStock == "1"
-              ? "Unlimited Stocks Available"
-              : "${data.stock} Stocks Available",
+          context, FluentIcons.stack_20_regular, "Unlimited Stocks Available",
+          // data.isUnlimitedStock == "1"
+          //     ? "Unlimited Stocks Available"
+          //     : "${data.stock} Stocks Available",
           smallText: true,
         ),
       ],

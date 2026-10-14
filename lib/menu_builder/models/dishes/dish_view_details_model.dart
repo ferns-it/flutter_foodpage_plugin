@@ -396,9 +396,6 @@ class VariationData {
 
   String toJson() => json.encode(toMap());
 
-  String get formattedAllergens =>
-      allergens.map((e) => e.name).toList().join(", ");
-
   factory VariationData.fromJson(String source) =>
       VariationData.fromMap(json.decode(source) as Map<String, dynamic>);
 
@@ -441,12 +438,26 @@ class VariationData {
 
   bool get isUnlimited => isUnlimitedStock == '1';
 
-  /// Ids of selected allergens. Prefers `allergens`, falls back to `selectedallergens`.
+  /// Ids selected for this variation (e.g. ["7"]).
   List<String> get allergenIds {
-    final ids = allergens.map((e) => e.id).toList();
-    if (ids.isNotEmpty) return ids;
-    return selectedallergens.map((e) => e.toString()).toList();
+    final source =
+        selectedallergens.isNotEmpty ? selectedallergens : allergensMaster;
+    return source
+        .map((e) => e is Map ? e['id']?.toString() : e?.toString())
+        .whereType<String>()
+        .where((id) => id.isNotEmpty)
+        .toList();
   }
+
+  /// Looks up the selected ids in the full allergens list.
+  List<Allergen> get selectedAllergenList {
+    final ids = allergenIds.toSet();
+    return allergens.where((a) => ids.contains(a.id)).toList();
+  }
+
+  /// Text to display, e.g. "Allergens 5".
+  String get formattedAllergens =>
+      selectedAllergenList.map((e) => e.name).join(", ");
 }
 
 class Allergen {

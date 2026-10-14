@@ -686,25 +686,60 @@ class DishesController extends ChangeNotifier with BaseController {
 
   bool get allDaysEnabled => _allDaysEnabled;
 
+  // void onChangeAllDaysEnable(bool? value) {
+  //   if (value == null) return;
+  //   _allDaysEnabled = value;
+  //   // When All Days is enabled, specific day selections are unnecessary.
+  //   // if (_allDaysEnabled) {
+  //   //   availableDays.clear();
+  //   // }
+  //   notifyListeners();
+  // }
   void onChangeAllDaysEnable(bool? value) {
     if (value == null) return;
     _allDaysEnabled = value;
+
+    if (_allDaysEnabled) {
+      availableDays
+        ..clear()
+        ..add('all_day');
+    } else {
+      availableDays.removeWhere(
+        (day) => day == 'all_day',
+      );
+    }
+
+    debugPrint('All Days enabled: $_allDaysEnabled');
+    debugPrint('Selected days: $availableDays');
+
     notifyListeners();
   }
 
   List<String> availableDays = [];
-
   void onChangeAvailableDays(String day) {
-    try {
-      if (availableDays.contains(day)) {
-        availableDays.remove(day);
-        return;
-      }
+    if (day == 'all_day') return;
+
+    if (availableDays.contains(day)) {
+      availableDays.remove(day);
+    } else {
       availableDays.add(day);
-    } finally {
-      notifyListeners();
     }
+
+    _allDaysEnabled = false;
+
+    notifyListeners();
   }
+  // void onChangeAvailableDays(String day) {
+  //   try {
+  //     if (availableDays.contains(day)) {
+  //       availableDays.remove(day);
+  //       return;
+  //     }
+  //     availableDays.add(day);
+  //   } finally {
+  //     notifyListeners();
+  //   }
+  // }
 
   bool checkDaysIsSelected(String day) {
     return availableDays.contains(day);
@@ -760,8 +795,10 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   Future<void> fetchDishes() async {
-    _dishCollection = APIResponse.loading();
-    notifyListeners();
+    if (_dishCollection.data == null) {
+      _dishCollection = APIResponse.loading();
+      notifyListeners();
+    }
 
     try {
       final response = await DishesService.getDishesList();
@@ -852,19 +889,18 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   Future<void> getDishDetails() async {
-    if (selectedDish == null) {
+    final dishId = _selectedDishId;
+    if (dishId == null) {
       _viewDishDetails = throwNotFoundException<DishViewDetailsModel>();
       notifyListeners();
       return;
     }
 
-    final dishId = selectedDish!.pID;
     _viewDishDetails = APIResponse.loading();
     notifyListeners();
 
     try {
       final response = await DishesService.getDishDetails(dishId);
-
       response.fold(
         (error) =>
             _viewDishDetails = throwAppException<DishViewDetailsModel>(error),
@@ -878,6 +914,33 @@ class DishesController extends ChangeNotifier with BaseController {
       notifyListeners();
     }
   }
+  // Future<void> getDishDetails() async {
+  //   if (selectedDish == null) {
+  //     _viewDishDetails = throwNotFoundException<DishViewDetailsModel>();
+  //     notifyListeners();
+  //     return;
+  //   }
+
+  //   final dishId = selectedDish!.pID;
+  //   _viewDishDetails = APIResponse.loading();
+  //   notifyListeners();
+
+  //   try {
+  //     final response = await DishesService.getDishDetails(dishId);
+
+  //     response.fold(
+  //       (error) =>
+  //           _viewDishDetails = throwAppException<DishViewDetailsModel>(error),
+  //       (result) => _viewDishDetails = APIResponse.completed(result),
+  //     );
+  //   } on AppExceptions catch (error) {
+  //     _viewDishDetails = APIResponse.error(error.message, exception: error);
+  //   } catch (_) {
+  //     _viewDishDetails = throwUnknownErrorException<DishViewDetailsModel>();
+  //   } finally {
+  //     notifyListeners();
+  //   }
+  // }
 
   String _text(Map<String, dynamic> e, String key) =>
       (e[key] as TextEditingController).text.trim();
@@ -1317,28 +1380,29 @@ class DishesController extends ChangeNotifier with BaseController {
     _loadingDishAction = true;
     notifyListeners();
 
+    bool updated = false;
+
     try {
       final payload = _buildPayload();
+      log('Dish payload: ${payload.toJson()}');
 
-      log(
-        'Selected single allergens: ${singleSelectedAllergens.toList()}',
-      );
-      log(
-        'Single dish payload: ${payload.toJson()}',
-      );
-      log(payload.toJson());
-
+      // ---------- UPDATE ----------
       if (editDishId != null) {
         final response = await DishesService.updateDish(editDishId!, payload);
-        return response.fold((error) {
+
+        final result = response.fold((error) {
           Fluttertoast.showToast(msg: error.message);
           return ResponseResult.failure;
         }, (_) {
           Fluttertoast.showToast(msg: "Dish updated successfully!");
           return ResponseResult.success;
         });
+
+        updated = result == ResponseResult.success;
+        return result;
       }
 
+      // ---------- ADD ----------
       final response = await DishesService.addNewDish(payload);
       return response.fold((error) {
         Fluttertoast.showToast(msg: error.message);
@@ -1354,7 +1418,9 @@ class DishesController extends ChangeNotifier with BaseController {
     } finally {
       _loadingDishAction = false;
       notifyListeners();
-      fetchDishes();
+      fetchDishes().then((_) {
+        if (updated) getDishDetails();
+      });
     }
   }
 
@@ -1374,13 +1440,20 @@ class DishesController extends ChangeNotifier with BaseController {
       ...choosedSubCategories.where((e) => e.$3 != null).map((e) => e.$3!),
     ];
 
+    // Initialize allDayAvailable based on allDaysEnabled
+    final allDayAvailable = allDaysEnabled ? "on" : null;
+
+    // Extract timing data and validate each entry
     final timing = dishAvailabilityEntries
-        .where((e) => e.$1 != null && e.$2 != null)
-        .map((e) => {
-              "startTime": convertTimeOfDayTo24hr(e.$1!),
-              "endTime": convertTimeOfDayTo24hr(e.$2!),
-            })
-        .toList();
+        .where((entry) => entry.$1 != null && entry.$2 != null)
+        .map((entry) {
+      final formatStartTime = convertTimeOfDayTo24hr(entry.$1!);
+      final formatEndTime = convertTimeOfDayTo24hr(entry.$2!);
+      return {
+        "startTime": formatStartTime,
+        "endTime": formatEndTime,
+      };
+    }).toList();
 
     final singleQty = isUnlimitedStock
         ? 0
@@ -1410,7 +1483,7 @@ class DishesController extends ChangeNotifier with BaseController {
       description: descriptionController.text,
       itemCode: itemCodeController.text,
       category: categoryIds,
-      allDayAvailable: allDaysEnabled ? "on" : null,
+      allDayAvailable: allDayAvailable,
       availability: availableDays,
       timing: timing,
       // Single-only fields; the model omits them for variation/meal.
