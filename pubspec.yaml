@@ -26,6 +26,7 @@ dependencies:
   flutter_treeview: ^1.0.7+1
   fluttertoast: ^8.2.8
   fpdart: ^1.1.0
+  image_picker: ^1.1.2
 
   # Icons
   fluentui_system_icons: ^1.1.239

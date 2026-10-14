@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
@@ -41,6 +43,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
 
     switch (activeSideSheetType) {
       case AddDishSideSheetType.variation:
+      case AddDishSideSheetType.meal:
         return const AddVariationModifiersSideSheet();
       case AddDishSideSheetType.availability:
         return const AddAvailabilitySideSheet();
@@ -153,8 +156,8 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      Flexible(
-                                        flex: 1,
+                                      Expanded(
+                                        flex: 3,
                                         child: CustomRoundedTextField.topText(
                                           hintText: "Enter dish name",
                                           topText: "Dish name",
@@ -169,7 +172,8 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                         ),
                                       ),
                                       horizontalSpaceRegular,
-                                      Flexible(
+                                      Expanded(
+                                        flex: 5,
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -438,345 +442,336 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                               ),
                             ),
                           ),
-                          controller.dishVariationType ==
-                                  DishVariationType.single
-                              ? LayoutBuilder(builder: (context, constraints) {
-                                  return Card(
-                                    child: Padding(
-                                      padding: defaultCardPadding,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          SizedBox(
-                                            width: constraints.maxWidth / 2,
-                                            child:
-                                                CustomRoundedTextField.topText(
-                                              topText: "Dish price",
-                                              hintText: "Enter dish price",
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              textInputAction:
-                                                  TextInputAction.next,
-                                              validator: MenuBuilderValidators
-                                                  .validatePrice,
-                                              textEditingController: controller
-                                                  .singleVariationPriceController,
-                                            ),
-                                          ),
-                                          verticalSpaceRegular,
-                                          CustomRoundedTextField.topText(
-                                            topText: "Ingredients",
-                                            hintText:
-                                                "Short note about dish ingredients..",
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            maxLines: 2,
-                                            keyboardType: TextInputType.text,
-                                            textInputAction:
-                                                TextInputAction.done,
-                                            textEditingController: controller
-                                                .singleVariationIngredientsController,
-                                            suffixIcon: geminiController
-                                                    .dishIngredientsGenerating
-                                                ? const Padding(
-                                                    padding:
-                                                        EdgeInsets.all(10.0),
-                                                    child: SizedBox(
-                                                      height: 26.0,
-                                                      width: 26.0,
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        strokeWidth: 2.5,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : IconButton(
-                                                    onPressed: () async {
-                                                      final name = controller
-                                                          .nameController.text;
-                                                      if (name.isEmpty) {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                "Dish Name cannot be empty!");
-                                                        return;
-                                                      }
-                                                      final generatedContent =
-                                                          await geminiController
-                                                              .generateDishIngredients(
-                                                                  name);
-                                                      if (generatedContent !=
-                                                          null) {
-                                                        controller
-                                                                .singleVariationIngredientsController
-                                                                .text =
-                                                            generatedContent;
-                                                      }
-                                                    },
-                                                    icon: const Icon(FluentIcons
-                                                        .sparkle_24_regular),
+                          if (controller.dishVariationType ==
+                              DishVariationType.single)
+                            LayoutBuilder(builder: (context, constraints) {
+                              return Card(
+                                child: Padding(
+                                  padding: defaultCardPadding,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: constraints.maxWidth / 2,
+                                        child: CustomRoundedTextField.topText(
+                                          topText: "Dish price",
+                                          hintText: "Enter dish price",
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          keyboardType: TextInputType.number,
+                                          textInputAction: TextInputAction.next,
+                                          validator: MenuBuilderValidators
+                                              .validatePrice,
+                                          textEditingController: controller
+                                              .singleVariationPriceController,
+                                        ),
+                                      ),
+                                      verticalSpaceRegular,
+                                      CustomRoundedTextField.topText(
+                                        topText: "Ingredients",
+                                        hintText:
+                                            "Short note about dish ingredients..",
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        maxLines: 2,
+                                        keyboardType: TextInputType.text,
+                                        textInputAction: TextInputAction.done,
+                                        textEditingController: controller
+                                            .singleVariationIngredientsController,
+                                        suffixIcon: geminiController
+                                                .dishIngredientsGenerating
+                                            ? const Padding(
+                                                padding: EdgeInsets.all(10.0),
+                                                child: SizedBox(
+                                                  height: 26.0,
+                                                  width: 26.0,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 2.5,
                                                   ),
-                                          ),
-                                          verticalSpaceRegular,
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 2.0),
-                                            child: Text(
-                                              "Stock",
-                                              style: textTheme.titleSmall!
-                                                  .copyWith(
-                                                color: Colors.grey.shade700,
-                                              ),
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              Checkbox(
-                                                value:
-                                                    controller.isUnlimitedStock,
-                                                onChanged: (value) {
-                                                  if (value != null) {
+                                                ),
+                                              )
+                                            : IconButton(
+                                                onPressed: () async {
+                                                  final name = controller
+                                                      .nameController.text;
+                                                  if (name.isEmpty) {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Dish Name cannot be empty!");
+                                                    return;
+                                                  }
+                                                  final generatedContent =
+                                                      await geminiController
+                                                          .generateDishIngredients(
+                                                              name);
+                                                  if (generatedContent !=
+                                                      null) {
                                                     controller
-                                                        .onChangeUnlimitedStock(
-                                                            value);
+                                                        .singleVariationIngredientsController
+                                                        .text = generatedContent;
                                                   }
                                                 },
+                                                icon: const Icon(FluentIcons
+                                                    .sparkle_24_regular),
                                               ),
-                                              const Text("Unlimited Stock"),
-                                            ],
+                                      ),
+                                      verticalSpaceRegular,
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 2.0),
+                                        child: Text(
+                                          "Stock",
+                                          style: textTheme.titleSmall!.copyWith(
+                                            color: Colors.grey.shade700,
                                           ),
-                                          if (!controller.isUnlimitedStock) ...[
-                                            verticalSpaceSmall,
-                                            CustomRoundedTextField.topText(
-                                              topText: "Quantity",
-                                              hintText: "Enter quantity",
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              textEditingController:
-                                                  controller.quantityController,
-                                            ),
-                                          ],
-                                          verticalSpaceRegular,
-                                          const BuildAllergensWidget()
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Checkbox(
+                                            value: controller.isUnlimitedStock,
+                                            onChanged: (value) {
+                                              if (value != null) {
+                                                controller
+                                                    .onChangeUnlimitedStock(
+                                                        value);
+                                              }
+                                            },
+                                          ),
+                                          const Text("Unlimited Stock"),
                                         ],
                                       ),
-                                    ),
-                                  );
-                                })
-                              : Card(
-                                  child: Padding(
-                                    padding: defaultCardPadding,
-                                    child: Center(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Variations",
-                                                style: textTheme.titleMedium,
-                                              ),
-                                              const Spacer(),
-                                              Builder(builder: (context) {
-                                                return OutlinedButton.icon(
-                                                  onPressed: () {
-                                                    controller
-                                                        .onChangeSideSheetType(
-                                                      AddDishSideSheetType
-                                                          .variation,
-                                                    );
-
-                                                    Scaffold.of(context)
-                                                        .openEndDrawer();
-                                                  },
-                                                  icon: const Icon(
-                                                    FluentIcons.add_24_filled,
-                                                  ),
-                                                  label: const Text(
-                                                      "Add Variation"),
-                                                  style:
-                                                      OutlinedButton.styleFrom(
-                                                    textStyle:
-                                                        textTheme.titleMedium,
-                                                    foregroundColor:
-                                                        MenuBuilderColors.kBlue,
-                                                    side: const BorderSide(
-                                                      width: 1,
-                                                      color: MenuBuilderColors
-                                                          .kBlue,
-                                                    ),
-                                                  ),
-                                                );
-                                              }),
-                                            ],
-                                          ),
-                                          const Divider(),
-                                          verticalSpaceRegular,
-                                          if (controller
-                                              .variationsFormEntriesEmpty)
-                                            Center(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  vertical: 10.0,
-                                                ),
-                                                child: Text(
-                                                  "You have no variations yet. To add a variation, press the Add Variation (+) button.",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium!
-                                                      .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color: Colors
-                                                            .grey.shade600,
-                                                      ),
-                                                ),
-                                              ),
-                                            )
-                                          else
-                                            ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxHeight: mq.size.height * 0.3,
-                                              ),
-                                              child: AlignedGridView.count(
-                                                crossAxisCount: 2,
-                                                itemCount: controller
-                                                    .variationsFormEntries
-                                                    .length,
-                                                mainAxisSpacing: 14.0,
-                                                crossAxisSpacing: 14.0,
-                                                shrinkWrap: true,
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                itemBuilder: (context, index) {
-                                                  final entry = controller
-                                                          .variationsFormEntries[
-                                                      index];
-                                                  final hasValues = controller
-                                                      .checkVariationEntryIsEmpty(
-                                                          index);
-
-                                                  if (hasValues) {
-                                                    return const SizedBox
-                                                        .shrink();
-                                                  }
-
-                                                  final name = (entry["name"]
-                                                          as TextEditingController)
-                                                      .text;
-                                                  final price = (entry["price"]
-                                                          as TextEditingController)
-                                                      .text;
-
-                                                  if (name.isEmpty ||
-                                                      price.isEmpty) {
-                                                    return const SizedBox
-                                                        .shrink();
-                                                  }
-
-                                                  return ListTile(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                        color: Colors
-                                                            .grey.shade300,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6.0),
-                                                    ),
-                                                    title: Text(name),
-                                                    subtitle: Text(
-                                                      "£$price",
-                                                      style: textTheme
-                                                          .bodyLarge!
-                                                          .copyWith(
-                                                        color: Colors
-                                                            .grey.shade500,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            )
-                                        ],
-                                      ),
-                                    ),
+                                      if (!controller.isUnlimitedStock) ...[
+                                        verticalSpaceSmall,
+                                        CustomRoundedTextField.topText(
+                                          topText: "Quantity",
+                                          hintText: "Enter quantity",
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          keyboardType: TextInputType.number,
+                                          textInputAction: TextInputAction.done,
+                                          textEditingController:
+                                              controller.quantityController,
+                                        ),
+                                      ],
+                                      verticalSpaceRegular,
+                                      if (controller.dishVariationType ==
+                                          DishVariationType.single)
+                                        const BuildAllergensWidget()
+                                    ],
                                   ),
                                 ),
-                          const Card(
-                            child: Padding(
-                              padding: defaultCardPadding,
-                              child: Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    // Row(
-                                    //   mainAxisAlignment:
-                                    //       MainAxisAlignment.spaceBetween,
-                                    //   children: [
-                                    //     Text(
-                                    //       "Choices & Addons",
-                                    //       style: textTheme.titleMedium,
-                                    //     ),
-                                    //     Builder(builder: (context) {
-                                    //       return OutlinedButton.icon(
-                                    //         onPressed: () {
-                                    //           Scaffold.of(context)
-                                    //               .openEndDrawer();
-                                    //         },
-                                    //         icon: const Icon(
-                                    //           FluentIcons.add_24_filled,
-                                    //         ),
-                                    //         label: const Text("Add Modifier"),
-                                    //         style: OutlinedButton.styleFrom(
-                                    //           textStyle: textTheme.titleMedium,
-                                    //           foregroundColor:
-                                    //               MenuBuilderColors.kOrange2,
-                                    //           backgroundColor: MenuBuilderColors
-                                    //               .kOrange2
-                                    //               .withOpacity(0.1),
-                                    //           elevation: 0,
-                                    //           side: BorderSide(
-                                    //             width: 0.8,
-                                    //             color: MenuBuilderColors.kOrange2
-                                    //                 .withOpacity(0.3),
-                                    //           ),
-                                    //         ),
-                                    //       );
-                                    //     })
-                                    //   ],
-                                    // ),
-                                    // const Divider(),
-                                    // verticalSpaceRegular,
-                                    // AlignedGridView.count(
-                                    //   crossAxisCount: 3,
-                                    //   itemCount: 4,
-                                    //   mainAxisSpacing: 14.0,
-                                    //   crossAxisSpacing: 14.0,
-                                    //   shrinkWrap: true,
-                                    //   physics:
-                                    //       const NeverScrollableScrollPhysics(),
-                                    //   itemBuilder: (context, index) {
-                                    //     return const FoodModifiersDetailsWidget();
-                                    //   },
-                                    // ),
-                                    // verticalSpaceRegular,
-                                    // const Divider(),
-                                    _BuildMasterModifiersWidget()
-                                  ],
+                              );
+                            })
+                          else
+                            Card(
+                              child: Padding(
+                                padding: defaultCardPadding,
+                                child: Center(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Variations",
+                                            style: textTheme.titleMedium,
+                                          ),
+                                          const Spacer(),
+                                          Builder(builder: (context) {
+                                            return OutlinedButton.icon(
+                                              onPressed: () {
+                                                controller
+                                                    .onChangeSideSheetType(
+                                                  AddDishSideSheetType
+                                                      .variation,
+                                                );
+
+                                                Scaffold.of(context)
+                                                    .openEndDrawer();
+                                              },
+                                              icon: const Icon(
+                                                FluentIcons.add_24_filled,
+                                              ),
+                                              label:
+                                                  const Text("Add Variation"),
+                                              style: OutlinedButton.styleFrom(
+                                                textStyle:
+                                                    textTheme.titleMedium,
+                                                foregroundColor:
+                                                    MenuBuilderColors.kBlue,
+                                                side: const BorderSide(
+                                                  width: 1,
+                                                  color:
+                                                      MenuBuilderColors.kBlue,
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                        ],
+                                      ),
+                                      const Divider(),
+                                      verticalSpaceRegular,
+                                      if (controller.activeEntries.isEmpty)
+                                        // if (controller.variationsFormEntriesEmpty)
+                                        Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 10.0,
+                                            ),
+                                            child: Text(
+                                              controller.isMealType
+                                                  ? "You have no meals yet. To add a meal, press the Add Variation (+) button."
+                                                  : "You have no variations yet. To add a variation, press the Add Variation (+) button.",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium!
+                                                  .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.grey.shade600,
+                                                  ),
+                                            ),
+                                          ),
+                                        )
+                                      else
+                                        ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxHeight: mq.size.height * 0.3,
+                                          ),
+                                          child: AlignedGridView.count(
+                                            crossAxisCount: 2,
+                                            itemCount:
+                                                controller.activeEntries.length,
+                                            // itemCount: controller
+                                            //     .variationsFormEntries.length,
+                                            mainAxisSpacing: 14.0,
+                                            crossAxisSpacing: 14.0,
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemBuilder: (context, index) {
+                                              // final entry = controller
+                                              //     .variationsFormEntries[index];
+                                              final entry = controller
+                                                  .activeEntries[index];
+
+                                              // final hasValues = controller
+                                              //     .checkVariationEntryIsEmpty(
+                                              //         index);
+
+                                              // if (hasValues) {
+                                              //   return const SizedBox.shrink();
+                                              // }
+
+                                              final name = (entry["name"]
+                                                      as TextEditingController)
+                                                  .text;
+                                              final price = (entry["price"]
+                                                      as TextEditingController)
+                                                  .text;
+
+                                              if (name.isEmpty ||
+                                                  price.isEmpty) {
+                                                return const SizedBox.shrink();
+                                              }
+
+                                              return ListTile(
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                    color: Colors.grey.shade300,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          6.0),
+                                                ),
+                                                title: Text(name),
+                                                subtitle: Text(
+                                                  "£$price",
+                                                  style: textTheme.bodyLarge!
+                                                      .copyWith(
+                                                    color: Colors.grey.shade500,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          if (!controller.isMealType)
+                            const Card(
+                              child: Padding(
+                                padding: defaultCardPadding,
+                                child: Center(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.spaceBetween,
+                                      //   children: [
+                                      //     Text(
+                                      //       "Choices & Addons",
+                                      //       style: textTheme.titleMedium,
+                                      //     ),
+                                      //     Builder(builder: (context) {
+                                      //       return OutlinedButton.icon(
+                                      //         onPressed: () {
+                                      //           Scaffold.of(context)
+                                      //               .openEndDrawer();
+                                      //         },
+                                      //         icon: const Icon(
+                                      //           FluentIcons.add_24_filled,
+                                      //         ),
+                                      //         label: const Text("Add Modifier"),
+                                      //         style: OutlinedButton.styleFrom(
+                                      //           textStyle: textTheme.titleMedium,
+                                      //           foregroundColor:
+                                      //               MenuBuilderColors.kOrange2,
+                                      //           backgroundColor: MenuBuilderColors
+                                      //               .kOrange2
+                                      //               .withOpacity(0.1),
+                                      //           elevation: 0,
+                                      //           side: BorderSide(
+                                      //             width: 0.8,
+                                      //             color: MenuBuilderColors.kOrange2
+                                      //                 .withOpacity(0.3),
+                                      //           ),
+                                      //         ),
+                                      //       );
+                                      //     })
+                                      //   ],
+                                      // ),
+                                      // const Divider(),
+                                      // verticalSpaceRegular,
+                                      // AlignedGridView.count(
+                                      //   crossAxisCount: 3,
+                                      //   itemCount: 4,
+                                      //   mainAxisSpacing: 14.0,
+                                      //   crossAxisSpacing: 14.0,
+                                      //   shrinkWrap: true,
+                                      //   physics:
+                                      //       const NeverScrollableScrollPhysics(),
+                                      //   itemBuilder: (context, index) {
+                                      //     return const FoodModifiersDetailsWidget();
+                                      //   },
+                                      // ),
+                                      // verticalSpaceRegular,
+                                      // const Divider(),
+                                      _BuildMasterModifiersWidget()
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -799,6 +794,16 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
+                                      // Text(
+                                      //   "Dish Image",
+                                      //   style: textTheme.titleMedium,
+                                      // ),
+                                      // verticalSpaceSmall,
+                                      // _buildDishImagePicker(
+                                      //   context,
+                                      //   controller,
+                                      // ),
+                                      // verticalSpaceMedium,
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -1271,6 +1276,82 @@ class _AddFoodScreenState extends State<AddFoodScreen>
       },
     );
   }
+
+  // Widget _buildDishImagePicker(
+  //   BuildContext context,
+  //   DishesController controller,
+  // ) {
+  //   final image = controller.photo;
+
+  //   return Container(
+  //     width: double.infinity,
+  //     height: 220,
+  //     decoration: BoxDecoration(
+  //       border: Border.all(
+  //         color: Colors.grey.shade300,
+  //       ),
+  //       borderRadius: BorderRadius.circular(8),
+  //     ),
+  //     child: image == null
+  //         ? InkWell(
+  //             onTap: () => controller.pickDishImage(),
+  //             borderRadius: BorderRadius.circular(8),
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 Icon(
+  //                   FluentIcons.image_add_24_regular,
+  //                   size: 42,
+  //                   color: Colors.grey.shade500,
+  //                 ),
+  //                 const SizedBox(height: 10),
+  //                 Text(
+  //                   "Add Dish Image",
+  //                   style: Theme.of(context).textTheme.titleMedium,
+  //                 ),
+  //                 const SizedBox(height: 4),
+  //                 Text(
+  //                   "Click to select an image",
+  //                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+  //                         color: Colors.grey.shade500,
+  //                       ),
+  //                 ),
+  //               ],
+  //             ),
+  //           )
+  //         : Stack(
+  //             fit: StackFit.expand,
+  //             children: [
+  //               ClipRRect(
+  //                 borderRadius: BorderRadius.circular(8),
+  //                 child: Image.file(
+  //                   File(image),
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //               Positioned(
+  //                 top: 8,
+  //                 right: 8,
+  //                 child: IconButton.filled(
+  //                   onPressed: () => controller.removeDishImage(),
+  //                   icon: const Icon(Icons.close),
+  //                 ),
+  //               ),
+  //               Positioned(
+  //                 bottom: 8,
+  //                 right: 8,
+  //                 child: FilledButton.icon(
+  //                   onPressed: () => controller.pickDishImage(),
+  //                   icon: const Icon(
+  //                     FluentIcons.edit_20_regular,
+  //                   ),
+  //                   label: const Text("Change"),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //   );
+  // }
 
   Widget _buildExpansionTileContainer(
     BuildContext context, {

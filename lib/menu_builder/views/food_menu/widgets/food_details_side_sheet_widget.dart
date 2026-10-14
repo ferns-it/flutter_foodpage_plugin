@@ -68,7 +68,12 @@ class _FoodDetailsSideSheetWidgetState
                   'Friday',
                   'Saturday'
                 ];
+                final timings = data.formattedTiming
+                    .where((timing) => timing.trim().isNotEmpty)
+                    .toList();
 
+                final hasTimings = timings.isNotEmpty;
+                final isAllDay = data.availability.days.contains("all_day");
                 return Positioned.fill(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -344,7 +349,17 @@ class _FoodDetailsSideSheetWidgetState
                           title: "Timing Info",
                           children: [
                             verticalSpaceVerySmall,
-                            if (data.availability.days.contains("all_day")) ...[
+
+                            // No timing configured: show 24-hour availability.
+                            if (!hasTimings) ...[
+                              _buildInfoRow(
+                                  context,
+                                  FluentIcons.clock_20_regular,
+                                  "Available all day (24 hours)"),
+                            ]
+
+                            // All days with configured timings.
+                            else if (isAllDay) ...[
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
@@ -366,7 +381,7 @@ class _FoodDetailsSideSheetWidgetState
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: data.formattedTiming.map((timing) {
+                                  children: timings.map((timing) {
                                     return Text(
                                       timing,
                                       style: textTheme.bodyMedium!.copyWith(
@@ -376,25 +391,86 @@ class _FoodDetailsSideSheetWidgetState
                                     );
                                   }).toList(),
                                 ),
-                              )
-                            ] else
+                              ),
+                            ]
+
+                            // Selected days with configured timings.
+                            else ...[
                               Table(
-                                  border: TableBorder.all(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(4.0),
-                                  ),
-                                  children: weekDays
-                                      .where((day) => data.availability.days
-                                          .contains(day.toLowerCase()))
-                                      .map((day) {
-                                    return _buildMultiDataTableRow(
-                                      context,
-                                      day,
-                                      data.formattedTiming,
-                                    );
-                                  }).toList()),
+                                border: TableBorder.all(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                children: weekDays
+                                    .where(
+                                  (day) => data.availability.days
+                                      .contains(day.toLowerCase()),
+                                )
+                                    .map((day) {
+                                  return _buildMultiDataTableRow(
+                                    context,
+                                    day,
+                                    timings,
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+
                             verticalSpaceSmall,
                           ],
+                          // children: [
+                          //   verticalSpaceVerySmall,
+                          //   if (data.availability.days.contains("all_day")) ...[
+                          //     Align(
+                          //       alignment: Alignment.centerLeft,
+                          //       child: Text(
+                          //         shopController.shopAvailableDaysStartEnd,
+                          //         style: Theme.of(context).textTheme.bodyMedium,
+                          //       ),
+                          //     ),
+                          //     verticalSpaceSmall,
+                          //     Container(
+                          //       padding: const EdgeInsets.symmetric(
+                          //         vertical: 8.0,
+                          //         horizontal: 10.0,
+                          //       ),
+                          //       decoration: BoxDecoration(
+                          //         border: Border.all(
+                          //           color: MenuBuilderColors.kLightGrey,
+                          //         ),
+                          //         borderRadius: BorderRadius.circular(8.0),
+                          //       ),
+                          //       child: Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: data.formattedTiming.map((timing) {
+                          //           return Text(
+                          //             timing,
+                          //             style: textTheme.bodyMedium!.copyWith(
+                          //               color: Colors.grey.shade500,
+                          //             ),
+                          //             textAlign: TextAlign.left,
+                          //           );
+                          //         }).toList(),
+                          //       ),
+                          //     )
+                          //   ] else
+                          //     Table(
+                          //         border: TableBorder.all(
+                          //           color: Colors.grey.shade300,
+                          //           borderRadius: BorderRadius.circular(4.0),
+                          //         ),
+                          //         children: weekDays
+                          //             .where((day) => data.availability.days
+                          //                 .contains(day.toLowerCase()))
+                          //             .map((day) {
+                          //           return _buildMultiDataTableRow(
+                          //             context,
+                          //             day,
+                          //             data.formattedTiming,
+                          //           );
+                          //         }).toList()),
+                          //   verticalSpaceSmall,
+                          // ],
                         ),
                       ],
                     ),
@@ -659,7 +735,9 @@ class _FoodDetailsSideSheetWidgetState
         _buildInfoRow(
           context,
           FluentIcons.stack_20_regular,
-          "${data.stock} Stocks Available",
+          data.isUnlimitedStock == "1"
+              ? "Unlimited Stocks Available"
+              : "${data.stock} Stocks Available",
           smallText: true,
         ),
       ],

@@ -76,8 +76,11 @@ class DishViewDetailsModel {
         ),
       ),
       selectedAddonGroups: List.from((map['selectedAddonGroups'] ?? [])),
-      selectedMenuList:
-          List<dynamic>.from((map['selectedMenuList'] as List<dynamic>)),
+      selectedMenuList: map['selectedMenuList'] is List
+          ? List<dynamic>.from(map['selectedMenuList'])
+          : <dynamic>[],
+      // selectedMenuList:
+      //     List<dynamic>.from((map['selectedMenuList'] as List<dynamic>)),
       availability:
           Availability.fromMap(map['availability'] as Map<String, dynamic>),
     );
@@ -340,26 +343,56 @@ class VariationData {
   }
 
   factory VariationData.fromMap(Map<String, dynamic> map) {
-    log(map.toString());
+    final rawAllergens = map['allergens'];
+
     return VariationData(
-      pvID: map['pvID'] as String,
-      name: map['name'] ?? "",
-      price: map['price'] as String,
-      displayPrice: map['displayPrice'] ?? "",
-      ingredients: map['ingredients'] as String,
-      isUnlimitedStock: map['isUnlimitedStock'] as String,
-      stock: map['stock'] as String,
-      allergens: List<Allergen>.from(
-        (map['allergens'] ?? []).map<Allergen>(
-          (x) => Allergen.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      selectedallergens: List<dynamic>.from((map['selectedallergens'] ?? [])),
-      allergensMaster: List<dynamic>.from((map['allergensMaster'] ?? [])),
-      spiceLevel:
-          map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
+      pvID: map['pvID']?.toString() ?? '',
+      name: map['name']?.toString() ?? '',
+      price: map['price']?.toString() ?? '0',
+      displayPrice: map['displayPrice']?.toString() ?? '',
+      ingredients: map['ingredients']?.toString() ?? '',
+      isUnlimitedStock: map['isUnlimitedStock']?.toString() ?? '0',
+      stock: map['stock']?.toString() ?? '0',
+      allergens: rawAllergens is List
+          ? rawAllergens
+              .whereType<Map>()
+              .map(
+                (item) => Allergen.fromMap(
+                  Map<String, dynamic>.from(item),
+                ),
+              )
+              .toList()
+          : <Allergen>[],
+      selectedallergens: map['selectedallergens'] is List
+          ? List<dynamic>.from(map['selectedallergens'])
+          : <dynamic>[],
+      allergensMaster: map['allergensMaster'] is List
+          ? List<dynamic>.from(map['allergensMaster'])
+          : <dynamic>[],
+      spiceLevel: map['spiceLevel']?.toString(),
     );
   }
+  // factory VariationData.fromMap(Map<String, dynamic> map) {
+  //   log(map.toString());
+  //   return VariationData(
+  //     pvID: map['pvID'] as String,
+  //     name: map['name'] ?? "",
+  //     price: map['price'] as String,
+  //     displayPrice: map['displayPrice'] ?? "",
+  //     ingredients: map['ingredients']?.toString() ?? '',
+  //     isUnlimitedStock: map['isUnlimitedStock'] as String,
+  //     stock: map['stock'] as String,
+  //     allergens: List<Allergen>.from(
+  //       (map['allergens'] ?? []).map<Allergen>(
+  //         (x) => Allergen.fromMap(x as Map<String, dynamic>),
+  //       ),
+  //     ),
+  //     selectedallergens: List<dynamic>.from((map['selectedallergens'] ?? [])),
+  //     allergensMaster: List<dynamic>.from((map['allergensMaster'] ?? [])),
+  //     spiceLevel:
+  //         map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
+  //   );
+  // }
 
   String toJson() => json.encode(toMap());
 
@@ -404,6 +437,15 @@ class VariationData {
         selectedallergens.hashCode ^
         allergensMaster.hashCode ^
         spiceLevel.hashCode;
+  }
+
+  bool get isUnlimited => isUnlimitedStock == '1';
+
+  /// Ids of selected allergens. Prefers `allergens`, falls back to `selectedallergens`.
+  List<String> get allergenIds {
+    final ids = allergens.map((e) => e.id).toList();
+    if (ids.isNotEmpty) return ids;
+    return selectedallergens.map((e) => e.toString()).toList();
   }
 }
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_data.dart';
@@ -166,4 +167,142 @@ class DishesService {
       return Left(InternalServerErrorException());
     }
   }
+
+  // Add new dish with photo upload (FormData)
+  // static Future<Either<AppExceptions, Map<String, dynamic>>>
+  //     addNewDishWithPhoto(
+  //   AddDishData data,
+  //   String? photoPath,
+  // ) async {
+  //   try {
+  //     // If no photo path, use regular addNewDish
+  //     if (photoPath == null || photoPath.isEmpty) {
+  //       return addNewDish(data);
+  //     }
+
+  //     final formData = await _buildFormDataFromDishData(data, photoPath);
+  //     log('Uploading with FormData - fields: ${formData.fields.length}, files: ${formData.files.length}',
+  //         name: "addNewDishWithPhoto");
+
+  //     final response = await BaseClient.postFormData(
+  //       api: ApiEndpoints.addNewProduct,
+  //       needAuth: true,
+  //       data: formData,
+  //     );
+
+  //     log('Response received: $response', name: "addNewDishWithPhoto");
+  //     if (response == null) {
+  //       log('Response is null', name: "addNewDishWithPhoto");
+  //       return Left(InternalServerErrorException());
+  //     }
+
+  //     final enCodeData = jsonDecode(response);
+  //     log('Decoded response: $enCodeData', name: "addNewDishWithPhoto");
+  //     return Right(enCodeData);
+  //   } on DioException catch (e) {
+  //     log('DioException: ${e.message}, Response: ${e.response?.data}',
+  //         name: "addNewDishWithPhoto");
+  //     return Left(e.error is AppExceptions
+  //         ? e.error as AppExceptions
+  //         : InternalServerErrorException());
+  //   } catch (e) {
+  //     log('Exception: $e', name: "addNewDishWithPhoto");
+  //     return Left(InternalServerErrorException());
+  //   }
+  // }
+
+  // Update dish with photo upload (FormData)
+  // static Future<Either<AppExceptions, Map<String, dynamic>>>
+  //     updateDishWithPhoto(
+  //   String dishId,
+  //   AddDishData data,
+  //   String? photoPath,
+  // ) async {
+  //   try {
+  //     // If no photo path, use regular updateDish
+  //     if (photoPath == null || photoPath.isEmpty) {
+  //       return updateDish(dishId, data);
+  //     }
+
+  //     final formData = await _buildFormDataFromDishData(data, photoPath);
+
+  //     final response = await BaseClient.putFormData(
+  //       api: "${ApiEndpoints.updateProduct}$dishId",
+  //       needAuth: true,
+  //       data: formData,
+  //     );
+  //     if (response == null) return Left(InternalServerErrorException());
+
+  //     final enCodeData = jsonDecode(response);
+  //     return Right(enCodeData);
+  //   } on DioException catch (e) {
+  //     return Left(e.error is AppExceptions
+  //         ? e.error as AppExceptions
+  //         : InternalServerErrorException());
+  //   } catch (e) {
+  //     log(e.toString(), name: "updateDishWithPhoto");
+  //     return Left(InternalServerErrorException());
+  //   }
+  // }
+
+  // Recursively flattens maps/lists into bracket-notation form fields
+  // static void _addField(
+  //   List<MapEntry<String, String>> fields,
+  //   String key,
+  //   dynamic value,
+  // ) {
+  //   if (value == null) return;
+
+  //   if (value is Map) {
+  //     value.forEach((k, v) => _addField(fields, '$key[$k]', v));
+  //   } else if (value is List) {
+  //     for (var i = 0; i < value.length; i++) {
+  //       _addField(fields, '$key[$i]', value[i]);
+  //     }
+  //   } else {
+  //     fields.add(MapEntry(key, value.toString()));
+  //   }
+  // }
+
+  // static Future<FormData> _buildFormDataFromDishData(
+  //   AddDishData data,
+  //   String photoPath,
+  // ) async {
+  //   final dataMap =
+  //       jsonDecode(jsonEncode(data.toMap())) as Map<String, dynamic>;
+
+  //   final formData = FormData();
+
+  //   for (final entry in dataMap.entries) {
+  //     if (entry.key == 'photo') continue; // sent as a file below
+  //     _addField(formData.fields, entry.key, entry.value);
+  //   }
+
+  //   final file = File(photoPath);
+  //   if (await file.exists()) {
+  //     formData.files.add(MapEntry(
+  //       'photo',
+  //       await MultipartFile.fromFile(
+  //         photoPath,
+  //         filename: photoPath.split(Platform.pathSeparator).last,
+  //       ),
+  //     ));
+  //   } else {
+  //     log('Photo file does not exist: $photoPath', name: "FormDataBuilder");
+  //   }
+
+  //   log(
+  //     'FormData fields: ${formData.fields}',
+  //     name: "FormDataBuilder",
+  //   );
+
+  //   for (final entry in formData.files) {
+  //     log(
+  //       'File field: ${entry.key}, filename: ${entry.value.filename}',
+  //       name: "FormDataBuilder",
+  //     );
+  //   }
+
+  //   return formData;
+  // }
 }
