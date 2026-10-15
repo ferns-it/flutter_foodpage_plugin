@@ -331,6 +331,7 @@ class SingleDishDetails {
   final int? isUnlimitedStock;
   final int? quantity;
   final List<dynamic>? allergensMaster;
+  final String? spiceLevel;
   final String? ingredients;
   SingleDishDetails({
     this.pvID,
@@ -338,6 +339,7 @@ class SingleDishDetails {
     this.isUnlimitedStock,
     this.quantity,
     this.allergensMaster,
+    this.spiceLevel,
     this.ingredients,
   });
 
@@ -347,6 +349,7 @@ class SingleDishDetails {
     int? isUnlimitedStock,
     int? quantity,
     List<dynamic>? allergensMaster,
+    String? spiceLevel,
     String? ingredients,
   }) {
     return SingleDishDetails(
@@ -355,6 +358,7 @@ class SingleDishDetails {
       isUnlimitedStock: isUnlimitedStock ?? this.isUnlimitedStock,
       quantity: quantity ?? this.quantity,
       allergensMaster: allergensMaster ?? this.allergensMaster,
+      spiceLevel: spiceLevel ?? this.spiceLevel,
       ingredients: ingredients ?? this.ingredients,
     );
   }
@@ -366,6 +370,7 @@ class SingleDishDetails {
       'isUnlimitedStock': isUnlimitedStock,
       'quantity': quantity,
       'allergensMaster': allergensMaster,
+      'spiceLevel': spiceLevel,
       'ingredients': ingredients,
     };
   }
@@ -381,6 +386,8 @@ class SingleDishDetails {
       allergensMaster: map['allergensMaster'] != null
           ? List<dynamic>.from((map['allergensMaster'] as List<dynamic>))
           : null,
+      spiceLevel:
+          map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
       ingredients:
           map['ingredients'] != null ? map['ingredients'] as String : null,
     );
@@ -393,7 +400,7 @@ class SingleDishDetails {
 
   @override
   String toString() {
-    return 'SingleDishDetails(pvID :$pvID, price: $price, isUnlimitedStock: $isUnlimitedStock, quantity: $quantity, allergensMaster: $allergensMaster, ingredients: $ingredients)';
+    return 'SingleDishDetails(pvID :$pvID, price: $price, isUnlimitedStock: $isUnlimitedStock, quantity: $quantity, allergensMaster: $allergensMaster,spiceLevel:$spiceLevel, ingredients: $ingredients)';
   }
 
   @override
@@ -405,6 +412,7 @@ class SingleDishDetails {
         other.isUnlimitedStock == isUnlimitedStock &&
         other.quantity == quantity &&
         listEquals(other.allergensMaster, allergensMaster) &&
+        other.spiceLevel == spiceLevel &&
         other.ingredients == ingredients;
   }
 
@@ -415,6 +423,7 @@ class SingleDishDetails {
         isUnlimitedStock.hashCode ^
         quantity.hashCode ^
         allergensMaster.hashCode ^
+        spiceLevel.hashCode ^
         ingredients.hashCode;
   }
 }
@@ -509,6 +518,7 @@ class DishVariationItem {
   final int? isUnlimitedStock;
   final int? quantity;
   final List<dynamic>? allergensMaster;
+  final String? spiceLevel;
   final String? ingredients;
   DishVariationItem({
     this.pvID,
@@ -517,6 +527,7 @@ class DishVariationItem {
     this.isUnlimitedStock,
     this.quantity,
     this.allergensMaster,
+    this.spiceLevel,
     this.ingredients,
   });
 
@@ -527,6 +538,7 @@ class DishVariationItem {
     int? isUnlimitedStock,
     int? quantity,
     List<dynamic>? allergensMaster,
+    String? spiceLevel,
     String? ingredients,
   }) {
     return DishVariationItem(
@@ -536,6 +548,7 @@ class DishVariationItem {
       isUnlimitedStock: isUnlimitedStock ?? this.isUnlimitedStock,
       quantity: quantity ?? this.quantity,
       allergensMaster: allergensMaster ?? this.allergensMaster,
+      spiceLevel: spiceLevel ?? this.spiceLevel,
       ingredients: ingredients ?? this.ingredients,
     );
   }
@@ -548,6 +561,7 @@ class DishVariationItem {
       'isUnlimitedStock': isUnlimitedStock,
       'quantity': quantity,
       'allergensMaster': allergensMaster,
+      'spiceLevel': spiceLevel,
       'ingredients': ingredients,
     };
   }
@@ -563,6 +577,8 @@ class DishVariationItem {
       allergensMaster: map['allergensMaster'] != null
           ? List<dynamic>.from((map['allergensMaster'] as List<dynamic>))
           : null,
+      spiceLevel:
+          map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
       ingredients:
           map['ingredients'] != null ? map['ingredients'] as String : null,
       pvID: map['pvID']?.toString(),
@@ -576,7 +592,7 @@ class DishVariationItem {
 
   @override
   String toString() {
-    return 'DishVariationItem( pvID :$pvID, name: $name, price: $price, isUnlimitedStock: $isUnlimitedStock, quantity: $quantity, allergensMaster: $allergensMaster, ingredients: $ingredients)';
+    return 'DishVariationItem( pvID :$pvID, name: $name, price: $price, isUnlimitedStock: $isUnlimitedStock, quantity: $quantity, allergensMaster: $allergensMaster,:$spiceLevel, ingredients: $ingredients)';
   }
 
   @override
@@ -589,6 +605,7 @@ class DishVariationItem {
         other.isUnlimitedStock == isUnlimitedStock &&
         other.quantity == quantity &&
         listEquals(other.allergensMaster, allergensMaster) &&
+        other.spiceLevel==spiceLevel&&
         other.ingredients == ingredients;
   }
 
@@ -600,6 +617,7 @@ class DishVariationItem {
         isUnlimitedStock.hashCode ^
         quantity.hashCode ^
         allergensMaster.hashCode ^
+        spiceLevel.hashCode^
         ingredients.hashCode;
   }
 }
@@ -651,6 +669,7 @@ class MealItem {
   final int? isUnlimitedStock;
   final int? quantity;
   final List<dynamic>? allergensMaster;
+  final String? spiceLevel;
   final String? ingredients;
   final List<dynamic>? addonsMasterGroup;
   MealItem({
@@ -661,6 +680,7 @@ class MealItem {
     this.quantity,
     this.allergensMaster,
     this.ingredients,
+    this.spiceLevel,
     this.addonsMasterGroup,
   });
 
@@ -671,6 +691,7 @@ class MealItem {
     int? isUnlimitedStock,
     int? quantity,
     List<dynamic>? allergensMaster,
+    String? spiceLevel,
     String? ingredients,
     List<dynamic>? addonsMasterGroup,
   }) {
@@ -682,6 +703,7 @@ class MealItem {
       quantity: quantity ?? this.quantity,
       allergensMaster: allergensMaster ?? this.allergensMaster,
       ingredients: ingredients ?? this.ingredients,
+      spiceLevel:spiceLevel?? this.spiceLevel,
       addonsMasterGroup: addonsMasterGroup ?? this.addonsMasterGroup,
     );
   }
@@ -695,6 +717,7 @@ class MealItem {
       'quantity': quantity,
       'allergensMaster': allergensMaster,
       'ingredients': ingredients,
+      'spiceLevel':spiceLevel,
       'addonsMasterGroup': addonsMasterGroup,
     };
   }
@@ -712,6 +735,7 @@ class MealItem {
           : null,
       ingredients:
           map['ingredients'] != null ? map['ingredients'] as String : null,
+          spiceLevel: map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
       addonsMasterGroup: map['addonsMasterGroup'] != null
           ? List<dynamic>.from((map['addonsMasterGroup'] as List<dynamic>))
           : null,
@@ -726,7 +750,7 @@ class MealItem {
 
   @override
   String toString() {
-    return 'MealItem(pvID :$pvID, name: $name, price: $price, isUnlimitedStock: $isUnlimitedStock, quantity: $quantity, allergensMaster: $allergensMaster, ingredients: $ingredients, addonsMasterGroup: $addonsMasterGroup)';
+    return 'MealItem(pvID :$pvID, name: $name, price: $price, isUnlimitedStock: $isUnlimitedStock, quantity: $quantity, allergensMaster: $allergensMaster, ingredients: $ingredients,spiceLevel:$spiceLevel, addonsMasterGroup: $addonsMasterGroup)';
   }
 
   @override
@@ -740,6 +764,7 @@ class MealItem {
         other.quantity == quantity &&
         listEquals(other.allergensMaster, allergensMaster) &&
         other.ingredients == ingredients &&
+        other.spiceLevel==spiceLevel&&
         listEquals(other.addonsMasterGroup, addonsMasterGroup);
   }
 
@@ -752,6 +777,7 @@ class MealItem {
         quantity.hashCode ^
         allergensMaster.hashCode ^
         ingredients.hashCode ^
+        spiceLevel.hashCode^
         addonsMasterGroup.hashCode;
   }
 }

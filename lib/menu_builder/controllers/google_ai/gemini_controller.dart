@@ -18,6 +18,25 @@ class GeminiController extends ChangeNotifier with BaseController {
     Gemini.init(apiKey: apiKey);
   }
 
+  String _cleanOutput(String? raw) {
+    if (raw == null) return '';
+    var text = raw.trim();
+
+    // Remove markdown bold/italic, headings and blockquote markers
+    text = text
+        .replaceAll(RegExp(r'\*\*|__'), '')
+        .replaceAll(RegExp(r'(?<!\w)\*|\*(?!\w)'), '')
+        .replaceAll(RegExp(r'^\s{0,3}#{1,6}\s*', multiLine: true), '')
+        .replaceAll(RegExp(r'^\s*>\s?', multiLine: true), '');
+
+    // Remove wrapping quotes
+    text = text.replaceAll(RegExp(r'^["“]|["”]$'), '');
+
+    // Collapse extra blank lines
+    text = text.replaceAll(RegExp(r'\n{2,}'), '\n').trim();
+    return text;
+  }
+
   // Generate dish description
   Future<String?> generateDishDescription(String dishName) async {
     try {
@@ -25,10 +44,13 @@ class GeminiController extends ChangeNotifier with BaseController {
       notifyListeners();
       final gemini = Gemini.instance;
       final result = await gemini.text(
-        "Write a short, appealing restaurant menu description for the dish $dishName",
+        'Write ONE menu description for the dish "$dishName". '
+        'Maximum 15 words, one sentence. '
+        'Plain text only: no markdown, no title, no options, no quotes. '
+        'Output only the description.',
         modelName: 'models/gemini-3.8-flash',
       );
-      return result?.output;
+      return _cleanOutput(result?.output);
     } on DioException catch (e) {
       if (e.response?.statusCode == 429) {
         showToastMessage(

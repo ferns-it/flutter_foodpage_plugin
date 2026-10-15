@@ -159,6 +159,9 @@ class DishesController extends ChangeNotifier with BaseController {
 
   List<AllergensInitialiseSubData> get listOfAllergens =>
       _addDishInitializeData?.allergens.data ?? [];
+  List<SpiceLevelInitializeSubData> get listOfSpiceLevels =>
+      _addDishInitializeData?.spiceLevel.data ?? [];
+  String? singleSelectedSpiceLevel;
 
   String? _selectedDishId;
 
@@ -254,6 +257,7 @@ class DishesController extends ChangeNotifier with BaseController {
         "isUnlimitedStock": true,
         "allergens": <String>[],
         "addons": <String>[], // per-meal addonsMasterGroup ids
+        "spiceLevel": null
       };
 
   late List<Map<String, dynamic>> mealsFormEntries = [mealFormEntry];
@@ -291,6 +295,7 @@ class DishesController extends ChangeNotifier with BaseController {
       "isUnlimitedStock": e["isUnlimitedStock"] as bool? ?? true,
       "allergens": List<String>.from(e["allergens"]),
       "addons": List<String>.from(e["addons"]),
+      "spiceLevel": e["spiceLevel"],
     });
     notifyListeners();
   }
@@ -333,7 +338,8 @@ class DishesController extends ChangeNotifier with BaseController {
         "ingredients": TextEditingController(),
         "quantity": TextEditingController(),
         "isUnlimitedStock": true,
-        "allergens": <String>[]
+        "allergens": <String>[],
+        "spiceLevel": null
       };
 
   List<Map<String, dynamic>> variationsFormEntries = [
@@ -343,7 +349,8 @@ class DishesController extends ChangeNotifier with BaseController {
       "ingredients": TextEditingController(),
       "quantity": TextEditingController(),
       "isUnlimitedStock": true,
-      "allergens": <String>[]
+      "allergens": <String>[],
+      "spiceLevel": null
     }
   ];
 
@@ -424,6 +431,36 @@ class DishesController extends ChangeNotifier with BaseController {
     }
   }
 
+  String? spiceLevelFor(int index) {
+    switch (dishVariationType) {
+      case DishVariationType.single:
+        return singleSelectedSpiceLevel;
+      case DishVariationType.multiple:
+        if (index < 0 || index >= variationsFormEntries.length) return null;
+        return variationsFormEntries[index]['spiceLevel'] as String?;
+      case DishVariationType.meal:
+        if (index < 0 || index >= mealsFormEntries.length) return null;
+        return mealsFormEntries[index]['spiceLevel'] as String?;
+    }
+  }
+
+  void onChangeSpiceLevel(int index, String? name) {
+    if (name == null) return;
+    switch (dishVariationType) {
+      case DishVariationType.single:
+        singleSelectedSpiceLevel = name;
+        break;
+      case DishVariationType.multiple:
+        if (index < 0 || index >= variationsFormEntries.length) return;
+        variationsFormEntries[index]['spiceLevel'] = name;
+        break;
+      case DishVariationType.meal:
+        if (index < 0 || index >= mealsFormEntries.length) return;
+        mealsFormEntries[index]['spiceLevel'] = name;
+        break;
+    }
+    notifyListeners();
+  }
   // void onChangeAllergensSelection(int index, String? allergenId) {
   //   if (allergenId == null) return;
   //   final allergens = allergensFor(index);
@@ -510,6 +547,7 @@ class DishesController extends ChangeNotifier with BaseController {
       "isUnlimitedStock": entry["isUnlimitedStock"] as bool? ?? true,
       // "allergens": List.from(entry["allergens"]),
       "allergens": List<String>.from(entry["allergens"]),
+      "spiceLevel": entry["spiceLevel"],
     });
     notifyListeners();
   }
@@ -959,6 +997,7 @@ class DishesController extends ChangeNotifier with BaseController {
         quantity: _quantity(e),
         allergensMaster: List<String>.from(e["allergens"] ?? []),
         ingredients: _text(e, "ingredients"),
+        spiceLevel: e["spiceLevel"] as String?,
       );
 
   MealItem _toMealItem(Map<String, dynamic> e) => MealItem(
@@ -970,6 +1009,7 @@ class DishesController extends ChangeNotifier with BaseController {
         allergensMaster: List<String>.from(e["allergens"] ?? []),
         ingredients: _text(e, "ingredients"),
         addonsMasterGroup: List<String>.from(e["addons"] ?? []),
+        spiceLevel: e["spiceLevel"] as String?,
       );
 
   void _disposeEntry(Map<String, dynamic> e) {
@@ -1469,6 +1509,7 @@ class DishesController extends ChangeNotifier with BaseController {
             quantity: singleQty,
             allergensMaster: List<String>.from(singleSelectedAllergens),
             ingredients: singleVariationIngredientsController.text.trim(),
+            spiceLevel: singleSelectedSpiceLevel,
           )
         : null;
 
@@ -1495,6 +1536,7 @@ class DishesController extends ChangeNotifier with BaseController {
       allergns: isSingle ? singleSelectedAllergens : const [],
       ingredients:
           isSingle ? singleVariationIngredientsController.text.trim() : null,
+
       // For meals, addons live inside each meal. Confirm with the backend
       // whether the top-level list should be empty here.
       addonsMasterGroup: isMeal
@@ -1597,102 +1639,6 @@ class DishesController extends ChangeNotifier with BaseController {
       };
     }
 
-    // final hasMultipleVariations = dishData.variationData.length > 1;
-
-    // if (hasMultipleVariations) {
-    //   // Variation Form Entries
-    //   final elements = dishData.variationData.map((variation) {
-    //     final isUnlimited = variation.isUnlimitedStock == 1;
-
-    //     return {
-    //       "pvID": variation.pvID,
-    //       "name": TextEditingController()..text = variation.name,
-    //       "price": TextEditingController()..text = variation.price,
-    //       "ingredients": TextEditingController()..text = variation.ingredients,
-    //       "quantity": TextEditingController()
-    //         ..text = isUnlimited ? "" : variation.stock,
-    //       "isUnlimitedStock": isUnlimited,
-    //       "allergens": List<String>.from(
-    //         variation.selectedallergens,
-    //       ),
-    //     };
-    //   }).toList();
-    //   variationsFormEntries = List.from(elements);
-    //   onChangeDishVariationType(DishVariationType.multiple);
-    // } else if (dishData.variationData.isNotEmpty) {
-    //   final variation = dishData.variationData.first;
-    //   singleVariationPriceController.text = variation.price;
-    //   singleSelectedAllergens = variation.allergens.map((e) => e.id).toList();
-    //   singleVariationIngredientsController.text = variation.ingredients;
-    //   quantityController.text =
-    //       variation.isUnlimitedStock == 1 ? "" : variation.stock;
-    // }
-    // final productType = selectedDish?.productType ?? "single";
-
-    // switch (productType) {
-    //   case "meal":
-    //     mealsFormEntries = dishData.variationData.map((m) {
-    //       final isUnlimited = m.isUnlimitedStock == 1;
-    //       return <String, dynamic>{
-    //         "pvID": m.pvID,
-    //         "name": TextEditingController()..text = m.name,
-    //         "price": TextEditingController()..text = m.price,
-    //         "ingredients": TextEditingController()..text = m.ingredients,
-    //         "quantity": TextEditingController()
-    //           ..text = isUnlimited ? "" : m.stock,
-    //         "isUnlimitedStock": isUnlimited,
-    //         // "allergens": List<String>.from(m.selectedallergens),
-    //         "allergens": List<String>.from(
-    //           m.selectedallergens.map((id) => id.toString()),
-    //         ),
-    //         "addons": <String>[], // TODO: per-meal addons from details model
-    //       };
-    //     }).toList();
-    //     isUnlimitedStock = mealsFormEntries.isNotEmpty &&
-    //         mealsFormEntries.every(
-    //           (entry) => entry["isUnlimitedStock"] == true,
-    //         );
-
-    //     onChangeDishVariationType(DishVariationType.meal);
-    //     break;
-
-    //   case "variation":
-    //     variationsFormEntries = dishData.variationData.map((v) {
-    //       final isUnlimited = v.isUnlimitedStock == 1;
-    //       return <String, dynamic>{
-    //         "pvID": v.pvID,
-    //         "name": TextEditingController()..text = v.name,
-    //         "price": TextEditingController()..text = v.price,
-    //         "ingredients": TextEditingController()..text = v.ingredients,
-    //         "quantity": TextEditingController()
-    //           ..text = isUnlimited ? "" : v.stock,
-    //         "isUnlimitedStock": isUnlimited,
-    //         // "allergens": List<String>.from(v.selectedallergens),
-    //         "allergens": List<String>.from(
-    //           v.selectedallergens.map((id) => id.toString()),
-    //         ),
-    //       };
-    //     }).toList();
-    //     isUnlimitedStock = variationsFormEntries.isNotEmpty &&
-    //         variationsFormEntries.every(
-    //           (entry) => entry["isUnlimitedStock"] == true,
-    //         );
-    //     onChangeDishVariationType(DishVariationType.multiple);
-    //     break;
-
-    //   default:
-    //     if (dishData.variationData.isNotEmpty) {
-    //       final v = dishData.variationData.first;
-    //       singleVariationPriceController.text = v.price;
-    //       // singleSelectedAllergens = v.allergens.map((e) => e.id).toList();
-    //       singleSelectedAllergens =
-    //           v.allergens.map((e) => e.id).whereType<String>().toList();
-    //       singleVariationIngredientsController.text = v.ingredients;
-    //       isUnlimitedStock = v.isUnlimitedStock == 1;
-    //       quantityController.text = isUnlimitedStock ? "" : v.stock;
-    //     }
-    //     onChangeDishVariationType(DishVariationType.single);
-    // }
     final productType =
         selectedDish?.productType ?? dishData.basicData.productType;
 
@@ -1719,6 +1665,7 @@ class DishesController extends ChangeNotifier with BaseController {
           final v = dishData.variationData.first;
           singleVariationPriceController.text = v.price;
           singleSelectedAllergens = v.allergenIds;
+          singleSelectedSpiceLevel = v.spiceLevel;
           singleVariationIngredientsController.text =
               removeHtmlTags(v.ingredients);
           isUnlimitedStock = v.isUnlimited;
@@ -1835,6 +1782,7 @@ class DishesController extends ChangeNotifier with BaseController {
     singleVariationPriceController.clear();
     singleVariationIngredientsController.clear();
     singleSelectedAllergens.clear();
+    singleSelectedSpiceLevel = null;
     itemCodeController.clear();
     quantityController.clear();
     // mealsFormEntries = [mealFormEntry];

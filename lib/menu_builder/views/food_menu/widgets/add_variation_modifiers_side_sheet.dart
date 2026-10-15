@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builder_validators.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/build_spice_level_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
@@ -280,6 +281,10 @@ class FoodVariationItem extends StatelessWidget {
                     entry["quantity"] as TextEditingController,
               ),
             ],
+            verticalSpaceRegular,
+            BuildSpiceLevelWidget(
+              index: index,
+            ),
             verticalSpaceRegular,
             BuildAllergensWidget(index: index),
             verticalSpaceRegular,

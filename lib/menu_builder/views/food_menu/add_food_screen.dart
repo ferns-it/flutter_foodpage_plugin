@@ -14,6 +14,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_category_side_sheet.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_menu_side_sheet.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_variation_modifiers_side_sheet.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/build_spice_level_widget.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -99,7 +100,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                       ? () => controller.addOrUpdateDish().then((result) {
                             if (result == ResponseResult.success) {
                               Navigator.pop(context);
-                             
+
                               controller.resetFormEntries();
                             }
                           })
@@ -560,7 +561,9 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                       verticalSpaceRegular,
                                       if (controller.dishVariationType ==
                                           DishVariationType.single)
-                                        const BuildAllergensWidget()
+                                        const BuildSpiceLevelWidget(),
+                                      verticalSpaceRegular,
+                                      const BuildAllergensWidget()
                                     ],
                                   ),
                                 ),
