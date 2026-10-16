@@ -214,33 +214,33 @@ class FoodVariationItem extends StatelessWidget {
               textInputAction: TextInputAction.done,
               textEditingController:
                   entry["ingredients"] as TextEditingController,
-              suffixIcon: geminiController.dishIngredientsGenerating
-                  ? const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: SizedBox(
-                        height: 26.0,
-                        width: 26.0,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                        ),
-                      ),
-                    )
-                  : IconButton(
-                      onPressed: () async {
-                        final name = entry["name"].text;
-                        if (name.isEmpty) {
-                          Fluttertoast.showToast(
-                              msg: "Dish Name cannot be empty!");
-                          return;
-                        }
-                        final generatedContent = await geminiController
-                            .generateDishIngredients(name);
-                        if (generatedContent != null) {
-                          entry["ingredients"].text = generatedContent;
-                        }
-                      },
-                      icon: const Icon(FluentIcons.sparkle_24_regular),
-                    ),
+              // suffixIcon: geminiController.dishIngredientsGenerating
+              //     ? const Padding(
+              //         padding: EdgeInsets.all(10.0),
+              //         child: SizedBox(
+              //           height: 26.0,
+              //           width: 26.0,
+              //           child: CircularProgressIndicator(
+              //             strokeWidth: 2.5,
+              //           ),
+              //         ),
+              //       )
+              //     : IconButton(
+              //         onPressed: () async {
+              //           final name = entry["name"].text;
+              //           if (name.isEmpty) {
+              //             Fluttertoast.showToast(
+              //                 msg: "Dish Name cannot be empty!");
+              //             return;
+              //           }
+              //           final generatedContent = await geminiController
+              //               .generateDishIngredients(name);
+              //           if (generatedContent != null) {
+              //             entry["ingredients"].text = generatedContent;
+              //           }
+              //         },
+              //         icon: const Icon(FluentIcons.sparkle_24_regular),
+              //       ),
             ),
             verticalSpaceRegular,
             Padding(
