@@ -755,29 +755,16 @@ class DishesController extends ChangeNotifier with BaseController {
 
   List<String> availableDays = [];
   void onChangeAvailableDays(String day) {
-    if (day == 'all_day') return;
-
-    if (availableDays.contains(day)) {
-      availableDays.remove(day);
-    } else {
+    try {
+      if (availableDays.contains(day)) {
+        availableDays.remove(day);
+        return;
+      }
       availableDays.add(day);
+    } finally {
+      notifyListeners();
     }
-
-    _allDaysEnabled = false;
-
-    notifyListeners();
   }
-  // void onChangeAvailableDays(String day) {
-  //   try {
-  //     if (availableDays.contains(day)) {
-  //       availableDays.remove(day);
-  //       return;
-  //     }
-  //     availableDays.add(day);
-  //   } finally {
-  //     notifyListeners();
-  //   }
-  // }
 
   bool checkDaysIsSelected(String day) {
     return availableDays.contains(day);
@@ -1479,21 +1466,29 @@ class DishesController extends ChangeNotifier with BaseController {
       ...choosedParentCategory.where((e) => e.$1 != null).map((e) => e.$1!),
       ...choosedSubCategories.where((e) => e.$3 != null).map((e) => e.$3!),
     ];
-
-    // Initialize allDayAvailable based on allDaysEnabled
-    final allDayAvailable = allDaysEnabled ? "on" : null;
-
-    // Extract timing data and validate each entry
-    final timing = dishAvailabilityEntries
+// Extract timing data and validate each entry
+    final selectedTimings = dishAvailabilityEntries
         .where((entry) => entry.$1 != null && entry.$2 != null)
-        .map((entry) {
-      final formatStartTime = convertTimeOfDayTo24hr(entry.$1!);
-      final formatEndTime = convertTimeOfDayTo24hr(entry.$2!);
-      return {
-        "startTime": formatStartTime,
-        "endTime": formatEndTime,
-      };
-    }).toList();
+        .map((entry) => {
+              "startTime": convertTimeOfDayTo24hr(entry.$1!),
+              "endTime": convertTimeOfDayTo24hr(entry.$2!),
+            })
+        .toList();
+
+// If no timing is selected, the dish is available 24 hours.
+    final timing = selectedTimings.isNotEmpty
+        ? selectedTimings
+        : [
+            {
+              "startTime": convertTimeOfDayTo24hr(
+                const TimeOfDay(hour: 0, minute: 0),
+              ),
+              "endTime": convertTimeOfDayTo24hr(
+                const TimeOfDay(hour: 23, minute: 59),
+              ),
+            },
+          ];
+    final allDayAvailable = allDaysEnabled ? "on" : null;
 
     final singleQty = isUnlimitedStock
         ? 0
