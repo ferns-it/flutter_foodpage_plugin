@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builder_validators.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/build_spice_level_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
@@ -54,11 +55,14 @@ class _AddVariationModifiersSideSheetState
       child: Column(
         children: <Widget>[
           OutlinedButton.icon(
-            onPressed: () => controller.addNewVariationFormEntry(),
+            // onPressed: () => controller.addNewVariationFormEntry(),
+            onPressed: () => controller.addNewActiveEntry(),
+            label: Text(controller.isMealType ? "Add Meal" : "Add Variation"),
+
             icon: const Icon(
               FluentIcons.add_24_filled,
             ),
-            label: const Text("Add Variation"),
+            // label: const Text("Add Variation"),
             style: OutlinedButton.styleFrom(
               textStyle: textTheme.titleMedium,
               foregroundColor: MenuBuilderColors.kBlue,
@@ -72,11 +76,16 @@ class _AddVariationModifiersSideSheetState
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: ListView.separated(
                 padding: EdgeInsets.zero,
-                itemCount: controller.variationsFormEntries.length,
+                // itemCount: controller.variationsFormEntries.length,
+                itemCount: controller.activeEntries.length,
                 itemBuilder: (context, index) {
-                  final entry = controller.variationsFormEntries[index];
+                  final entry = controller.activeEntries[index];
                   return FoodVariationItem(index: index, entry: entry);
                 },
+                // itemBuilder: (context, index) {
+                //   final entry = controller.variationsFormEntries[index];
+                //   return FoodVariationItem(index: index, entry: entry);
+                // },
                 separatorBuilder: (_, __) {
                   return verticalSpaceSmall;
                 },
@@ -108,6 +117,7 @@ class FoodVariationItem extends StatelessWidget {
     final geminiController = context.watch<GeminiController>();
 
     final isUnlimitedStock = entry["isUnlimitedStock"] as bool? ?? true;
+    final label = controller.isMealType ? "Meal" : "Variation";
 
     return Card(
       child: Padding(
@@ -117,10 +127,14 @@ class FoodVariationItem extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Text("Variation ${index + 1}", style: textTheme.titleMedium),
+                // Text("Variation ${index + 1}", style: textTheme.titleMedium),
+                Text("$label ${index + 1}", style: textTheme.titleMedium),
+
                 const Spacer(),
                 InkWell(
-                  onTap: () => controller.duplicateVariationFormEntry(index),
+                  // onTap: () => controller.duplicateVariationFormEntry(index),
+                  onTap: () => controller.duplicateActiveEntry(index),
+
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
@@ -134,11 +148,13 @@ class FoodVariationItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (controller.variationsFormEntries.length > 1) ...[
+                // if (controller.variationsFormEntries.length > 1) ...[
+                if (controller.activeEntries.length > 1) ...[
                   horizontalSpaceRegular,
                   InkWell(
                     onTap: () {
-                      controller.removeVariationFormEntry(index);
+                      controller.removeActiveEntry(index);
+                      // controller.removeVariationFormEntry(index);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
@@ -198,33 +214,33 @@ class FoodVariationItem extends StatelessWidget {
               textInputAction: TextInputAction.done,
               textEditingController:
                   entry["ingredients"] as TextEditingController,
-              suffixIcon: geminiController.dishIngredientsGenerating
-                  ? const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: SizedBox(
-                        height: 26.0,
-                        width: 26.0,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                        ),
-                      ),
-                    )
-                  : IconButton(
-                      onPressed: () async {
-                        final name = entry["name"].text;
-                        if (name.isEmpty) {
-                          Fluttertoast.showToast(
-                              msg: "Dish Name cannot be empty!");
-                          return;
-                        }
-                        final generatedContent = await geminiController
-                            .generateDishIngredients(name);
-                        if (generatedContent != null) {
-                          entry["ingredients"].text = generatedContent;
-                        }
-                      },
-                      icon: const Icon(FluentIcons.sparkle_24_regular),
-                    ),
+              // suffixIcon: geminiController.dishIngredientsGenerating
+              //     ? const Padding(
+              //         padding: EdgeInsets.all(10.0),
+              //         child: SizedBox(
+              //           height: 26.0,
+              //           width: 26.0,
+              //           child: CircularProgressIndicator(
+              //             strokeWidth: 2.5,
+              //           ),
+              //         ),
+              //       )
+              //     : IconButton(
+              //         onPressed: () async {
+              //           final name = entry["name"].text;
+              //           if (name.isEmpty) {
+              //             Fluttertoast.showToast(
+              //                 msg: "Dish Name cannot be empty!");
+              //             return;
+              //           }
+              //           final generatedContent = await geminiController
+              //               .generateDishIngredients(name);
+              //           if (generatedContent != null) {
+              //             entry["ingredients"].text = generatedContent;
+              //           }
+              //         },
+              //         icon: const Icon(FluentIcons.sparkle_24_regular),
+              //       ),
             ),
             verticalSpaceRegular,
             Padding(
@@ -242,10 +258,11 @@ class FoodVariationItem extends StatelessWidget {
                   value: isUnlimitedStock,
                   onChanged: (value) {
                     if (value != null) {
-                      controller.onChangeVariationUnlimitedStock(
-                        index,
-                        value,
-                      );
+                      controller.onChangeActiveUnlimitedStock(index, value);
+                      // controller.onChangeVariationUnlimitedStock(
+                      //   index,
+                      //   value,
+                      // );
                     }
                   },
                 ),
@@ -265,8 +282,78 @@ class FoodVariationItem extends StatelessWidget {
               ),
             ],
             verticalSpaceRegular,
+            BuildSpiceLevelWidget(
+              index: index,
+            ),
+            verticalSpaceRegular,
             BuildAllergensWidget(index: index),
             verticalSpaceRegular,
+            verticalSpaceRegular,
+            if (controller.isMealType) ...[
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade200),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      height: 40,
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 10.0,
+                      ),
+                      color: MenuBuilderColors.kWhite2,
+                      child: Center(
+                        child: Text(
+                          "Master Addons",
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
+                    ),
+                    verticalSpaceSmall,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Wrap(
+                        spacing: 8.0,
+                        runSpacing: 0.0,
+                        children: controller.listOfMasterAddons.map((addon) {
+                          final backgroundColor =
+                              MenuBuilderColors.kGrey.withOpacity(0.1);
+                          if (addon.title == null || addon.id == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return FilterChip(
+                            label: Text(addon.title ?? ""),
+                            selected: (entry["addons"] as List<String>)
+                                .contains(addon.id),
+                            selectedColor: backgroundColor,
+                            backgroundColor: backgroundColor,
+                            labelStyle: textTheme.titleSmall!.copyWith(
+                              color: Colors.grey.shade600,
+                            ),
+                            color: WidgetStateProperty.resolveWith((states) {
+                              if (states.contains(WidgetState.selected)) {
+                                return backgroundColor;
+                              }
+                              return null;
+                            }),
+                            checkmarkColor: Colors.grey.shade600,
+                            onSelected: (_) =>
+                                controller.onToggleMealAddon(index, addon.id!),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    verticalSpaceRegular,
+                  ],
+                ),
+              ),
+              verticalSpaceRegular,
+            ],
           ],
         ),
       ),
@@ -368,7 +455,7 @@ class AddModifiersFormWidget extends StatelessWidget {
                         flex: 2,
                         child: CustomRoundedTextField.topText(
                           topText: "Price",
-                          hintText: "£0.00",
+                          hintText: "0.00",
                           borderRadius: BorderRadius.circular(8.0),
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
@@ -414,7 +501,7 @@ class AddModifiersFormWidget extends StatelessWidget {
                         flex: 2,
                         child: CustomRoundedTextField.topText(
                           topText: "Price",
-                          hintText: "£0.00",
+                          hintText: "0.00",
                           borderRadius: BorderRadius.circular(8.0),
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,

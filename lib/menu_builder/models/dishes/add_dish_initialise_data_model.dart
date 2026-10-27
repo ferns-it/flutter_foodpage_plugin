@@ -13,6 +13,7 @@ class AddDishInitializeDataModel {
   final TimingInitialiseData timing;
   final MasterAddonsInitialiseData masterAddons;
   final AllergensInitialiseData allergens;
+  final SpiceLevelInitializeData spiceLevel;
 
   AddDishInitializeDataModel(
       {required this.type,
@@ -23,7 +24,8 @@ class AddDishInitializeDataModel {
       required this.productMenu,
       required this.timing,
       required this.masterAddons,
-      required this.allergens});
+      required this.allergens,
+      required this.spiceLevel});
 
   AddDishInitializeDataModel copyWith({
     TypeInitialiseData? type,
@@ -35,17 +37,20 @@ class AddDishInitializeDataModel {
     TimingInitialiseData? timing,
     MasterAddonsInitialiseData? masterAddons,
     AllergensInitialiseData? allergens,
+    SpiceLevelInitializeData? spiceLevel,
   }) {
     return AddDishInitializeDataModel(
-        type: type ?? this.type,
-        dishtype: dishtype ?? this.dishtype,
-        availability: availability ?? this.availability,
-        category: category ?? this.category,
-        status: status ?? this.status,
-        productMenu: productMenu ?? this.productMenu,
-        timing: timing ?? this.timing,
-        masterAddons: masterAddons ?? this.masterAddons,
-        allergens: allergens ?? this.allergens);
+      type: type ?? this.type,
+      dishtype: dishtype ?? this.dishtype,
+      availability: availability ?? this.availability,
+      category: category ?? this.category,
+      status: status ?? this.status,
+      productMenu: productMenu ?? this.productMenu,
+      timing: timing ?? this.timing,
+      masterAddons: masterAddons ?? this.masterAddons,
+      allergens: allergens ?? this.allergens,
+      spiceLevel: spiceLevel ?? this.spiceLevel,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -59,6 +64,7 @@ class AddDishInitializeDataModel {
       'timing': timing.toMap(),
       'masterAddons': masterAddons.toMap(),
       'allergens': allergens.toMap(),
+      'spiceLevel': spiceLevel.toMap(),
     };
   }
 
@@ -80,7 +86,9 @@ class AddDishInitializeDataModel {
         masterAddons: MasterAddonsInitialiseData.fromMap(
             map['masterAddons'] as Map<String, dynamic>),
         allergens: AllergensInitialiseData.fromMap(
-            map['allergens'] as Map<String, dynamic>));
+            map['allergens'] as Map<String, dynamic>),
+        spiceLevel: SpiceLevelInitializeData.fromMap(
+            map['spiceLevel'] as Map<String, dynamic>));
   }
 
   String toJson() => json.encode(toMap());
@@ -91,7 +99,7 @@ class AddDishInitializeDataModel {
 
   @override
   String toString() {
-    return 'AddDishInitialiseData(type: $type, dishtype: $dishtype, availability: $availability, category: $category, status: $status, timing: $timing, masterAddons: $masterAddons, productMenu: $productMenu, allergens: $allergens)';
+    return 'AddDishInitialiseData(type: $type, dishtype: $dishtype, availability: $availability, category: $category, status: $status, timing: $timing, masterAddons: $masterAddons, productMenu: $productMenu, allergens: $allergens,spiceLevel:$spiceLevel)';
   }
 
   @override
@@ -106,7 +114,8 @@ class AddDishInitializeDataModel {
         other.timing == timing &&
         other.masterAddons == masterAddons &&
         other.productMenu == productMenu &&
-        other.allergens == allergens;
+        other.allergens == allergens &&
+        other.spiceLevel == spiceLevel;
   }
 
   @override
@@ -119,7 +128,8 @@ class AddDishInitializeDataModel {
         timing.hashCode ^
         masterAddons.hashCode ^
         productMenu.hashCode ^
-        allergens.hashCode;
+        allergens.hashCode ^
+        spiceLevel.hashCode;
   }
 }
 
@@ -1043,4 +1053,113 @@ class AllergensInitialiseSubData {
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode ^ icon.hashCode;
+}
+
+class SpiceLevelInitializeData {
+  final String? control;
+  final List<SpiceLevelInitializeSubData> data;
+  SpiceLevelInitializeData({
+    this.control,
+    required this.data,
+  });
+
+  SpiceLevelInitializeData copyWith({
+    String? control,
+    List<SpiceLevelInitializeSubData>? data,
+  }) {
+    return SpiceLevelInitializeData(
+      control: control ?? this.control,
+      data: data ?? this.data,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'control': control,
+      'data': data.map((x) => x.toMap()).toList(),
+    };
+  }
+
+factory SpiceLevelInitializeData.fromMap(Map<String, dynamic> map) {
+  return SpiceLevelInitializeData(
+    control: map['control'] != null ? map['control'] as String : null,
+    data: List<SpiceLevelInitializeSubData>.from(
+      (map['data'] ?? []).map<SpiceLevelInitializeSubData>(
+        (x) => SpiceLevelInitializeSubData.fromMap(x as Map<String, dynamic>),
+      ),
+    ),
+  );
+}
+
+  String toJson() => json.encode(toMap());
+
+  factory SpiceLevelInitializeData.fromJson(String source) =>
+      SpiceLevelInitializeData.fromMap(
+          json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() =>
+      'SpiceLevelInitializeData(control: $control, data: $data)';
+
+  @override
+  bool operator ==(covariant SpiceLevelInitializeData other) {
+    if (identical(this, other)) return true;
+
+    return other.control == control && listEquals(other.data, data);
+  }
+
+  @override
+  int get hashCode => control.hashCode ^ data.hashCode;
+}
+
+class SpiceLevelInitializeSubData {
+  final String? name;
+  final String? icon;
+  SpiceLevelInitializeSubData({
+    this.name,
+    this.icon,
+  });
+
+  SpiceLevelInitializeSubData copyWith({
+    String? name,
+    String? icon,
+  }) {
+    return SpiceLevelInitializeSubData(
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'name': name,
+      'icon': icon,
+    };
+  }
+
+  factory SpiceLevelInitializeSubData.fromMap(Map<String, dynamic> map) {
+    return SpiceLevelInitializeSubData(
+      name: map['name'] != null ? map['name'] as String : null,
+      icon: map['icon'] != null ? map['icon'] as String : null,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory SpiceLevelInitializeSubData.fromJson(String source) =>
+      SpiceLevelInitializeSubData.fromMap(
+          json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() => 'SpiceLevelInitializeSubData(name: $name, icon: $icon)';
+
+  @override
+  bool operator ==(covariant SpiceLevelInitializeSubData other) {
+    if (identical(this, other)) return true;
+
+    return other.name == name && other.icon == icon;
+  }
+
+  @override
+  int get hashCode => name.hashCode ^ icon.hashCode;
 }

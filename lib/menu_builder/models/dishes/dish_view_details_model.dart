@@ -76,8 +76,11 @@ class DishViewDetailsModel {
         ),
       ),
       selectedAddonGroups: List.from((map['selectedAddonGroups'] ?? [])),
-      selectedMenuList:
-          List<dynamic>.from((map['selectedMenuList'] as List<dynamic>)),
+      selectedMenuList: map['selectedMenuList'] is List
+          ? List<dynamic>.from(map['selectedMenuList'])
+          : <dynamic>[],
+      // selectedMenuList:
+      //     List<dynamic>.from((map['selectedMenuList'] as List<dynamic>)),
       availability:
           Availability.fromMap(map['availability'] as Map<String, dynamic>),
     );
@@ -340,31 +343,58 @@ class VariationData {
   }
 
   factory VariationData.fromMap(Map<String, dynamic> map) {
-    log(map.toString());
+    final rawAllergens = map['allergens'];
+
     return VariationData(
-      pvID: map['pvID'] as String,
-      name: map['name'] ?? "",
-      price: map['price'] as String,
-      displayPrice: map['displayPrice'] ?? "",
-      ingredients: map['ingredients'] as String,
-      isUnlimitedStock: map['isUnlimitedStock'] as String,
-      stock: map['stock'] as String,
-      allergens: List<Allergen>.from(
-        (map['allergens'] ?? []).map<Allergen>(
-          (x) => Allergen.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      selectedallergens: List<dynamic>.from((map['selectedallergens'] ?? [])),
-      allergensMaster: List<dynamic>.from((map['allergensMaster'] ?? [])),
-      spiceLevel:
-          map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
+      pvID: map['pvID']?.toString() ?? '',
+      name: map['name']?.toString() ?? '',
+      price: map['price']?.toString() ?? '0',
+      displayPrice: map['displayPrice']?.toString() ?? '',
+      ingredients: map['ingredients']?.toString() ?? '',
+      isUnlimitedStock: map['isUnlimitedStock']?.toString() ?? '0',
+      stock: map['stock']?.toString() ?? '0',
+      allergens: rawAllergens is List
+          ? rawAllergens
+              .whereType<Map>()
+              .map(
+                (item) => Allergen.fromMap(
+                  Map<String, dynamic>.from(item),
+                ),
+              )
+              .toList()
+          : <Allergen>[],
+      selectedallergens: map['selectedallergens'] is List
+          ? List<dynamic>.from(map['selectedallergens'])
+          : <dynamic>[],
+      allergensMaster: map['allergensMaster'] is List
+          ? List<dynamic>.from(map['allergensMaster'])
+          : <dynamic>[],
+      spiceLevel: map['spiceLevel']?.toString(),
     );
   }
+  // factory VariationData.fromMap(Map<String, dynamic> map) {
+  //   log(map.toString());
+  //   return VariationData(
+  //     pvID: map['pvID'] as String,
+  //     name: map['name'] ?? "",
+  //     price: map['price'] as String,
+  //     displayPrice: map['displayPrice'] ?? "",
+  //     ingredients: map['ingredients']?.toString() ?? '',
+  //     isUnlimitedStock: map['isUnlimitedStock'] as String,
+  //     stock: map['stock'] as String,
+  //     allergens: List<Allergen>.from(
+  //       (map['allergens'] ?? []).map<Allergen>(
+  //         (x) => Allergen.fromMap(x as Map<String, dynamic>),
+  //       ),
+  //     ),
+  //     selectedallergens: List<dynamic>.from((map['selectedallergens'] ?? [])),
+  //     allergensMaster: List<dynamic>.from((map['allergensMaster'] ?? [])),
+  //     spiceLevel:
+  //         map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
+  //   );
+  // }
 
   String toJson() => json.encode(toMap());
-
-  String get formattedAllergens =>
-      allergens.map((e) => e.name).toList().join(", ");
 
   factory VariationData.fromJson(String source) =>
       VariationData.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -405,6 +435,29 @@ class VariationData {
         allergensMaster.hashCode ^
         spiceLevel.hashCode;
   }
+
+  bool get isUnlimited => isUnlimitedStock == '1';
+
+  /// Ids selected for this variation (e.g. ["7"]).
+  List<String> get allergenIds {
+    final source =
+        selectedallergens.isNotEmpty ? selectedallergens : allergensMaster;
+    return source
+        .map((e) => e is Map ? e['id']?.toString() : e?.toString())
+        .whereType<String>()
+        .where((id) => id.isNotEmpty)
+        .toList();
+  }
+
+  /// Looks up the selected ids in the full allergens list.
+  List<Allergen> get selectedAllergenList {
+    final ids = allergenIds.toSet();
+    return allergens.where((a) => ids.contains(a.id)).toList();
+  }
+
+  /// Text to display, e.g. "Allergens 5".
+  String get formattedAllergens =>
+      selectedAllergenList.map((e) => e.name).join(", ");
 }
 
 class Allergen {

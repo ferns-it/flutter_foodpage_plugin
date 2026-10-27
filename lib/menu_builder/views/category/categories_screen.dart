@@ -11,7 +11,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builde
 import 'package:flutter_foodpage_plugin/menu_builder/widgets/custom_rounded_textfield.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_initialise_data_model.dart';
 import '../../core/constants/menu_builder_app_colors.dart';
 import '../../core/utils/ui_utils.dart';
 import '../widgets/build_dropdown_base.dart';
@@ -105,191 +105,174 @@ class _CategoryTreeViewWidget extends StatefulWidget {
 }
 
 class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      initializeTableViewController();
-    });
-  }
+ final Set<String> _expandedCategoryIds = {};
+ 
 
-  void initializeTableViewController() {
-    final controller = context.read<DishesController>();
-    final categoryController = context.read<DishCategoryController>();
-    final listOfCategories = controller.listOfCategories
-        .where((category) => category.cID != null)
-        .map((category) {
-      final children = category.childrens
-          .where((child) => child.cID != null)
-          .map((child) => Node(
-                key: child.cID!,
-                label: capitalizeFirstLetter(child.name ?? ""),
-              ))
-          .toList();
-
-      return Node(
-        key: category.cID!,
-        label: capitalizeFirstLetter(category.name ?? ""),
-        children: children,
-      );
-    }).toList();
-
-    categoryController.updateTreeViewController(TreeViewController(
-      children: listOfCategories,
-      selectedKey: null,
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final categoryController = context.watch<DishCategoryController>();
     final controller = context.watch<DishesController>();
-    final listOfCategories = controller.listOfCategories;
+    final categories = controller.listOfCategories
+        .where((category) => category.cID != null)
+        .toList();
 
-    return Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          side: BorderSide(color: Colors.grey.shade300),
+    final selectedCId = categoryController.selectedCategory?.cID;
+
+     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 10,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20.0,
-            vertical: 10.0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("All Categories", style: textTheme.titleMedium),
-                  horizontalSpaceSmall,
-                  TextButton(
-                    onPressed: categoryController.selectedCategory != null
-                        ? () {
-                            final controller =
-                                context.read<DishCategoryController>();
-                            controller.resetSelectedCategory();
-                          }
-                        : null,
-                    style: TextButton.styleFrom(
-                      foregroundColor: MenuBuilderColors.kPrimaryColor,
-                      disabledForegroundColor: Colors.grey.shade500,
-                    ),
-                    child: const Text("DESELECT"),
-                  )
-                ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "All Categories",
+                  style: textTheme.titleMedium,
+                ),
+                TextButton(
+                  onPressed: categoryController.selectedCategory != null
+                      ? () {
+                          categoryController.resetSelectedCategory();
+                        }
+                      : null,
+                  style: TextButton.styleFrom(
+                    foregroundColor: MenuBuilderColors.kPrimaryColor,
+                    disabledForegroundColor: Colors.grey.shade500,
+                  ),
+                  child: const Text("DESELECT"),
+                ),
+              ],
+            ),
+            Text(
+              "Tap a category to expand its subcategories.",
+              style: textTheme.bodySmall,
+            ),
+            const Divider(),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: categories.map((category) {
+                  return _buildCategoryTile(
+                    category: category,
+                    level: 0,
+                    selectedCId: selectedCId,
+                    categoryController: categoryController,
+                  );
+                }).toList(),
               ),
-              Text(
-                "Tip: Press and hold, then drag to reorder.",
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              verticalSpaceSmall,
-              const Divider(),
-              Flexible(
-                child: ReorderableListView.builder(
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      final category = listOfCategories.elementAt(index);
-                      final selectedCId =
-                          categoryController.selectedCategory?.cID;
-                      return ListTile(
-                        key: ValueKey(category.cID),
-                        tileColor: category.categoryStatus != "Active"
-                            ? Colors.grey.shade100
-                            : null,
-                        title: Text(category.name ?? "Unknown"),
-                        onTap: () =>
-                            categoryController.onPressCategory(category),
-                        selectedTileColor: MenuBuilderColors.kAccentOrange,
-                        selected:
-                            selectedCId != null && selectedCId == category.cID,
-                        visualDensity:
-                            const VisualDensity(horizontal: 0, vertical: -2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                      );
-                    },
-                    itemCount: listOfCategories.length,
-                    onReorder: (int oldIndex, int newIndex) {
-                      return context
-                          .read<DishCategoryController>()
-                          .reOrderCategory(context, oldIndex, newIndex);
-                    }),
-              )
-              // Flexible(
-              //   child: TreeView(
-              //     shrinkWrap: true,
-              //     controller: treeViewController,
-              //     allowParentSelect: true,
-              //     supportParentDoubleTap: false,
-              //     onExpansionChanged: (key, expanded) =>
-              //         _expandNode(key, expanded),
-              //     onNodeTap: (key) {
-              //       final controller = context.read<DishCategoryController>();
-              //       final dishController = context.read<DishesController>();
-              //       var category =
-              //           dishController.listOfCategories.firstWhereOrNull((x) {
-              //         return x.cID == key;
-              //       });
-              //
-              //       category ??=
-              //           dishController.childCategories.firstWhereOrNull((x) {
-              //         return x.cID == key;
-              //       });
-              //
-              //       if (category == null) {
-              //         log("Category not found in the list",
-              //             name: "Category Selection");
-              //         return;
-              //       }
-              //
-              //       controller.onPressCategory(category);
-              //       controller.updateTreeViewController(
-              //         treeViewController.copyWith(selectedKey: key),
-              //       );
-              //     },
-              //     theme: TreeViewTheme(
-              //       expanderTheme: const ExpanderThemeData(
-              //         animated: true,
-              //         modifier: ExpanderModifier.none,
-              //         type: ExpanderType.chevron,
-              //         size: 20,
-              //       ),
-              //       parentLabelStyle: textTheme.titleMedium!,
-              //       labelStyle: textTheme.titleMedium!,
-              //       colorScheme: Theme.of(context).colorScheme.copyWith(
-              //           primary: MenuBuilderColors.kAccentOrange,
-              //           onPrimary: MenuBuilderColors.kOrange),
-              //     ),
-              //   ),
-              // ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );}
+     Widget _buildCategoryTile({
+    required CategoryData category,
+    required int level,
+    required String? selectedCId,
+    required DishCategoryController categoryController,
+  }) {
+    final categoryId = category.cID;
+
+    if (categoryId == null) {
+      return const SizedBox.shrink();
+    }
+
+    final children =
+        category.childrens.where((child) => child.cID != null).toList();
+
+    final hasChildren = children.isNotEmpty;
+    final isExpanded = _expandedCategoryIds.contains(categoryId);
+    final isSelected = selectedCId == categoryId;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          key: ValueKey('category_$categoryId'),
+          contentPadding: EdgeInsets.only(
+            left: level * 20.0,
+            right: 4,
           ),
-        ));
+          tileColor:
+              category.categoryStatus != "Active" ? Colors.grey.shade100 : null,
+          selected: isSelected,
+          selectedTileColor: MenuBuilderColors.kAccentOrange,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+          visualDensity: const VisualDensity(
+            horizontal: 0,
+            vertical: -2,
+          ),
+
+          // Expand/collapse icon
+          leading: hasChildren
+              ? IconButton(
+                  tooltip: isExpanded
+                      ? 'Collapse subcategories'
+                      : 'Expand subcategories',
+                  icon: Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_right,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (isExpanded) {
+                        _expandedCategoryIds.remove(categoryId);
+                      } else {
+                        _expandedCategoryIds.add(categoryId);
+                      }
+                    });
+                  },
+                )
+              : const SizedBox(width: 48),
+
+          // Select the category when tapping its name
+          title: Text(category.name ?? "Unknown"),
+          onTap: () {
+            categoryController.onPressCategory(category);
+
+            if (hasChildren) {
+              setState(() {
+                if (isExpanded) {
+                  _expandedCategoryIds.remove(categoryId);
+                } else {
+                  _expandedCategoryIds.add(categoryId);
+                }
+              });
+            }
+          },
+        ),
+
+        // Recursively display children only when expanded
+        if (hasChildren && isExpanded)
+          ...children.map(
+            (child) => _buildCategoryTile(
+              category: child,
+              level: level + 1,
+              selectedCId: selectedCId,
+              categoryController: categoryController,
+            ),
+          ),
+      ],
+    );
   }
-
-// void _expandNode(String key, bool expanded) {
-//   final categoryController = context.read<DishCategoryController>();
-//   final treeViewController = categoryController.treeViewController;
-//   if (treeViewController == null) return;
-//   Node<dynamic>? node = treeViewController.getNode(key);
-//   if (node != null) {
-//     List<Node> updated = treeViewController.updateNode(
-//       key,
-//       node.copyWith(expanded: expanded),
-//     );
-//     categoryController.updateTreeViewController(
-//       treeViewController.copyWith(children: updated),
-//     );
-//   }
-// }
 }
-
+              
 class _BuildAddUpdateCategorySection extends StatefulWidget {
   const _BuildAddUpdateCategorySection({Key? key}) : super(key: key);
 
@@ -300,33 +283,7 @@ class _BuildAddUpdateCategorySection extends StatefulWidget {
 
 class _BuildAddUpdateCategorySectionState
     extends State<_BuildAddUpdateCategorySection> {
-  // void initializeTableViewController() {
-  //   final controller = context.read<DishesController>();
-  //   final categoryController = context.read<DishCategoryController>();
-  //   final listOfCategories = controller.listOfCategories
-  //       .where((category) => category.cID != null)
-  //       .map((category) {
-  //     final children = category.childrens
-  //         .where((child) => child.cID != null)
-  //         .map((child) => Node(
-  //               key: child.cID!,
-  //               label: capitalizeFirstLetter(child.name ?? ""),
-  //             ))
-  //         .toList();
-  //
-  //     return Node(
-  //       key: category.cID!,
-  //       label: capitalizeFirstLetter(category.name ?? ""),
-  //       children: children,
-  //     );
-  //   }).toList();
-  //
-  //   categoryController.updateTreeViewController(TreeViewController(
-  //     children: listOfCategories,
-  //     selectedKey: null,
-  //   ));
-  // }
-
+  
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -492,7 +449,7 @@ class _BuildAddUpdateCategorySectionState
                   textInputAction: TextInputAction.done,
                   validator: MenuBuilderValidators.validateCategoryName,
                   textEditingController: controller.nameController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  autovalidateMode: AutovalidateMode.disabled,
                   inputFormatters: const <TextInputFormatter>[
                     NoEmojiTextInputFormatter(),
                   ],

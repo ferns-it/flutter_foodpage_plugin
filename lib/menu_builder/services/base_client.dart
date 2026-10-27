@@ -31,6 +31,16 @@ class BaseClient {
         onResponse: responseInterceptorHandler,
         onError: errorResponseHandler,
       ),
+       )
+    ..interceptors.add(
+      LogInterceptor(
+        request: true,
+        requestHeader: true,
+        requestBody: true,
+        responseHeader: true,
+        responseBody: true,
+        error: true,
+      ),
     );
 
   // ..interceptors.add(LogInterceptor(
@@ -223,6 +233,9 @@ class BaseClient {
       case DioExceptionType.unknown:
         exception = InternalServerErrorException(message: message);
         break;
+          default:
+        exception = InternalServerErrorException(message: message);
+        break;
     }
     // switch (type) {
     //   case DioExceptionType.connectionTimeout:
@@ -406,6 +419,78 @@ class BaseClient {
       data: data,
       queryParameters: queryParameters,
       options: Options(headers: headers),
+    );
+
+    return response.data;
+  }
+    // POST with FormData (for file uploads)
+  static Future<String?> postFormData({
+    bool needAuth = true,
+    bool dataKeyChecking = false,
+    DevelopmentMode mode = DevelopmentMode.release,
+    String? baseUrl,
+    String? dataKey,
+    required String api,
+    required FormData data,
+    String params = '',
+    Map<String, dynamic>? additionalHeaders,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final url = baseUrl != null ? baseUrl + api + params : api + params;
+
+    final headers = <String, dynamic>{
+      'dataKey': dataKey,
+      'dataKeyChecking': false,
+      'needAuth': needAuth,
+      'mode': mode.name,
+    };
+
+    if (additionalHeaders != null) {
+      headers.addAll(additionalHeaders);
+    }
+    final response = await dio.post<String>(
+      url,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: headers,
+        contentType: Headers.multipartFormDataContentType,
+        responseType: ResponseType.plain, // <- add this
+      ),
+    );
+
+    return response.data;
+  }
+
+  //PUT with FormData (for file uploads)
+  static Future<String?> putFormData({
+    bool needAuth = false,
+    String? baseUrl,
+    String? dataKey,
+    required String api,
+    required FormData data,
+    String params = '',
+    Map<String, dynamic>? additionalHeaders,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final url = baseUrl != null ? baseUrl + api + params : api + params;
+    var headers = <String, dynamic>{
+      'dataKey': dataKey,
+      'needAuth': needAuth,
+    };
+
+    if (additionalHeaders != null) {
+      headers.addAll(additionalHeaders);
+    }
+
+    final response = await dio.put<String>(
+      url,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: headers,
+        contentType: null, // Let Dio handle content-type for FormData
+      ),
     );
 
     return response.data;

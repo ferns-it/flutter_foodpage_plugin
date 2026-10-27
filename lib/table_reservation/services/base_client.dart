@@ -171,6 +171,9 @@ class BaseClient {
       case DioExceptionType.unknown:
         exception = InternalServerErrorException(message: message);
         break;
+        default:
+        exception = InternalServerErrorException(message: message);
+        break;
     }
     // switch (type) {
     //   case DioExceptionType.connectionTimeout:
