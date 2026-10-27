@@ -130,6 +130,7 @@ class AddDishRequestModel with AddDishData {
         'quantity': quantity,
         'allergensMaster': allergns,
         'ingredients': ingredients,
+        'spiceLevel': variationsSelectOnlyOne.ifSingle?.spiceLevel,
       },
       // Top-level list, as in your old AddDishRequestWithVariationModel.
       if (isVariation && variationsSelectOnlyOne.ifVariation != null)
@@ -605,7 +606,7 @@ class DishVariationItem {
         other.isUnlimitedStock == isUnlimitedStock &&
         other.quantity == quantity &&
         listEquals(other.allergensMaster, allergensMaster) &&
-        other.spiceLevel==spiceLevel&&
+        other.spiceLevel == spiceLevel &&
         other.ingredients == ingredients;
   }
 
@@ -617,7 +618,7 @@ class DishVariationItem {
         isUnlimitedStock.hashCode ^
         quantity.hashCode ^
         allergensMaster.hashCode ^
-        spiceLevel.hashCode^
+        spiceLevel.hashCode ^
         ingredients.hashCode;
   }
 }
@@ -703,7 +704,7 @@ class MealItem {
       quantity: quantity ?? this.quantity,
       allergensMaster: allergensMaster ?? this.allergensMaster,
       ingredients: ingredients ?? this.ingredients,
-      spiceLevel:spiceLevel?? this.spiceLevel,
+      spiceLevel: spiceLevel ?? this.spiceLevel,
       addonsMasterGroup: addonsMasterGroup ?? this.addonsMasterGroup,
     );
   }
@@ -717,7 +718,7 @@ class MealItem {
       'quantity': quantity,
       'allergensMaster': allergensMaster,
       'ingredients': ingredients,
-      'spiceLevel':spiceLevel,
+      'spiceLevel': spiceLevel,
       'addonsMasterGroup': addonsMasterGroup,
     };
   }
@@ -735,7 +736,8 @@ class MealItem {
           : null,
       ingredients:
           map['ingredients'] != null ? map['ingredients'] as String : null,
-          spiceLevel: map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
+      spiceLevel:
+          map['spiceLevel'] != null ? map['spiceLevel'] as String : null,
       addonsMasterGroup: map['addonsMasterGroup'] != null
           ? List<dynamic>.from((map['addonsMasterGroup'] as List<dynamic>))
           : null,
@@ -764,7 +766,7 @@ class MealItem {
         other.quantity == quantity &&
         listEquals(other.allergensMaster, allergensMaster) &&
         other.ingredients == ingredients &&
-        other.spiceLevel==spiceLevel&&
+        other.spiceLevel == spiceLevel &&
         listEquals(other.addonsMasterGroup, addonsMasterGroup);
   }
 
@@ -777,7 +779,7 @@ class MealItem {
         quantity.hashCode ^
         allergensMaster.hashCode ^
         ingredients.hashCode ^
-        spiceLevel.hashCode^
+        spiceLevel.hashCode ^
         addonsMasterGroup.hashCode;
   }
 }

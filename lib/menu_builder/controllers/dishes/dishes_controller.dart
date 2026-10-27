@@ -1629,6 +1629,8 @@ class DishesController extends ChangeNotifier with BaseController {
         "quantity": TextEditingController(text: unlimited ? "" : v.stock),
         "isUnlimitedStock": unlimited,
         "allergens": v.allergenIds,
+        "spiceLevel": v.spiceLevel,
+
         if (isMeal)
           "addons": <String>[], // TODO: map once the meal addon key is known
       };
