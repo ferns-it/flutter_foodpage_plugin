@@ -19,7 +19,7 @@ class ShopController extends ChangeNotifier with BaseController {
   List<String> get shopAvailableDays => shopTimingDetails?.keys.toList() ?? [];
 
   String get shopAvailableDaysStartEnd =>
-      "${convertFirstCharacterToUpperCase(shopAvailableDays.firstOrNull ?? "00:00:00")} to ${convertFirstCharacterToUpperCase(shopAvailableDays.firstOrNull ?? "00:00:00")}";
+      "${convertFirstCharacterToUpperCase(shopAvailableDays.firstOrNull ?? "00:00:00")} to ${convertFirstCharacterToUpperCase(shopAvailableDays.lastOrNull ?? "00:00:00")}";
 
   @override
   Future<void> init() async {
