@@ -72,7 +72,7 @@ class DishesCategoryService {
       "name": name,
       "description": description,
     };
-
+    log(payload.toString(), name: "updateExistingCategory");
     try {
       final response = await BaseClient.put(
         api: ApiEndpoints.updateCategory,
@@ -117,16 +117,21 @@ class DishesCategoryService {
     }
   }
 
-  static Future<Either<AppExceptions, APIResultType>> updateCategorySortOrder(
-      String cID, int newOrderIndex) async {
+  static Future<Either<AppExceptions, APIResultType>> updateCategorySortOrder({
+    required List<Map<String, dynamic>> categoryList,
+  }) async {
     try {
       final response = await BaseClient.post(
         api: ApiEndpoints.updateCategorySortOrder,
         needAuth: true,
         data: jsonEncode({
-          "categorylist": [
-            {"categoryId": cID, "sortOrder": newOrderIndex}
-          ]
+          "categorylist": categoryList
+              .where((entry) => entry["categoryId"] != null)
+              .map((entry) => {
+                    "categoryId": entry["categoryId"],
+                    "sortOrder": entry["sortOrder"],
+                  })
+              .toList(),
         }),
       );
 

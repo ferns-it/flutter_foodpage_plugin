@@ -105,9 +105,7 @@ class _CategoryTreeViewWidget extends StatefulWidget {
 }
 
 class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
- final Set<String> _expandedCategoryIds = {};
- 
-
+  final Set<String> _expandedCategoryIds = {};
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +118,7 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
 
     final selectedCId = categoryController.selectedCategory?.cID;
 
-     return Card(
+    return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -162,24 +160,54 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
             ),
             const Divider(),
             Flexible(
-              child: ListView(
-                shrinkWrap: true,
-                children: categories.map((category) {
-                  return _buildCategoryTile(
-                    category: category,
-                    level: 0,
-                    selectedCId: selectedCId,
-                    categoryController: categoryController,
-                  );
-                }).toList(),
+              child: _buildCategoryList(
+                items: categories,
+                level: 0,
+                parent: null,
+                selectedCId: selectedCId,
+                categoryController: categoryController,
               ),
             ),
           ],
         ),
       ),
-    );}
-     Widget _buildCategoryTile({
+    );
+  }
+
+  Widget _buildCategoryList({
+    required List<CategoryData> items,
+    required int level,
+    required CategoryData? parent,
+    required String? selectedCId,
+    required DishCategoryController categoryController,
+  }) {
+    return ReorderableListView.builder(
+      shrinkWrap: true,
+      // nested lists must not scroll on their own
+      physics: level == 0 ? null : const NeverScrollableScrollPhysics(),
+      buildDefaultDragHandles: false, // we add our own handle in the tile
+      itemCount: items.length,
+      onReorder: (oldIndex, newIndex) {
+        if (parent == null) {
+          categoryController.reOrderCategory(context, oldIndex, newIndex);
+        } else {
+          categoryController.reOrderChildCategory(
+              context, parent, oldIndex, newIndex);
+        }
+      },
+      itemBuilder: (context, index) => _buildCategoryTile(
+        category: items[index],
+        index: index,
+        level: level,
+        selectedCId: selectedCId,
+        categoryController: categoryController,
+      ),
+    );
+  }
+
+  Widget _buildCategoryTile({
     required CategoryData category,
+    required int index,
     required int level,
     required String? selectedCId,
     required DishCategoryController categoryController,
@@ -187,7 +215,7 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
     final categoryId = category.cID;
 
     if (categoryId == null) {
-      return const SizedBox.shrink();
+      return SizedBox.shrink(key: UniqueKey());
     }
 
     final children =
@@ -198,10 +226,10 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
     final isSelected = selectedCId == categoryId;
 
     return Column(
+      key: ValueKey('category_$categoryId'),
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(
-          key: ValueKey('category_$categoryId'),
           contentPadding: EdgeInsets.only(
             left: level * 20.0,
             right: 4,
@@ -243,6 +271,14 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
 
           // Select the category when tapping its name
           title: Text(category.name ?? "Unknown"),
+          // Drag handle
+          trailing: ReorderableDragStartListener(
+            index: index,
+            child: const Padding(
+              padding: EdgeInsets.all(8),
+              child: Icon(Icons.drag_handle),
+            ),
+          ),
           onTap: () {
             categoryController.onPressCategory(category);
 
@@ -260,19 +296,18 @@ class _CategoryTreeViewWidgetState extends State<_CategoryTreeViewWidget> {
 
         // Recursively display children only when expanded
         if (hasChildren && isExpanded)
-          ...children.map(
-            (child) => _buildCategoryTile(
-              category: child,
-              level: level + 1,
-              selectedCId: selectedCId,
-              categoryController: categoryController,
-            ),
+          _buildCategoryList(
+            items: children,
+            level: level + 1,
+            parent: category,
+            selectedCId: selectedCId,
+            categoryController: categoryController,
           ),
       ],
     );
   }
 }
-              
+
 class _BuildAddUpdateCategorySection extends StatefulWidget {
   const _BuildAddUpdateCategorySection({Key? key}) : super(key: key);
 
@@ -283,7 +318,6 @@ class _BuildAddUpdateCategorySection extends StatefulWidget {
 
 class _BuildAddUpdateCategorySectionState
     extends State<_BuildAddUpdateCategorySection> {
-  
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;

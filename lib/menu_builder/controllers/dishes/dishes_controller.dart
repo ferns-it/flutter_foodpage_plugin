@@ -179,6 +179,58 @@ class DishesController extends ChangeNotifier with BaseController {
   int _selectedCategoryIndex = -1;
 
   int get selectedCategoryIndex => _selectedCategoryIndex;
+  void updateChildCategoryList(String parentId, int oldIndex, int newIndex) {
+    final source = _addDishInitializeData?.category.data;
+    if (source == null) return;
+
+    final reordered =
+        _reorderChildCategoryTree(source, parentId, oldIndex, newIndex);
+    if (reordered == null) return;
+
+    _addDishInitializeData!.category.data = reordered;
+    notifyListeners();
+  }
+
+  List<CategoryData>? _reorderChildCategoryTree(
+    List<CategoryData> categories,
+    String parentId,
+    int oldIndex,
+    int newIndex,
+  ) {
+    for (int i = 0; i < categories.length; i++) {
+      final current = categories[i];
+
+      if (current.cID == parentId) {
+        final children = List<CategoryData>.from(current.childrens);
+        if (oldIndex < 0 || oldIndex >= children.length) return null;
+        if (newIndex < 0 || newIndex >= children.length) return null;
+
+        final movedItem = children.removeAt(oldIndex);
+        children.insert(newIndex, movedItem);
+
+        final updated = List<CategoryData>.from(categories);
+        updated[i] = current.copyWith(childrens: children);
+        return updated;
+      }
+
+      if (current.childrens.isNotEmpty) {
+        final updatedChildren = _reorderChildCategoryTree(
+          current.childrens,
+          parentId,
+          oldIndex,
+          newIndex,
+        );
+
+        if (updatedChildren != null) {
+          final updated = List<CategoryData>.from(categories);
+          updated[i] = current.copyWith(childrens: updatedChildren);
+          return updated;
+        }
+      }
+    }
+
+    return null;
+  }
 
   void onChangeCategoryIndex(int index) {
     _selectedCategoryIndex = index;
@@ -860,11 +912,6 @@ class DishesController extends ChangeNotifier with BaseController {
 
     // Remove the category at the old index
     newListOfCategories.removeAt(oldIndex);
-
-    // Adjust newIndex if necessary
-    if (newIndex > oldIndex) {
-      newIndex -= 1; // Adjust because of the removed element
-    }
 
     // Insert the category at the new index
     newListOfCategories.insert(newIndex, category);
@@ -1785,5 +1832,49 @@ class DishesController extends ChangeNotifier with BaseController {
     // mealsFormEntries = [mealFormEntry];
     // photo = null;
     activeDefaultSelectedInMenu();
+  }
+
+  List<Map<String, dynamic>> buildCategorySortPayloadForParent(
+      String? parentId) {
+    if (parentId == null || parentId.isEmpty) {
+      return listOfCategories
+          .asMap()
+          .entries
+          .map((entry) => {
+                "categoryId": entry.value.cID,
+                "sortOrder": entry.key + 1,
+              })
+          .toList();
+    }
+
+    final parentNode = findCategoryNodeById(parentId);
+    if (parentNode == null) return const [];
+
+    return parentNode.childrens
+        .asMap()
+        .entries
+        .map((entry) => {
+              "categoryId": entry.value.cID,
+              "sortOrder": entry.key + 1,
+            })
+        .toList();
+  }
+
+  CategoryData? findCategoryNodeById(String categoryId,
+      [List<CategoryData>? categories]) {
+    final source = categories ?? listOfCategories;
+
+    for (final category in source) {
+      if (category.cID == categoryId) {
+        return category;
+      }
+
+      final childMatch = findCategoryNodeById(categoryId, category.childrens);
+      if (childMatch != null) {
+        return childMatch;
+      }
+    }
+
+    return null;
   }
 }

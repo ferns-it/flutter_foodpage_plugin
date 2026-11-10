@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/base_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
@@ -18,9 +19,11 @@ class DishCategoryController extends ChangeNotifier with BaseController {
   late TextEditingController nameController;
   late TextEditingController descriptionController;
 
-  APIResponse<DishCategoryCollectionModel> _dishCategoryCollection = APIResponse.initial();
+  APIResponse<DishCategoryCollectionModel> _dishCategoryCollection =
+      APIResponse.initial();
 
-  APIResponse<DishCategoryCollectionModel> get categoriesCollection => _dishCategoryCollection;
+  APIResponse<DishCategoryCollectionModel> get categoriesCollection =>
+      _dishCategoryCollection;
 
   int get totalCategories => categoriesCollection.data?.totalCategories ?? 0;
 
@@ -117,15 +120,18 @@ class DishCategoryController extends ChangeNotifier with BaseController {
 
       final response = await DishesCategoryService.fetchCategoryList(id: '1');
 
-      _dishCategoryCollection =
-          response != null ? APIResponse.completed(response) : throwNotFoundException<DishCategoryCollectionModel>();
+      _dishCategoryCollection = response != null
+          ? APIResponse.completed(response)
+          : throwNotFoundException<DishCategoryCollectionModel>();
 
       notifyListeners();
     } on AppExceptions catch (error) {
-      _dishCategoryCollection = APIResponse.error(error.message, exception: error);
+      _dishCategoryCollection =
+          APIResponse.error(error.message, exception: error);
       notifyListeners();
     } catch (e) {
-      _dishCategoryCollection = throwUnknownErrorException<DishCategoryCollectionModel>();
+      _dishCategoryCollection =
+          throwUnknownErrorException<DishCategoryCollectionModel>();
       notifyListeners();
     }
   }
@@ -136,11 +142,13 @@ class DishCategoryController extends ChangeNotifier with BaseController {
       notifyListeners();
 
       if (formKey.currentState?.validate() == false) return;
-      if (_addCategoryType == CategoryType.child && _selectedCategoryId == null) {
+      if (_addCategoryType == CategoryType.child &&
+          _selectedCategoryId == null) {
         //?? ADD TOAST
         return;
       }
-      final parentId = _addCategoryType == CategoryType.parent ? "0" : _selectedCategoryId!;
+      final parentId =
+          _addCategoryType == CategoryType.parent ? "0" : _selectedCategoryId!;
       final response = await DishesCategoryService.addNewCategory(
         name: nameController.text,
         description: descriptionController.text,
@@ -211,7 +219,8 @@ class DishCategoryController extends ChangeNotifier with BaseController {
         return;
       }
       // Toggle category status between "Active" and "Inactive"
-      final newStatus = targetCategory!.categoryStatus == "Active" ? "Inactive" : "Active";
+      final newStatus =
+          targetCategory!.categoryStatus == "Active" ? "Inactive" : "Active";
 
       final response = await DishesCategoryService.disableEnableCategory(
         targetCategory.cID!,
@@ -230,25 +239,71 @@ class DishCategoryController extends ChangeNotifier with BaseController {
     }
   }
 
-  void reOrderCategory(BuildContext context, int oldIndex, int newIndex) {
-    final dishController = context.read<DishesController>();
-    final listOfCategories = dishController.listOfCategories;
-    final category = listOfCategories.elementAtOrNull(oldIndex);
-    if (category?.cID == null) return;
+  void reOrderChildCategory(
+    BuildContext context,
+    CategoryData parent,
+    int oldIndex,
+    int newIndex,
+  ) {
+    final parentId = parent.cID;
+    if (parentId == null) return;
 
-    DishesCategoryService.updateCategorySortOrder(category!.cID!, newIndex).then((result) {
-      return result.fold((error) {
+    final dishController = context.read<DishesController>();
+    final children = parent.childrens.where((c) => c.cID != null).toList();
+
+    final child = children.elementAtOrNull(oldIndex);
+    if (child?.cID == null) return;
+
+    final adjustedNewIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
+    if (adjustedNewIndex == oldIndex) return;
+
+    dishController.updateChildCategoryList(
+        parentId, oldIndex, adjustedNewIndex);
+
+    final parentNode = dishController.findCategoryNodeById(parentId);
+    final updatedChildren = parentNode == null
+        ? const <Map<String, dynamic>>[]
+        : dishController.buildCategorySortPayloadForParent(parentId);
+
+    if (updatedChildren.isEmpty) return;
+
+    DishesCategoryService.updateCategorySortOrder(categoryList: updatedChildren)
+        .then((result) {
+      result.fold((error) {
         Fluttertoast.showToast(msg: error.message);
+        dishController.updateChildCategoryList(
+            parentId, adjustedNewIndex, oldIndex);
       }, (_) => null);
     });
-
-    dishController.updateCategoryList(oldIndex, newIndex, category);
   }
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    descriptionController.dispose();
-    super.dispose();
+  void reOrderCategory(BuildContext context, int oldIndex, int newIndex) {
+    final dishController = context.read<DishesController>();
+    final category = dishController.listOfCategories.elementAtOrNull(oldIndex);
+    if (category?.cID == null) return;
+
+    final adjustedNewIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
+    if (adjustedNewIndex == oldIndex) return;
+
+    dishController.updateCategoryList(oldIndex, adjustedNewIndex, category!);
+
+    final updatedCategories = dishController.listOfCategories
+        .asMap()
+        .entries
+        .map((entry) => {
+              "categoryId": entry.value.cID,
+              "sortOrder": entry.key + 1,
+            })
+        .toList();
+
+    DishesCategoryService.updateCategorySortOrder(
+            categoryList: updatedCategories)
+        .then((result) {
+      result.fold((error) {
+        Fluttertoast.showToast(msg: error.message);
+        dishController.updateCategoryList(
+            adjustedNewIndex, oldIndex, category); // rollback
+      }, (_) => null);
+    });
   }
 }
