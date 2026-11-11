@@ -8,6 +8,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_init
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/add_dish_request_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/services/dishes/dishes_service.dart';
+import 'package:flutter_foodpage_plugin/order_online/models/dishes/choice_group.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../core/utils/helper_utils.dart';
 import '../../models/dishes/dish_collection_model.dart';
@@ -130,6 +131,13 @@ class DishesController extends ChangeNotifier with BaseController {
 
   void disposeSearchController() {
     searchTextEditingController.dispose();
+  }
+
+  List<ChoiceGroup> choiceGroups = [];
+
+  void setChoiceGroups(List<ChoiceGroup> groups) {
+    choiceGroups =
+        List.of(groups); // no notifyListeners, the card keeps its own UI state
   }
 
   bool get isMealType => dishVariationType == DishVariationType.meal;
@@ -1812,6 +1820,7 @@ class DishesController extends ChangeNotifier with BaseController {
     // variationsFormEntries.clear();
     // variationsFormEntries.add(variationFormEntry);
     choosedMasterAddons.clear();
+    choiceGroups = [];
     selectedDishCategories.clear();
     dishAvailabilityEntries.clear();
     dishAvailabilityEntries = <(TimeOfDay?, TimeOfDay?)>[

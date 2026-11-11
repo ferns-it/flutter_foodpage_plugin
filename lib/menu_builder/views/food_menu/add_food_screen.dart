@@ -15,6 +15,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_menu_side_sheet.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/add_variation_modifiers_side_sheet.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/build_spice_level_widget.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/widgets/choices_addons_card.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -961,6 +962,11 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                                 ),
                               ),
                             ),
+                            if (!controller.isMealType)
+                              ChoicesAddonsCard(
+                                initialGroups: controller.choiceGroups,
+                                onChanged: controller.setChoiceGroups,
+                              ),
                             Card(
                               child: Padding(
                                 padding: defaultCardPadding,
