@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/responsive_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/validators/menu_builder_validators.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/food_menu/widgets/build_spice_level_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -46,27 +47,49 @@ class _AddVariationModifiersSideSheetState
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final controller = context.watch<DishesController>();
+    final isMobile = ResponsiveUtils.isMobile(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16.0,
-        vertical: 24.0,
+      padding: EdgeInsets.fromLTRB(
+        isMobile ? 10.0 : 16.0,
+        isMobile ? 4.0 : 24.0,
+        isMobile ? 10.0 : 16.0,
+        isMobile ? 12.0 : 24.0,
       ),
       child: Column(
         children: <Widget>[
-          OutlinedButton.icon(
-            // onPressed: () => controller.addNewVariationFormEntry(),
-            onPressed: () => controller.addNewActiveEntry(),
-            label: Text(controller.isMealType ? "Add Meal" : "Add Variation"),
-
-            icon: const Icon(
-              FluentIcons.add_24_filled,
+          if (isMobile) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    controller.isMealType ? "Meals" : "Variations",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.titleMedium,
+                  ),
+                ),
+                IconButton(
+                  tooltip: "Close",
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Scaffold.of(context).closeEndDrawer(),
+                ),
+              ],
             ),
-            // label: const Text("Add Variation"),
-            style: OutlinedButton.styleFrom(
-              textStyle: textTheme.titleMedium,
-              foregroundColor: MenuBuilderColors.kBlue,
-              side: const BorderSide(width: 1, color: MenuBuilderColors.kBlue),
+            verticalSpaceTiny,
+          ],
+          SizedBox(
+            width: isMobile ? double.infinity : null,
+            child: OutlinedButton.icon(
+              onPressed: () => controller.addNewActiveEntry(),
+              label: Text(controller.isMealType ? "Add Meal" : "Add Variation"),
+              icon: const Icon(FluentIcons.add_24_filled),
+              style: OutlinedButton.styleFrom(
+                textStyle: textTheme.titleMedium,
+                foregroundColor: MenuBuilderColors.kBlue,
+                side:
+                    const BorderSide(width: 1, color: MenuBuilderColors.kBlue),
+              ),
             ),
           ),
           verticalSpaceSmall,
@@ -76,19 +99,12 @@ class _AddVariationModifiersSideSheetState
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: ListView.separated(
                 padding: EdgeInsets.zero,
-                // itemCount: controller.variationsFormEntries.length,
                 itemCount: controller.activeEntries.length,
                 itemBuilder: (context, index) {
                   final entry = controller.activeEntries[index];
                   return FoodVariationItem(index: index, entry: entry);
                 },
-                // itemBuilder: (context, index) {
-                //   final entry = controller.variationsFormEntries[index];
-                //   return FoodVariationItem(index: index, entry: entry);
-                // },
-                separatorBuilder: (_, __) {
-                  return verticalSpaceSmall;
-                },
+                separatorBuilder: (_, __) => verticalSpaceSmall,
               ),
             ),
           ),
@@ -118,10 +134,32 @@ class FoodVariationItem extends StatelessWidget {
 
     final isUnlimitedStock = entry["isUnlimitedStock"] as bool? ?? true;
     final label = controller.isMealType ? "Meal" : "Variation";
+    final isMobile = ResponsiveUtils.isMobile(context);
+    final cardPadding = isMobile
+        ? const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0)
+        : defaultCardPadding;
+    final nameField = CustomRoundedTextField.topText(
+      topText: "Dish name",
+      hintText: "Enter dish name",
+      borderRadius: BorderRadius.circular(8.0),
+      keyboardType: TextInputType.name,
+      textInputAction: TextInputAction.next,
+      validator: MenuBuilderValidators.validateDishName,
+      textEditingController: entry["name"] as TextEditingController,
+    );
 
+    final priceField = CustomRoundedTextField.topText(
+      topText: "Dish price",
+      hintText: "Enter dish price",
+      borderRadius: BorderRadius.circular(8.0),
+      keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.next,
+      validator: MenuBuilderValidators.validatePrice,
+      textEditingController: entry["price"] as TextEditingController,
+    );
     return Card(
       child: Padding(
-        padding: defaultCardPadding,
+        padding: cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -136,7 +174,7 @@ class FoodVariationItem extends StatelessWidget {
                   onTap: () => controller.duplicateActiveEntry(index),
 
                   child: Container(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(isMobile ? 10.0 : 8.0),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: MenuBuilderColors.kBlue.withOpacity(0.1),
@@ -157,7 +195,7 @@ class FoodVariationItem extends StatelessWidget {
                       // controller.removeVariationFormEntry(index);
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(isMobile ? 10.0 : 8.0),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: MenuBuilderColors.kPrimaryColor.withOpacity(0.1),
@@ -174,36 +212,17 @@ class FoodVariationItem extends StatelessWidget {
             ),
             const Divider(),
             verticalSpaceSmall,
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: CustomRoundedTextField.topText(
-                    topText: "Dish name",
-                    hintText: "Enter dish name",
-                    borderRadius: BorderRadius.circular(8.0),
-                    keyboardType: TextInputType.name,
-                    textInputAction: TextInputAction.next,
-                    validator: MenuBuilderValidators.validateDishName,
-                    textEditingController:
-                        entry["name"] as TextEditingController,
-                  ),
-                ),
-                horizontalSpaceRegular,
-                Expanded(
-                  child: CustomRoundedTextField.topText(
-                    topText: "Dish price",
-                    hintText: "Enter dish price",
-                    borderRadius: BorderRadius.circular(8.0),
-                    keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.next,
-                    validator: MenuBuilderValidators.validatePrice,
-                    textEditingController:
-                        entry["price"] as TextEditingController,
-                  ),
-                ),
-              ],
-            ),
+            if (isMobile)
+              Column(children: [nameField, verticalSpaceRegular, priceField])
+            else
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(child: nameField),
+                  horizontalSpaceRegular,
+                  Expanded(child: priceField),
+                ],
+              ),
             verticalSpaceRegular,
             CustomRoundedTextField.topText(
               topText: "Ingredients",
@@ -367,7 +386,7 @@ class AddModifiersFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
+    final isMobile = ResponsiveUtils.isMobile(context);
     return Theme(
       data: Theme.of(context).copyWith(
         dividerColor: Colors.transparent,
@@ -510,7 +529,7 @@ class AddModifiersFormWidget extends StatelessWidget {
                       ),
                       horizontalSpaceRegular,
                       Container(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(isMobile ? 10.0 : 8.0),
                         margin: const EdgeInsets.only(top: 20.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,

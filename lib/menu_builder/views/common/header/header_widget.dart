@@ -1,11 +1,11 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/auth/auth_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/responsive_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:provider/provider.dart';
-
-import '../../../controllers/auth/auth_controller.dart';
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key});
@@ -14,11 +14,13 @@ class HeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final mq = MediaQuery.of(context);
+    final isMobile = ResponsiveUtils.isMobile(context);
     final builderConfig = context.watch<AuthController>().builderConfig;
     final shopController = context.watch<ShopController>();
+    final shopName = shopController.shopDetails?.shopName;
 
     return Container(
-      height: mq.size.height * 0.1,
+      height: isMobile ? kToolbarHeight : mq.size.height * 0.1,
       width: double.infinity,
       decoration: BoxDecoration(
         color: MenuBuilderColors.kWhite,
@@ -26,36 +28,65 @@ class HeaderWidget extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          horizontalSpaceSmall,
-          if (builderConfig != null) ...[
-            TextButton.icon(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back_ios_new_outlined),
-              label: Text("Back To ${builderConfig.applicationName}"),
+          if (isMobile) ...[
+            if (builderConfig != null)
+              IconButton(
+                tooltip: "Back To ${builderConfig.applicationName}",
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back_ios_new_outlined, size: 20),
+              )
+            else
+              horizontalSpaceSmall,
+            Expanded(
+              child: Row(
+                children: [
+                  if (shopName != null) ...[
+                    Icon(FluentIcons.building_shop_24_regular,
+                        size: 20, color: Colors.grey.shade600),
+                    horizontalSpaceSmall,
+                    Expanded(
+                      child: Text(
+                        shopName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.titleSmall!
+                            .copyWith(color: Colors.grey.shade700),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ],
-          const Spacer(),
-          Visibility(
-            visible: shopController.shopDetails?.shopName != null,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Icon(
-                  FluentIcons.building_shop_24_regular,
-                  color: Colors.grey.shade600,
-                ),
-                horizontalSpaceSmall,
-                Text(
-                  shopController.shopDetails?.shopName ?? "",
-                  style: textTheme.titleMedium!.copyWith(
-                    color: Colors.grey.shade600,
+            horizontalSpaceSmall,
+          ] else ...[
+            // ---- original tablet layout ----
+            horizontalSpaceSmall,
+            if (builderConfig != null)
+              TextButton.icon(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back_ios_new_outlined),
+                label: Text("Back To ${builderConfig.applicationName}"),
+              ),
+            const Spacer(),
+            Visibility(
+              visible: shopName != null,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(FluentIcons.building_shop_24_regular,
+                      color: Colors.grey.shade600),
+                  horizontalSpaceSmall,
+                  Text(
+                    shopName ?? "",
+                    style: textTheme.titleMedium!
+                        .copyWith(color: Colors.grey.shade600),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          horizontalSpaceMedium,
+            horizontalSpaceMedium,
+          ],
         ],
       ),
     );

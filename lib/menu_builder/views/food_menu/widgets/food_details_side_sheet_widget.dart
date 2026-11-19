@@ -3,6 +3,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/responsive_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/dishes/dish_view_details_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -39,7 +40,7 @@ class _FoodDetailsSideSheetWidgetState
 
     final controller = context.watch<DishesController>();
     final shopController = context.watch<ShopController>();
-
+    final isMobile = ResponsiveUtils.isMobile(context);
     if (controller.selectedDish == null) {
       return const SizedBox();
     }
@@ -48,7 +49,7 @@ class _FoodDetailsSideSheetWidgetState
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: SafeArea(
         child: Drawer(
-          width: size.width * 0.4,
+          width: isMobile ? size.width * 0.9 : size.width * 0.4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4.0),
           ),
@@ -68,7 +69,7 @@ class _FoodDetailsSideSheetWidgetState
                   'Friday',
                   'Saturday'
                 ];
- final timings = data.formattedTiming
+                final timings = data.formattedTiming
                     .where((timing) => timing.trim().isNotEmpty)
                     .toList();
 
@@ -76,27 +77,40 @@ class _FoodDetailsSideSheetWidgetState
                 final isAllDay = data.availability.days.contains("all_day");
                 return Positioned.fill(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 28.0,
-                      horizontal: 20.0,
+                    padding: EdgeInsets.fromLTRB(
+                      isMobile ? 16.0 : 20.0,
+                      isMobile ? 72.0 : 28.0,
+                      isMobile ? 16.0 : 20.0,
+                      28.0,
                     ),
                     child: ListView(
                       children: <Widget>[
                         verticalSpaceSmall,
                         Center(
-                          child: Container(
-                            height: size.height * 0.2,
-                            width: size.width * 0.15,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  controller.selectedDish!.photo,
+                          child: isMobile
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: AspectRatio(
+                                    aspectRatio: 16 / 10,
+                                    child: Image.network(
+                                      controller.selectedDish!.photo,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  height: size.height * 0.2,
+                                  width: size.width * 0.15,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          controller.selectedDish!.photo),
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
                                 ),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
                         ),
                         verticalSpaceSmall,
                         Center(
@@ -213,8 +227,12 @@ class _FoodDetailsSideSheetWidgetState
                                 backgroundColor: MenuBuilderColors.kWhite2,
                                 foregroundColor: MenuBuilderColors.kBlack,
                                 side: const BorderSide(
-                                  color: MenuBuilderColors.kLightGrey,
-                                ),
+                                    color: MenuBuilderColors.kLightGrey),
+                                visualDensity:
+                                    isMobile ? VisualDensity.compact : null,
+                                padding: isMobile
+                                    ? const EdgeInsets.symmetric(horizontal: 4)
+                                    : null,
                               ),
                             ),
                           ),
@@ -359,7 +377,8 @@ class _FoodDetailsSideSheetWidgetState
                             ]
 
                             // All days with configured timings.
-                            else if (isAllDay) ...[                              Align(
+                            else if (isAllDay) ...[
+                              Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   shopController.shopAvailableDaysStartEnd,
@@ -380,7 +399,8 @@ class _FoodDetailsSideSheetWidgetState
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: timings.map((timing) {                                    return Text(
+                                  children: timings.map((timing) {
+                                    return Text(
                                       timing,
                                       style: textTheme.bodyMedium!.copyWith(
                                         color: Colors.grey.shade500,
@@ -421,79 +441,81 @@ class _FoodDetailsSideSheetWidgetState
               }, error: (String? message, AppExceptions? exceptions) {
                 return Center(child: Text(message ?? "Unknown error"));
               }),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                        onPressed: () => Scaffold.of(context).closeEndDrawer(),
-                        icon: const Icon(
-                          Icons.close,
-                          color: MenuBuilderColors.kBlack,
-                        )),
-                    const Spacer(),
-                    if (controller.dishDetailsLoaded) ...[
-                      InkWell(
-                        onTap: () {
-                          controller.initializeAllFormControllers();
-                          controller.onPressEditButton();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              fullscreenDialog: true,
-                              builder: (context) => const AddFoodScreen(),
+              Container(
+                color: isMobile ? MenuBuilderColors.kWhite : null,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                          onPressed: () =>
+                              Scaffold.of(context).closeEndDrawer(),
+                          icon: const Icon(
+                            Icons.close,
+                            color: MenuBuilderColors.kBlack,
+                          )),
+                      const Spacer(),
+                      if (controller.dishDetailsLoaded) ...[
+                        InkWell(
+                          onTap: () {
+                            controller.initializeAllFormControllers();
+                            controller.onPressEditButton();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                fullscreenDialog: true,
+                                builder: (context) => const AddFoodScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: MenuBuilderColors.kBlue.withOpacity(0.1),
                             ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: MenuBuilderColors.kBlue.withOpacity(0.1),
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: MenuBuilderColors.kBlue,
+                            child: const Icon(
+                              Icons.edit,
+                              color: MenuBuilderColors.kBlue,
+                            ),
                           ),
                         ),
-                      ),
-                      horizontalSpaceRegular,
-                      !controller.loadingDishAction
-                          ? InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () {
-                                controller.deleteDish();
-                                Future.delayed(
-                                  const Duration(seconds: 1),
-                                  () {
-                                    Navigator.pop(context);
-                                  },
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: MenuBuilderColors.kPrimaryColor
-                                      .withOpacity(0.1),
+                        horizontalSpaceRegular,
+                        !controller.loadingDishAction
+                            ? InkWell(
+                                customBorder: const CircleBorder(),
+                                onTap: () {
+                                  controller.deleteDish();
+                                  Future.delayed(
+                                    const Duration(seconds: 1),
+                                    () {
+                                      Navigator.pop(context);
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(10.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: MenuBuilderColors.kPrimaryColor
+                                        .withOpacity(0.1),
+                                  ),
+                                  child: const Icon(
+                                    Icons.delete_forever,
+                                    color: MenuBuilderColors.kPrimaryColor,
+                                  ),
                                 ),
-                                child: const Icon(
-                                  Icons.delete_forever,
-                                  color: MenuBuilderColors.kPrimaryColor,
+                              )
+                            : const SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3.0,
                                 ),
                               ),
-                            )
-                          : const SizedBox(
-                              height: 30,
-                              width: 30,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3.0,
-                              ),
-                            ),
-                    ]
-                  ],
+                      ]
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -675,7 +697,7 @@ class _FoodDetailsSideSheetWidgetState
         ],
         verticalSpaceSmall,
         _buildInfoRow(
-            context, FluentIcons.stack_20_regular, "Unlimited Stocks Available",
+          context, FluentIcons.stack_20_regular, "Unlimited Stocks Available",
           // data.isUnlimitedStock == "1"
           //     ? "Unlimited Stocks Available"
           //     : "${data.stock} Stocks Available",

@@ -79,17 +79,17 @@ class _FlutterFoodpageMenuBuilderState
               final currentPageIndex =
                   pageNavigationController.currentPageIndex;
               return BaseRootWidget(
-                endDrawer: Align(
-                  alignment: Alignment.topRight,
-                  child: SizedBox(
-                    height: size.height - bottom,
-                    child: currentPageIndex == 1
-                        ? const FoodDetailsSideSheetWidget()
-                        : currentPageIndex == 3
-                            ? const AddUpdateModifierSideSheet()
-                            : null,
-                  ),
-                ),
+                endDrawer: currentPageIndex == 1 || currentPageIndex == 3
+                    ? Align(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          height: size.height - bottom,
+                          child: currentPageIndex == 1
+                              ? const FoodDetailsSideSheetWidget()
+                              : const AddUpdateModifierSideSheet(),
+                        ),
+                      )
+                    : null,
                 child: Expanded(
                   child: screens[pageNavigationController.currentPageIndex %
                       screens.length],

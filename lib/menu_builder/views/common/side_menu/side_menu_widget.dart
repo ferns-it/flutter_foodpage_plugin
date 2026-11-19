@@ -4,26 +4,17 @@ import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_nav
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_app_colors.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/menu_navigation.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:provider/provider.dart';
 
 class SideMenuWidget extends StatelessWidget {
   const SideMenuWidget({super.key});
 
-  void resetSelectedCategory(BuildContext context) {
-    final controller = context.read<DishCategoryController>();
-    if (!controller.editMode) return;
-    controller.resetSelectedCategory();
-    controller.clearCategoryForm();
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final readPageNavigationController =
-        context.read<PageNavigationController>();
-    final pageNavigationController = context.watch<PageNavigationController>();
-    final dishesController = context.read<DishesController>();
+    final index = context.watch<PageNavigationController>().currentPageIndex;
 
     return Container(
       width: size.width * 0.17,
@@ -48,72 +39,40 @@ class SideMenuWidget extends StatelessWidget {
               ),
             ),
             verticalSpaceLarge,
-            Flexible(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    _buildMenuItem(
-                      context,
-                      icon: pageNavigationController.currentPageIndex == 0
-                          ? FluentIcons.home_20_filled
-                          : FluentIcons.home_20_regular,
-                      title: "Dashboard",
-                      selected: pageNavigationController.currentPageIndex == 0,
-                      onTap: () {
-                        resetSelectedCategory(context);
-                        if (pageNavigationController.currentPageIndex == 1) {
-                          dishesController.clearDishSearch();
-                        }
-                        readPageNavigationController.onChangePageIndex(0);
-                      },
-                    ),
-                    verticalSpaceSmall,
-                    _buildMenuItem(
-                      context,
-                      icon: pageNavigationController.currentPageIndex == 1
-                          ? FluentIcons.food_20_filled
-                          : FluentIcons.food_20_regular,
-                      title: "Food Menu",
-                      selected: pageNavigationController.currentPageIndex == 1,
-                      onTap: () {
-                        resetSelectedCategory(context);
-                        readPageNavigationController.onChangePageIndex(1);
-                      },
-                    ),
-                    verticalSpaceSmall,
-                    _buildMenuItem(
-                      context,
-                      icon: pageNavigationController.currentPageIndex == 2
-                          ? FluentIcons.apps_list_20_filled
-                          : FluentIcons.apps_list_20_regular,
-                      title: "Categories",
-                      selected: pageNavigationController.currentPageIndex == 2,
-                      onTap: () {
-                        if (pageNavigationController.currentPageIndex == 1) {
-                          dishesController.clearDishSearch();
-                        }
-                        readPageNavigationController.onChangePageIndex(2);
-                      },
-                    ),
-                    verticalSpaceSmall,
-                    _buildMenuItem(
-                      context,
-                      icon: pageNavigationController.currentPageIndex == 3
-                          ? FluentIcons.apps_add_in_20_filled
-                          : FluentIcons.apps_add_in_20_regular,
-                      title: "Modifiers",
-                      selected: pageNavigationController.currentPageIndex == 3,
-                      onTap: () {
-                        resetSelectedCategory(context);
-                        if (pageNavigationController.currentPageIndex == 1) {
-                          dishesController.clearDishSearch();
-                        }
-                        readPageNavigationController.onChangePageIndex(3);
-                      },
-                    ),
-                  ],
-                ),
-              ),
+            Column(
+              children: <Widget>[
+                _buildMenuItem(context,
+                    icon: index == 0
+                        ? FluentIcons.home_20_filled
+                        : FluentIcons.home_20_regular,
+                    title: "Dashboard",
+                    selected: index == 0,
+                    onTap: () => MenuNavigation.goTo(context, 0)),
+                verticalSpaceSmall,
+                _buildMenuItem(context,
+                    icon: index == 1
+                        ? FluentIcons.food_20_filled
+                        : FluentIcons.food_20_regular,
+                    title: "Food Menu",
+                    selected: index == 1,
+                    onTap: () => MenuNavigation.goTo(context, 1)),
+                verticalSpaceSmall,
+                _buildMenuItem(context,
+                    icon: index == 2
+                        ? FluentIcons.apps_list_20_filled
+                        : FluentIcons.apps_list_20_regular,
+                    title: "Categories",
+                    selected: index == 2,
+                    onTap: () => MenuNavigation.goTo(context, 2)),
+                verticalSpaceSmall,
+                _buildMenuItem(context,
+                    icon: index == 3
+                        ? FluentIcons.apps_add_in_20_filled
+                        : FluentIcons.apps_add_in_20_regular,
+                    title: "Modifiers",
+                    selected: index == 3,
+                    onTap: () => MenuNavigation.goTo(context, 3)),
+              ],
             ),
           ],
         ),

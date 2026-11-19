@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_modifiers_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/responsive_utils.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/menu_builder_app_colors.dart';
@@ -19,10 +20,11 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
 
     final mq = MediaQuery.of(context);
     final size = mq.size;
+    final isMobile = ResponsiveUtils.isMobile(context);
 
     return SafeArea(
       child: Drawer(
-        width: size.width * 0.4,
+        width: isMobile ? size.width * 0.92 : size.width * 0.4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4.0),
         ),
@@ -31,27 +33,49 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
             dividerColor: Colors.transparent,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
-              vertical: 20.0,
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 14.0 : 20.0,
+              vertical: isMobile ? 14.0 : 20.0,
             ),
             child: Form(
               key: controller.formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: ListView(
                 children: <Widget>[
+                  // ---------- Header ----------
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 0.0 : 10.0,
+                      ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          if (isMobile) ...[
+                            InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () =>
+                                  Scaffold.of(context).closeEndDrawer(),
+                              child: const Padding(
+                                padding: EdgeInsets.all(6.0),
+                                child: Icon(Icons.close),
+                              ),
+                            ),
+                            horizontalSpaceSmall,
+                          ],
+                          Expanded(
+                            child: Text(
                               controller.editMode
                                   ? "Update Modifier"
                                   : "Add Modifier",
-                              style: textTheme.titleLarge),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: isMobile
+                                  ? textTheme.titleMedium
+                                  : textTheme.titleLarge,
+                            ),
+                          ),
+                          horizontalSpaceSmall,
                           !controller.isLoading
                               ? InkWell(
                                   customBorder: const CircleBorder(),
@@ -74,20 +98,20 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
                                     ),
                                   ),
                                 )
-                              : const Center(
-                                  child: SizedBox(
-                                    height: 30,
-                                    width: 30,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3.0,
-                                    ),
+                              : const SizedBox(
+                                  height: 30,
+                                  width: 30,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3.0,
                                   ),
                                 ),
                         ],
                       ),
                     ),
                   ),
-                  const Divider(height: 40.0),
+                  Divider(height: isMobile ? 28.0 : 40.0),
+
+                  // ---------- Group name ----------
                   CustomRoundedTextField.topText(
                     topText: "Group name",
                     hintText: "Eg Drinks, Salads..",
@@ -101,7 +125,10 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
                     validator: MenuBuilderValidators.validateModifierGroupName,
                   ),
                   verticalSpaceRegular,
+
+                  // ---------- Min / Max ----------
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: CustomRoundedTextField.topText(
@@ -132,20 +159,25 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
                   ),
                   verticalSpaceSmall,
                   const Divider(),
+
+                  // ---------- Options ----------
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 0.0 : 10.0,
                       vertical: 5.0,
                     ).copyWith(bottom: 20.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(
-                              "Modifier Options",
-                              style: textTheme.titleMedium,
+                            Expanded(
+                              child: Text(
+                                "Modifier Options",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.titleMedium,
+                              ),
                             ),
                             IconButton(
                               onPressed: () => controller.addModifierEntry(),
@@ -162,67 +194,98 @@ class AddUpdateModifierSideSheet extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final entry =
                                 controller.modifierEntries.elementAt(index);
+
+                            final nameField = CustomRoundedTextField.topText(
+                              topText: "Option name",
+                              hintText: "Eg Pepsi, Coca-Cola",
+                              borderRadius: BorderRadius.circular(8.0),
+                              keyboardType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                              fillColor: MenuBuilderColors.kWhite,
+                              textEditingController:
+                                  entry["name"] as TextEditingController,
+                              validator: MenuBuilderValidators
+                                  .validateModifierOptionName,
+                              inputFormatters: const <TextInputFormatter>[
+                                NoEmojiTextInputFormatter(),
+                              ],
+                            );
+
+                            final priceField = CustomRoundedTextField.topText(
+                              topText: "Price",
+                              hintText: "0.00",
+                              borderRadius: BorderRadius.circular(8.0),
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.done,
+                              fillColor: MenuBuilderColors.kWhite,
+                              textEditingController:
+                                  entry["price"] as TextEditingController,
+                              validator:
+                                  MenuBuilderValidators.validateModifierPrice,
+                            );
+
+                            final deleteButton = InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () {
+                                controller.removeModifierEntry(index);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(isMobile ? 10.0 : 8.0),
+                                margin: const EdgeInsets.only(top: 20.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: MenuBuilderColors.kPrimaryColor
+                                      .withOpacity(0.1),
+                                ),
+                                child: const Icon(
+                                  Icons.delete_forever,
+                                  color: MenuBuilderColors.kPrimaryColor,
+                                  size: 22,
+                                ),
+                              ),
+                            );
+
+                            if (isMobile) {
+                              // Name on its own line, price + delete below.
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  nameField,
+                                  verticalSpaceSmall,
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(child: priceField),
+                                      horizontalSpaceRegular,
+                                      deleteButton,
+                                    ],
+                                  ),
+                                ],
+                              );
+                            }
+
                             return Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Expanded(
-                                  flex: 2,
-                                  child: CustomRoundedTextField.topText(
-                                    topText: "Option name",
-                                    hintText: "Eg Pepsi, Coca-Cola",
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    keyboardType: TextInputType.name,
-                                    textInputAction: TextInputAction.next,
-                                    fillColor: MenuBuilderColors.kWhite,
-                                    textEditingController:
-                                        entry["name"] as TextEditingController,
-                                    validator: MenuBuilderValidators
-                                        .validateModifierOptionName,
-                                    inputFormatters: const <TextInputFormatter>[
-                                      NoEmojiTextInputFormatter(),
-                                    ],
-                                  ),
-                                ),
+                                Expanded(flex: 2, child: nameField),
                                 horizontalSpaceRegular,
-                                Expanded(
-                                  child: CustomRoundedTextField.topText(
-                                    topText: "Price",
-                                    hintText: "0.00",
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    keyboardType: TextInputType.number,
-                                    textInputAction: TextInputAction.done,
-                                    fillColor: MenuBuilderColors.kWhite,
-                                    textEditingController:
-                                        entry["price"] as TextEditingController,
-                                    validator: MenuBuilderValidators
-                                        .validateModifierPrice,
-                                  ),
-                                ),
+                                Expanded(child: priceField),
                                 horizontalSpaceRegular,
-                                InkWell(
-                                  onTap: () {
-                                    controller.removeModifierEntry(index);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    margin: const EdgeInsets.only(top: 20.0),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: MenuBuilderColors.kPrimaryColor
-                                          .withOpacity(0.1),
-                                    ),
-                                    child: const Icon(
-                                      Icons.delete_forever,
-                                      color: MenuBuilderColors.kPrimaryColor,
-                                      size: 22,
-                                    ),
-                                  ),
-                                ),
+                                deleteButton,
                               ],
                             );
                           },
                           separatorBuilder: (context, index) {
-                            return verticalSpaceRegular;
+                            return isMobile
+                                ? Column(
+                                    children: [
+                                      verticalSpaceSmall,
+                                      Divider(color: Colors.grey.shade300),
+                                      verticalSpaceSmall,
+                                    ],
+                                  )
+                                : verticalSpaceRegular;
                           },
                         )
                       ],

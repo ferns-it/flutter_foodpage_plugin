@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/core/menu_builder_dependency_registrar.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/responsive_utils.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/views/common/side_menu/mobile_bottom_nav.dart';
 
 import '../../../core/constants/menu_builder_theme.dart';
 import '../../../core/utils/ui_utils.dart';
@@ -31,29 +33,38 @@ class _BaseRootWidgetState extends State<BaseRootWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ResponsiveUtils.isMobile(context);
+
     return Theme(
       data: menuBuilderTheme(context),
       child: Scaffold(
         endDrawer: widget.endDrawer,
         endDrawerEnableOpenDragGesture: false,
+        bottomNavigationBar: isMobile ? const MobileBottomNav() : null,
         body: SafeArea(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const SideMenuWidget(),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+          child: isMobile
+              ? Column(
                   children: <Widget>[
                     const HeaderWidget(),
-                    verticalSpaceRegular,
                     widget.child,
                   ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const SideMenuWidget(),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          const HeaderWidget(),
+                          verticalSpaceRegular,
+                          widget.child,
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
         ),
       ),
     );
