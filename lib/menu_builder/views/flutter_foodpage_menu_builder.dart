@@ -4,6 +4,7 @@ import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_nav
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/core/utils/responsive_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/models/common/menu_builder_config.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/views/category/categories_screen.dart';
@@ -113,11 +114,14 @@ class _LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ResponsiveUtils.isMobile(context);
+    final width = MediaQuery.of(context).size.width;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         SizedBox(
-          width: MediaQuery.of(context).size.width / 3,
+          width: isMobile ? width * 0.88 : width / 3,
           child: Card(
             color: Colors.white,
             elevation: 4.0,
@@ -125,8 +129,8 @@ class _LoadingWidget extends StatelessWidget {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10.0,
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 16.0 : 10.0,
                 vertical: 16.0,
               ),
               child: Column(
@@ -134,19 +138,19 @@ class _LoadingWidget extends StatelessWidget {
                   verticalSpaceRegular,
                   Image.asset(
                     "packages/flutter_foodpage_plugin/assets/images/food-page-logo.png",
-                    height: 45,
+                    height: isMobile ? 36 : 45,
                   ),
                   verticalSpaceRegular,
                   Text(
                     "Build and manage your menu effortlessly with Menu Builder!",
                     style: GoogleFonts.poppins(
-                      fontSize: 18,
+                      fontSize: isMobile ? 15 : 18,
                       color: Colors.grey.shade700,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(
-                    height: 180,
+                    height: isMobile ? 150 : 180,
                     child: LottieBuilder.asset(
                       "packages/flutter_foodpage_plugin/assets/animations/loading_animation.json",
                       fit: BoxFit.cover,
