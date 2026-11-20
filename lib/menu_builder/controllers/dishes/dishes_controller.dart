@@ -854,12 +854,9 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   final GlobalKey<FormState> addNewDishFormKey = GlobalKey<FormState>();
-  TextEditingController? _nameController;
-  TextEditingController get nameController => _nameController ??= TextEditingController();
-  TextEditingController? _descriptionController;
-  TextEditingController get descriptionController => _descriptionController ??= TextEditingController();
-  TextEditingController? _itemCodeController;
-  TextEditingController get itemCodeController => _itemCodeController ??= TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController descriptionController;
+  late TextEditingController itemCodeController;
 
   String? _editDishId;
 
@@ -871,18 +868,15 @@ class DishesController extends ChangeNotifier with BaseController {
   }
 
   void initializeAllFormControllers() {
-    _nameController = TextEditingController();
-    _descriptionController = TextEditingController();
-    _itemCodeController = TextEditingController();
+    nameController = TextEditingController();
+    descriptionController = TextEditingController();
+    itemCodeController = TextEditingController();
   }
 
   void disposeAllFormControllers() {
-    _nameController?.dispose();
-    _descriptionController?.dispose();
-    _itemCodeController?.dispose();
-    _nameController = null;
-    _descriptionController = null;
-    _itemCodeController = null;
+    nameController.dispose();
+    descriptionController.dispose();
+    itemCodeController.dispose();
   }
 
   Future<void> fetchDishes() async {

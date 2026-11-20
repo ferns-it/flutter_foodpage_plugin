@@ -16,10 +16,8 @@ import '../../services/app_exception/app_exception.dart';
 class DishCategoryController extends ChangeNotifier with BaseController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  TextEditingController? _nameController;
-  TextEditingController get nameController => _nameController ??= TextEditingController();
-  TextEditingController? _descriptionController;
-  TextEditingController get descriptionController => _descriptionController ??= TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController descriptionController;
 
   APIResponse<DishCategoryCollectionModel> _dishCategoryCollection =
       APIResponse.initial();
@@ -110,8 +108,8 @@ class DishCategoryController extends ChangeNotifier with BaseController {
 
   @override
   Future<void> init() async {
-    _nameController = TextEditingController();
-    _descriptionController = TextEditingController();
+    nameController = TextEditingController();
+    descriptionController = TextEditingController();
     // await fetchCategories();
   }
 
