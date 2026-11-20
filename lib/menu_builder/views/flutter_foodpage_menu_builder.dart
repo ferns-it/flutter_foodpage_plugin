@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/auth/auth_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/common/page_navigation_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_category_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dish_modifiers_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/dishes/dishes_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/controllers/google_ai/gemini_controller.dart';
+import 'package:flutter_foodpage_plugin/menu_builder/controllers/shop/shop_controller.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/constants/menu_builder_theme.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/responsive_utils.dart';
 import 'package:flutter_foodpage_plugin/menu_builder/core/utils/ui_utils.dart';
@@ -32,20 +35,26 @@ class FlutterFoodpageMenuBuilder extends StatefulWidget {
 
 class _FlutterFoodpageMenuBuilderState
     extends State<FlutterFoodpageMenuBuilder> {
+  final AuthController _authController = AuthController();
+  final PageNavigationController _pageNavigationController =
+      PageNavigationController();
+  final GeminiController _geminiController = GeminiController();
+  final DishesController _dishesController = DishesController();
+  final DishCategoryController _dishCategoryController =
+      DishCategoryController();
+  final DishModifiersController _dishModifiersController =
+      DishModifiersController();
+  final ShopController _shopController = ShopController();
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      loginMenuBuilder();
-    });
-
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loginMenuBuilder());
   }
 
-  void loginMenuBuilder() {
-    context.read<AuthController>().loginMenuBuilder(widget.config);
-    context
-        .read<GeminiController>()
-        .initializeGemini(widget.config.geminiAPIKey);
+  void _loginMenuBuilder() {
+    _authController.loginMenuBuilder(widget.config);
+    _geminiController.initializeGemini(widget.config.geminiAPIKey);
   }
 
   @override
@@ -61,50 +70,63 @@ class _FlutterFoodpageMenuBuilderState
       const ModifiersScreen(),
     ];
 
-    final controller = context.watch<AuthController>();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: _authController),
+        ChangeNotifierProvider.value(value: _pageNavigationController),
+        ChangeNotifierProvider.value(value: _geminiController),
+        ChangeNotifierProvider.value(value: _dishesController),
+        ChangeNotifierProvider.value(value: _dishCategoryController),
+        ChangeNotifierProvider.value(value: _dishModifiersController),
+        ChangeNotifierProvider.value(value: _shopController),
+      ],
+      child: Builder(builder: (providerContext) {
+        final authController = providerContext.watch<AuthController>();
 
-    return Theme(
-      data: menuBuilderTheme(context),
-      child: Scaffold(
-          backgroundColor: MenuBuilderColors.kWhite2,
-          body: controller.authenticationDetails.when(initial: () {
-            return const SizedBox.shrink();
-          }, loading: () {
-            return const Center(
-              child: _LoadingWidget(),
-            );
-          }, completed: (_) {
-            return Builder(builder: (context) {
-              final pageNavigationController =
-                  context.watch<PageNavigationController>();
-              final currentPageIndex =
-                  pageNavigationController.currentPageIndex;
-              return BaseRootWidget(
-                endDrawer: currentPageIndex == 1 || currentPageIndex == 3
-                    ? Align(
-                        alignment: Alignment.topRight,
-                        child: SizedBox(
-                          height: size.height - bottom,
-                          child: currentPageIndex == 1
-                              ? const FoodDetailsSideSheetWidget()
-                              : const AddUpdateModifierSideSheet(),
-                        ),
-                      )
-                    : null,
-                child: Expanded(
-                  child: screens[pageNavigationController.currentPageIndex %
-                      screens.length],
-                ),
-              );
-            });
-          }, error: (message, error) {
-            return Center(
-              child: _ErrorWidget(
-                errorText: error?.message,
-                onPressRetry: loginMenuBuilder,
-              ),
-            );
-          })),
+        return Theme(
+          data: menuBuilderTheme(context),
+          child: Scaffold(
+              backgroundColor: MenuBuilderColors.kWhite2,
+              body: authController.authenticationDetails.when(initial: () {
+                return const SizedBox.shrink();
+              }, loading: () {
+                return const Center(
+                  child: _LoadingWidget(),
+                );
+              }, completed: (_) {
+                return Builder(builder: (navContext) {
+                  final pageNavigationController =
+                      navContext.watch<PageNavigationController>();
+                  final currentPageIndex =
+                      pageNavigationController.currentPageIndex;
+                  return BaseRootWidget(
+                    endDrawer: currentPageIndex == 1 || currentPageIndex == 3
+                        ? Align(
+                            alignment: Alignment.topRight,
+                            child: SizedBox(
+                              height: size.height - bottom,
+                              child: currentPageIndex == 1
+                                  ? const FoodDetailsSideSheetWidget()
+                                  : const AddUpdateModifierSideSheet(),
+                            ),
+                          )
+                        : null,
+                    child: Expanded(
+                      child: screens[pageNavigationController.currentPageIndex %
+                          screens.length],
+                    ),
+                  );
+                });
+              }, error: (message, error) {
+                return Center(
+                  child: _ErrorWidget(
+                    errorText: error?.message,
+                    onPressRetry: _loginMenuBuilder,
+                  ),
+                );
+              })),
+        );
+      }),
     );
   }
 }

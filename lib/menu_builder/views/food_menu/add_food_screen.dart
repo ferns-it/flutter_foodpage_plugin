@@ -211,7 +211,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                     CustomRadioCheckboxGroup(
                       title1: "Veg/Non Veg",
                       title2: "Available On",
-                      options1: addDishInitializeData!.dishtype.data,
+                      options1: addDishInitializeData?.dishtype.data ?? const [],
                       groupValue: controller.dishType,
                       options2: const ["Online", "Dine In"],
                       checkboxValues: [
